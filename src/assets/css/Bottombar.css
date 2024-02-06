@@ -1,14 +1,5 @@
-.bottombar {
-    border: 1px solid black;
-    height: 50px;
-    width: 100vw;
-    position: fixed;
-    bottom: 0;
-}
-@media screen and (min-width: 550px) {
-    .bottombar {
-        display: none;
-    }
+@media screen and (min-width: 640px) {
+
 }
 
 @media screen and (min-width: 768px) {
@@ -19,6 +10,10 @@
 
 }
 
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 1280px) {
+
+}
+
+@media screen and (min-width: 1536px) {
 
 }

@@ -9,9 +9,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <NextUIProvider>
-      <main>
-        <App/>
-      </main>
+      <App/>
     </NextUIProvider>
   </React.StrictMode>
 );
