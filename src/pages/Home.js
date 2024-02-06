@@ -9,7 +9,7 @@ export default function Home() {
             className="
             home-content
             border 
-            border-black 
+            border-black
             w-full
             "
             >

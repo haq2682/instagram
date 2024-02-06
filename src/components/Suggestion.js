@@ -1,4 +1,5 @@
 import '../assets/css/Suggestion.css';
+import ThemeSwitcher from './ThemeSwitcher'
 
 export default function Suggestion() {
     return (
@@ -12,7 +13,7 @@ export default function Suggestion() {
         w-1/4
         "
         >
-        <h1>What do you want to learn today?</h1>
+        <ThemeSwitcher/>
         </div>
     );
 }
