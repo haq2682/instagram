@@ -1,6 +1,8 @@
 import {useState, useEffect} from 'react';
+import {SunFill} from '@styled-icons/bootstrap/SunFill';
+import {Moon} from '@styled-icons/heroicons-solid/Moon';
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher({size}) {
     const [modeText, setModeText] = useState('Dark');
     useEffect(() => {
         if(localStorage.theme === 'dark') {
@@ -25,10 +27,11 @@ export default function ThemeSwitcher() {
         }
     }
     return (
-        <div>
-            <button onClick={toggleDarkMode} className='rounded bg-black dark:bg-white text-white dark:text-black py-2 px-5'>
-                {modeText}
-            </button>
+        <div onClick={toggleDarkMode} className="theme-switcher">
+            {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size={size}/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size={size}/>}
+            <span className={`hidden lg:block text-sm`}>
+                {localStorage.theme === 'dark' ? 'Light' : 'Dark'} Mode
+            </span>
         </div>
     );
 }

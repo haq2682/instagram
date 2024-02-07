@@ -1,5 +1,6 @@
 .active {
-    background-color: rgb(153, 157, 163);
+    font-weight: 1000;
+    font-size: 20px;
 }
 @media screen and (min-width: 640px) {
 
