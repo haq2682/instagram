@@ -27,7 +27,7 @@ export default function ThemeSwitcher({size}) {
         }
     }
     return (
-        <div onClick={toggleDarkMode} className="theme-switcher">
+        <div onClick={toggleDarkMode} className="theme-switcher h-full w-full">
             {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size={size}/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size={size}/>}
             <span className={`hidden lg:block text-sm`}>
                 {localStorage.theme === 'dark' ? 'Light' : 'Dark'} Mode

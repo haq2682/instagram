@@ -1,3 +1,10 @@
-.story-gradient {
-    border: solid 5px red;
+::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(102, 102, 102);
+    border-radius: 100px;
 }
