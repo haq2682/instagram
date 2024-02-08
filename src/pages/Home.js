@@ -8,7 +8,7 @@ export default function Home() {
     return (
         <div className="flex justify-between gap-2 h-screen">
             <Sidebar/>
-            <div className="home-content border border-black w-full lg:w-1/2">
+            <div className="home-content mt-8 w-full lg:w-[70%]">
                 <div className="stories overflow-x-auto w-full h-32 whitespace-nowrap custom-scrollbar scrollbar">
                     <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 rounded-lg">
                         <div className="story-image">

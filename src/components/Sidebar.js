@@ -93,7 +93,7 @@ export default function Sidebar() {
                             />
                             </ModalBody>
                             <ModalFooter className="block">
-                                <Button onPress={onClose} className="w-full mb-4">
+                                <Button className="w-full mb-4">
                                     Add Photos/Videos <PhotoLibrary/>
                                 </Button>
                                 <Button onPress={onClose} className="w-full bg-black text-white dark:bg-white dark:text-black">
