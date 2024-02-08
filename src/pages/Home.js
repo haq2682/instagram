@@ -15,9 +15,9 @@ export default function Home() {
             <NotificationsContext.Provider value={{open: open, setOpen: setOpen}}>
                 <div className="flex justify-between h-screen">
                     <Sidebar/>
-                    <div className="home-content mx-10 md:mx-10 mt-8 w-full lg:w-[70%] overflow-auto scrollbar-hide">
+                    <div className="home-content mx-10 md:mx-10 mt-4 w-full lg:w-[70%] overflow-auto scrollbar-hide">
                         <div className="stories overflow-x-auto w-full h-32 whitespace-nowrap custom-scrollbar scrollbar">
-                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 rounded-lg">
+                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg">
                                 <div className="story-image">
                                     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-20 h-20"/>
                                 </div>
@@ -25,7 +25,7 @@ export default function Home() {
                                     <p>Username</p>
                                 </div>
                             </div>
-                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 rounded-lg">
+                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg">
                                 <div className="story-image">
                                     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-20 h-20 story-gradient"/>
                                 </div>
@@ -33,7 +33,7 @@ export default function Home() {
                                     <p>Username</p>
                                 </div>
                             </div>
-                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 rounded-lg">
+                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg">
                                 <div className="story-image">
                                     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-20 h-20 story-gradient"/>
                                 </div>
@@ -41,7 +41,7 @@ export default function Home() {
                                     <p>Username</p>
                                 </div>
                             </div>
-                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 rounded-lg">
+                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg">
                                 <div className="story-image">
                                     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-20 h-20 story-gradient"/>
                                 </div>
@@ -49,7 +49,7 @@ export default function Home() {
                                     <p>Username</p>
                                 </div>
                             </div>
-                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 rounded-lg">
+                            <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-lg">
                                 <div className="story-image">
                                     <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-20 h-20 story-gradient"/>
                                 </div>
@@ -60,7 +60,7 @@ export default function Home() {
                         </div>
                         <div className="feed overflow-y-auto">
                             <div className="post my-5">
-                                <Card isBlurred className="py-4 bg-gray-100 dark:bg-gray-900">
+                                <Card isBlurred className="py-1 bg-gray-100 dark:bg-gray-900">
                                     <CardHeader className="pb-0 pt-2 px-4 flex-col items-start inline-block">
                                         <div className="inline-block">
                                             <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-10 h-10 relative top-1 story-gradient"/>
