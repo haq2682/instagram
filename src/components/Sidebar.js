@@ -1,6 +1,8 @@
 import '../assets/css/Sidebar.css';
 import Logo from '../assets/instagram-logo.svg';
 import ThemeSwitcher from './ThemeSwitcher';
+import { NotificationsContext } from '../pages/Home';
+import {useContext} from 'react';
 import {useLocation} from 'react-router-dom';
 import {Home} from '@styled-icons/material/Home';
 import {Search} from '@styled-icons/evaicons-solid/Search';
@@ -16,11 +18,13 @@ import {Textarea} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
 import {PhotoLibrary} from '@styled-icons/material-sharp/PhotoLibrary';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
+
 export default function Sidebar() {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     let location = useLocation();
+    const {open, setOpen} = useContext(NotificationsContext);
     return (
-        <div className="sidebar hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/6">
+        <div className="sidebar shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-gray-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/6">
             <div className="sidebar-contents">
                 <div className="logo hidden lg:block">
                     <img src={Logo} alt="Instagram Clone Logo"/>
@@ -57,17 +61,13 @@ export default function Sidebar() {
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/messages' ? 'active' : ''}`}>Messages</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
-                            <Link to="/">
-                                <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Notifications</span>
-                            </Link>
+                        <li onClick={()=>setOpen(!open)} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                            <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                            <span className={`hidden lg:block text-sm`}>Notifications</span>
                         </li>
                         <li onClick={onOpen} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
-                            <Link to="/">
-                                <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Create</span>
-                            </Link>
+                            <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                            <span className={`hidden lg:block text-sm`}>Create</span>
                         </li>
                         <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
                             <Link to="settings">

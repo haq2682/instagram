@@ -1,0 +1,4 @@
+.notifications {
+    transition: all 0.25s;
+    transition-timing-function: ease-out;
+}
