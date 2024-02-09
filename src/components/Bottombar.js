@@ -10,10 +10,17 @@ import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
 import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
-import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/react";
+import {Popover, PopoverTrigger, PopoverContent, Textarea, Button} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
+import {useContext} from "react";
+import {NotificationsContext} from "../pages/Home";
+import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/modal";
+import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
+import {Enter} from "@styled-icons/ionicons-solid/Enter";
 
 export default function Bottombar() {
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const {open, setOpen} = useContext(NotificationsContext);
     const content = (
         <PopoverContent className="sm:hidden">
             <ul className="px-1 py-3">
@@ -22,7 +29,7 @@ export default function Bottombar() {
                     <span className="text-[15px] ml-2 mt-0.5">Search</span>
                 </li>
                 <hr/>
-                <li className="flex my-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li onClick={()=>setOpen(!open)} className="flex my-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
                     <NotificationsCircle size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Notifications</span>
                 </li>
@@ -58,7 +65,7 @@ export default function Bottombar() {
                 <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
                     <Home size="34"/>
                 </li>
-                <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li onClick={onOpen} className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
                     <Create size="34"/>
                 </li>
                 <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
@@ -72,6 +79,31 @@ export default function Bottombar() {
                 </li>
             </ul>
             <Outlet/>
+            <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
+                            <ModalBody className="w-full">
+                                <Textarea
+                                    isRequired
+                                    label="Caption"
+                                    placeholder="Enter your caption here..."
+                                    className="w-full"
+                                />
+                            </ModalBody>
+                            <ModalFooter className="block">
+                                <Button className="w-full mb-4">
+                                    Add Photos/Videos <PhotoLibrary/>
+                                </Button>
+                                <Button onPress={onClose} className="w-full bg-black text-white dark:bg-white dark:text-black">
+                                    Submit <Enter/>
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

@@ -70,16 +70,15 @@ export default function Home() {
                                             <h4 className="font-bold text-xs">Frontend Radio</h4>
                                         </div>
                                     </CardHeader>
-                                    <CardBody className="overflow-visible py-2">
-                                        {/* <Image
-                                            alt="Card background"
-                                            className="object-cover rounded-xl"
-                                            src="/images/hero-card-complete.jpeg"
-                                            width={270}
-                                        /> */}
+                                    <CardBody className="overflow-visible py-2 flex flex-col items-center">
                                         <div className="post-description text-sm md:text-[15px]">
                                             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                                         </div>
+                                        <Image
+                                            alt="Card background"
+                                            className="object-cover flex rounded-xl mt-5 w-full h-[400px]"
+                                            src="https://i.pravatar.cc/150?u=a04258114e29026302d"
+                                        />
                                     </CardBody>
                                 </Card>
                             </div>

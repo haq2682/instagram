@@ -32,7 +32,7 @@ export default function App() {
                 <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-pink-400 text-white">Upwork Website</a>
                 <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-yellow-500 text-white">Github Website</a>
             </div>
-            <Modal size={'3xl'} isOpen={signup} onOpenChange={()=>setSignup(false)}>
+            <Modal size={'3xl'} isOpen={signup} onOpenChange={()=>setSignup(false)} className="pb-8">
                 <ModalContent>
                 {(signup) => (
                     <>
@@ -64,7 +64,7 @@ export default function App() {
                             </div>
                             <div className="w-full flex flex-col items-center">
                                 <span className="mb-4 text-lg">Or Sign Up with</span>
-                                <div className="w-[90%] flex flex-col justify-around h-full">
+                                <div className="w-[90%] flex flex-col justify-start h-full">
                                     <Button className="my-1 text-xl py-10"><Google size="25"/>Google</Button>
                                     <Button className="my-1 text-xl py-10"><Facebook size="25"/>Facebook</Button>
                                     <Button className="my-1 text-xl py-10"><TwitterWithCircle size="25"/>Twitter</Button>
@@ -80,33 +80,47 @@ export default function App() {
                 <ModalContent>
                 {(login) => (
                     <>
-                    <ModalHeader className="flex flex-col gap-1 text-center text-2xl">Login</ModalHeader>
-                    <ModalBody>
-                        <form action="/welcome" method="post" className="w-[90%]">
-                            <div>
-                                <Input isClearable errorMessage="Please enter a valid email." color="danger" type="email" name="email" variant={'underlined'} label="Email Address"/>
-                                <Input description="Password must be at least 8 characters long" name="password" variant={'underlined'} label="Password" endContent={
-                                    <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                                        {isVisible ? (
-                                            <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                                        ) : (
-                                            <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                                        )}
-                                    </button>
-                                }
-                                       type={isVisible ? "text" : "password"}/>
-                                <Button type="submit" className="mt-5 w-full bg-gradient-to-tl from-yellow-400 to-pink-600 text-white text-lg">Submit <Enter size="25"/></Button>
-                            </div>
-                            <div className="w-full flex flex-col items-center">
-                                <span className="mb-4 text-lg">Or Log In with</span>
-                                <div className="w-[90%] flex flex-col justify-around h-full">
-                                    <Button className="my-1 text-xl py-10"><Google size="25"/>Google</Button>
-                                    <Button className="my-1 text-xl py-10"><Facebook size="25"/>Facebook</Button>
-                                    <Button className="my-1 text-xl py-10"><TwitterWithCircle size="25"/>Twitter</Button>
+                    <ModalHeader className="flex flex-col gap-1 text-center text-2xl">Log In</ModalHeader>
+                        <ModalBody>
+                            <div className="divide-x divide-gray-800 flex justify-around">
+                                <div className="w-full flex flex-col items-center">
+                                    <span className="text-lg">Log In with Email</span>
+                                    <form action="/welcome" method="post" className="w-[90%]">
+                                        <div>
+                                            <Input isClearable errorMessage="Please enter a valid email." color="danger"
+                                                   type="email" name="email" variant={'underlined'}
+                                                   label="Email Address"/>
+                                            <Input description="Password must be at least 8 characters long"
+                                                   name="password" variant={'underlined'} label="Password" endContent={
+                                                <button className="focus:outline-none" type="button"
+                                                        onClick={toggleVisibility}>
+                                                    {isVisible ? (
+                                                        <EyeSlashFilledIcon
+                                                            className="text-2xl text-default-400 pointer-events-none"/>
+                                                    ) : (
+                                                        <EyeFilledIcon
+                                                            className="text-2xl text-default-400 pointer-events-none"/>
+                                                    )}
+                                                </button>
+                                            }
+                                                   type={isVisible ? "text" : "password"}/>
+                                            <Button type="submit"
+                                                    className="mt-5 w-full bg-gradient-to-tl from-yellow-400 to-pink-600 text-white text-lg">Submit <Enter
+                                                size="25"/></Button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="w-full flex flex-col items-center">
+                                    <span className="mb-4 text-lg">Or Log In with</span>
+                                    <div className="w-[90%] flex flex-col justify-around h-full">
+                                        <Button className="my-1 text-xl py-10"><Google size="25"/>Google</Button>
+                                        <Button className="my-1 text-xl py-10"><Facebook size="25"/>Facebook</Button>
+                                        <Button className="my-1 text-xl py-10"><TwitterWithCircle
+                                            size="25"/>Twitter</Button>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
-                    </ModalBody>
+                        </ModalBody>
                     </>
                 )}
                 </ModalContent>

@@ -61,11 +61,11 @@ export default function Sidebar() {
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/messages' ? 'active' : ''}`}>Messages</span>
                             </Link>
                         </li>
-                        <li onClick={()=>setOpen(!open)} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li onClick={()=>setOpen(!open)} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900 cursor-pointer">
                             <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Notifications</span>
                         </li>
-                        <li onClick={onOpen} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li onClick={onOpen} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900 cursor-pointer">
                             <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Create</span>
                         </li>
