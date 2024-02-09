@@ -2,3 +2,7 @@
 .logo-by-khalid {
     font-family: Satisfy, sans-serif;
 }
+
+.welcome-background {
+    background: linear-gradient(to right bottom, #F9CE34, #ee2a7b, #6228d7);
+}
