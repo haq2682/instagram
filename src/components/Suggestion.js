@@ -3,8 +3,8 @@ import {User, Link as UserLink} from "@nextui-org/react";
 
 export default function Suggestion() {
     return (
-        <div className="suggestions bg-white dark:bg-black dark:border-l-2 dark:border-neutral-600 shadow-lg mt-5 hidden lg:block w-1/4">
-            <div className="logged-user shadow-md mt-5 ml-5 bg-neutral-100 dark:bg-neutral-900 rounded-xl px-4 py-2 inline-block w-[90%]">
+        <div className="suggestions bg-white dark:bg-black dark:border-l-2 dark:border-neutral-600 shadow-lg hidden lg:block w-1/4">
+            <div className="logged-user shadow-md mt-10 ml-5 bg-neutral-100 dark:bg-neutral-900 rounded-xl px-4 py-2 inline-block w-[90%]">
                 <User   
                     name="Junior Garcia"
                     description={(
