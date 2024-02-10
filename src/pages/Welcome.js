@@ -7,7 +7,7 @@ import {Google} from '@styled-icons/bootstrap/Google';
 import {Facebook} from '@styled-icons/fa-brands/Facebook';
 import {TwitterWithCircle} from '@styled-icons/entypo-social/TwitterWithCircle';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, Button, useDisclosure} from "@nextui-org/react";
 import '../assets/css/Welcome.css';
 export default function App() {
     const {onOpen} = useDisclosure();
@@ -18,12 +18,12 @@ export default function App() {
     return (
         <div className="h-screen">
             <div className="welcome-background flex justify-center items-center h-full w-screen flex-col">
-            <h1 className="text-center mb-56 text-gray-300">Copyright © Abdul Haq Khalid <br/> All Rights Reserved</h1>
+            <h1 className="text-center mb-56 text-neutral-300">Copyright © Abdul Haq Khalid <br/> All Rights Reserved</h1>
                 <div className="welcome bg-white rounded-lg shadow-lg flex items-center flex-col w-[80%] md:w-[70%] xl:w-1/3 h-1/2 relative bottom-40">
                     <img src={Logo} alt="Instagram_Logo" className="w-[300px]"/>
                     <h1 className="logo-by-khalid text-xl xl:text-3xl mb-16">A Clone by Abdul Haq Khalid</h1>
-                    <Button onPress={onOpen} onClick={()=>setSignup(true)} className="w-1/3 my-2.5 bg-gradient-to-br from-yellow-400 to-pink-600 text-white text-lg shadow-gray-400 shadow-md">Sign Up</Button>
-                    <Button onPress={onOpen} onClick={()=>setLogin(true)} className="w-1/3 my-2.5 bg-gradient-to-br from-pink-400 to-purple-600 text-white text-lg shadow-gray-400 shadow-md">Log In</Button>
+                    <Button onPress={onOpen} onClick={()=>setSignup(true)} className="w-1/3 my-2.5 bg-gradient-to-br from-yellow-400 to-pink-600 text-white text-lg shadow-neutral-400 shadow-md">Sign Up</Button>
+                    <Button onPress={onOpen} onClick={()=>setLogin(true)} className="w-1/3 my-2.5 bg-gradient-to-br from-pink-400 to-purple-600 text-white text-lg shadow-neutral-400 shadow-md">Log In</Button>
                 </div>
             </div>
             <div className="flex justify-around relative bottom-10">
@@ -38,7 +38,7 @@ export default function App() {
                     <>
                     <ModalHeader className="flex flex-col gap-1 text-center text-2xl">Sign Up</ModalHeader>
                     <ModalBody>
-                        <div className="divide-x divide-gray-800 flex justify-around">
+                        <div className="divide-x divide-neutral-800 flex justify-around">
                             <div className="w-full flex flex-col items-center">
                                 <span className="text-lg">Sign Up with Email</span>
                                 <form action="/welcome" method="post" className="w-[90%]">
@@ -82,7 +82,7 @@ export default function App() {
                     <>
                     <ModalHeader className="flex flex-col gap-1 text-center text-2xl">Log In</ModalHeader>
                         <ModalBody>
-                            <div className="divide-x divide-gray-800 flex justify-around">
+                            <div className="divide-x divide-neutral-800 flex justify-around">
                                 <div className="w-full flex flex-col items-center">
                                     <span className="text-lg">Log In with Email</span>
                                     <form action="/welcome" method="post" className="w-[90%]">

@@ -24,58 +24,58 @@ export default function Sidebar() {
     let location = useLocation();
     const {open, setOpen} = useContext(NotificationsContext);
     return (
-        <div className="sidebar shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-gray-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/6">
+        <div className="sidebar shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/6">
             <div className="sidebar-contents">
                 <div className="logo hidden lg:block">
                     <img src={Logo} alt="Instagram Clone Logo"/>
                 </div>
                 <div className="sidebar-pages">
                     <ul className="pages">
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <Link to="/">
                                 <Home className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/' ? 'active' : ''}`}>Home</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <Link to="/">
                                 <Search className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/search' ? 'active' : ''}`}>Search</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <Link to="/">
                                 <Explore className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/explore' ? 'active' : ''}`}>Explore</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <Link to="/">
                                 <SaveCopy className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/saved' ? 'active' : ''}`}>Saved</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <Link to="/">
                                 <MessageAltDetail className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/messages' ? 'active' : ''}`}>Messages</span>
                             </Link>
                         </li>
-                        <li onClick={()=>setOpen(!open)} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900 cursor-pointer">
+                        <li onClick={()=>setOpen(!open)} className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
                             <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Notifications</span>
                         </li>
-                        <li onClick={onOpen} className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900 cursor-pointer">
+                        <li onClick={onOpen} className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
                             <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Create</span>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <Link to="settings">
                                 <Settings className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm ${location.pathname === '/settings' ? 'active' : ''}`}>Settings</span>
                             </Link>
                         </li>
-                        <li className="cursor-pointer mx-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-800 transition px-4 py-4 active:bg-gray-400 dark:active:bg-gray-900">
+                        <li className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <ThemeSwitcher size="33"/>
                         </li>
                     </ul>

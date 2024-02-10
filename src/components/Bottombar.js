@@ -11,7 +11,7 @@ import {Explore} from '@styled-icons/material-rounded/Explore';
 import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
 import {Popover, PopoverTrigger, PopoverContent, Textarea, Button} from "@nextui-org/react";
-import {Link, Outlet} from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 import {useContext} from "react";
 import {NotificationsContext} from "../pages/Home";
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/modal";
@@ -24,27 +24,27 @@ export default function Bottombar() {
     const content = (
         <PopoverContent className="sm:hidden">
             <ul className="px-1 py-3">
-                <li className="flex mb-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="flex mb-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Search size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Search</span>
                 </li>
                 <hr/>
-                <li onClick={()=>setOpen(!open)} className="flex my-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li onClick={()=>setOpen(!open)} className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <NotificationsCircle size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Notifications</span>
                 </li>
                 <hr/>
-                <li className="flex my-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <SaveCopy size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Saved</span>
                 </li>
                 <hr/>
-                <li className="flex my-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Explore size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Explore</span>
                 </li>
                 <hr/>
-                <li className="flex mt-3 py-2 px-3 hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="flex mt-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Settings size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Settings</span>
                 </li>
@@ -54,7 +54,7 @@ export default function Bottombar() {
     return (
         <div className="bottombar bg-white dark:bg-black shadow-lg h-[50px] w-screen fixed bottom-0 sm:hidden">
             <ul className="bottombar-contents h-full w-full flex justify-around items-center">
-                <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Popover key={"top-start"} placement={"top-start"}>
                         <PopoverTrigger>
                             <ThreeBars size="30"/>
@@ -62,19 +62,19 @@ export default function Bottombar() {
                         {content}
                     </Popover>
                 </li>
-                <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Home size="34"/>
                 </li>
-                <li onClick={onOpen} className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li onClick={onOpen} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Create size="34"/>
                 </li>
-                <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <MessageAltDetail size="34"/>
                 </li>
                 <li>
                     <ThemeSwitcher size="34"/>
                 </li>
-                <li className="hover:bg-gray-300 p-1.5 rounded-lg dark:hover:bg-gray-800 transition active:bg-gray-400 dark:active:bg-gray-900">
+                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Person size="34"/>
                 </li>
             </ul>
