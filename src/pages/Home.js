@@ -16,11 +16,11 @@ import {Save as SaveFill} from '@styled-icons/ionicons-sharp/Save';
 import {Paperclip} from '@styled-icons/feather/Paperclip';
 import {Comments} from '@styled-icons/fa-solid/Comments';
 import {ArrowForward} from '@styled-icons/typicons/ArrowForward';
-import {Avatar, Divider, Card, Skeleton, Input, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Tooltip} from "@nextui-org/react";
+import {Avatar, Divider, Card, Skeleton, Input, Modal, ModalContent, ModalHeader, ModalBody, Tooltip} from "@nextui-org/react";
 
 export const NotificationsContext = createContext(false);
 export default function Home() {
-    const [open, setOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [commentSectionOpen, setCommentSectionOpen] = useState(false);
     const [replyInput, setReplyInput] = useState(false);
     const mention = /@([\w_]+)/;
@@ -41,7 +41,7 @@ export default function Home() {
     );
     return (
         <div>
-            <NotificationsContext.Provider value={{open: open, setOpen: setOpen}}>
+            <NotificationsContext.Provider value={{notificationsOpen: notificationsOpen, setNotificationsOpen: setNotificationsOpen}}>
                 <div className="flex justify-between h-screen">
                     <Sidebar/>
                     <div className="home-content mx-10 mt-4 w-full lg:w-[40%] overflow-auto scrollbar-hide">
@@ -119,7 +119,7 @@ export default function Home() {
                                                                 @khalid_ah_1
                                                                 #khalid_ah_1
                                                                 www.github.com
-                                                                haq2682@gmail.com
+                                                                email123@gmail.com
                                                             </LinkIt>
                                                         </LinkIt>
                                                     </LinkItUrl>

@@ -1,7 +1,21 @@
 .active {
+    background-color: #e0e0e0;
+}
+
+.active span {
     font-weight: 1000;
     font-size: 20px;
 }
+
+.dark-active {
+    background-color: #333333;
+}
+
+.dark-active span {
+    font-weight: 1000;
+    font-size: 20px;
+}
+
 @media screen and (min-width: 640px) {
 
 }

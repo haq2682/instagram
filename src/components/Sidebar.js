@@ -2,7 +2,7 @@ import '../assets/css/Sidebar.css';
 import Logo from '../assets/instagram-logo.svg';
 import ThemeSwitcher from './ThemeSwitcher';
 import { NotificationsContext } from '../pages/Home';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import {Home} from '@styled-icons/material/Home';
 import {Search} from '@styled-icons/evaicons-solid/Search';
@@ -20,9 +20,11 @@ import {PhotoLibrary} from '@styled-icons/material-sharp/PhotoLibrary';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
 
 export default function Sidebar() {
+    console.log(localStorage.theme);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [darkState, setDarkState] = useState(null);
     let location = useLocation();
-    const {open, setOpen} = useContext(NotificationsContext);
+    const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
     return (
         <div className="sidebar shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/6">
             <div className="sidebar-contents">
@@ -31,37 +33,42 @@ export default function Sidebar() {
                 </div>
                 <div className="sidebar-pages">
                     <ul className="pages">
-                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/' ? 'active' : '')}`}>
                             <Link to="/">
                                 <Home className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm ${location.pathname === '/' ? 'active' : ''}`}>Home</span>
+                                <span className={`hidden lg:block text-sm`}>Home</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/search' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/search' ? 'active' : '')}`}>
                             <Link to="/">
                                 <Search className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm ${location.pathname === '/search' ? 'active' : ''}`}>Search</span>
+                                <span
+                                    className={`hidden lg:block text-sm`}>Search</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/explore' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/explore' ? 'active' : '')}`}>
                             <Link to="/">
                                 <Explore className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm ${location.pathname === '/explore' ? 'active' : ''}`}>Explore</span>
+                                <span
+                                    className={`hidden lg:block text-sm`}>Explore</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/saved' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/saved' ? 'active' : '')}`}>
                             <Link to="/">
                                 <SaveCopy className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm ${location.pathname === '/saved' ? 'active' : ''}`}>Saved</span>
+                                <span
+                                    className={`hidden lg:block text-sm`}>Saved</span>
                             </Link>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
                             <Link to="/">
                                 <MessageAltDetail className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm ${location.pathname === '/messages' ? 'active' : ''}`}>Messages</span>
+                                <span
+                                    className={`hidden lg:block text-sm`}>Messages</span>
                             </Link>
                         </li>
-                        <li onClick={()=>setOpen(!open)} className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
+                        <li onClick={() => setNotificationsOpen(!notificationsOpen)}
+                            className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
                             <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Notifications</span>
                         </li>
@@ -69,13 +76,13 @@ export default function Sidebar() {
                             <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Create</span>
                         </li>
-                        <li className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
-                            <Link to="settings">
+                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/settings' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/settings' ? 'active' : '')}`}>
+                            <Link to="/settings">
                                 <Settings className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm ${location.pathname === '/settings' ? 'active' : ''}`}>Settings</span>
+                                <span className={`hidden lg:block text-sm`}>Settings</span>
                             </Link>
                         </li>
-                        <li className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <li onClick={()=>setDarkState(!darkState)} className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
                             <ThemeSwitcher size="33"/>
                         </li>
                     </ul>

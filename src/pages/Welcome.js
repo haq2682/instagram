@@ -32,7 +32,7 @@ export default function App() {
                 <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-pink-400 text-white">Upwork Website</a>
                 <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-yellow-500 text-white">Github Website</a>
             </div>
-            <Modal size={'3xl'} isOpen={signup} onOpenChange={()=>setSignup(false)} className="pb-8">
+            <Modal size={'3xl'} isOpen={signup} onOpenChange={()=>setSignup(false)} className="pb-8" placement={'center'}>
                 <ModalContent>
                 {(signup) => (
                     <>
@@ -76,7 +76,7 @@ export default function App() {
                 )}
                 </ModalContent>
             </Modal>
-            <Modal size={'3xl'} isOpen={login} onOpenChange={()=>setLogin(false)}>
+            <Modal size={'3xl'} isOpen={login} onOpenChange={()=>setLogin(false)} placement={'center'}>
                 <ModalContent>
                 {(login) => (
                     <>
