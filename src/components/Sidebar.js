@@ -18,6 +18,8 @@ import {Textarea} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
 import {PhotoLibrary} from '@styled-icons/material-sharp/PhotoLibrary';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
+import {SunFill} from "@styled-icons/bootstrap/SunFill";
+import {Moon} from "@styled-icons/heroicons-solid/Moon";
 
 export default function Sidebar() {
     console.log(localStorage.theme);
@@ -33,40 +35,36 @@ export default function Sidebar() {
                 </div>
                 <div className="sidebar-pages">
                     <ul className="pages">
-                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/' ? 'active' : '')}`}>
-                            <Link to="/">
+                        <Link to="/">
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/' ? 'active' : '')}`}>
                                 <Home className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm`}>Home</span>
-                            </Link>
-                        </li>
-                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/search' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/search' ? 'active' : '')}`}>
-                            <Link to="/">
+                            </li>
+                        </Link>
+                        <Link to="/">
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/search' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/search' ? 'active' : '')}`}>
                                 <Search className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span
-                                    className={`hidden lg:block text-sm`}>Search</span>
-                            </Link>
-                        </li>
-                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/explore' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/explore' ? 'active' : '')}`}>
-                            <Link to="/">
+                                <span className={`hidden lg:block text-sm`}>Search</span>
+                            </li>
+                        </Link>
+                        <Link to="/">
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/explore' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/explore' ? 'active' : '')}`}>
                                 <Explore className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span
-                                    className={`hidden lg:block text-sm`}>Explore</span>
-                            </Link>
-                        </li>
-                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/saved' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/saved' ? 'active' : '')}`}>
-                            <Link to="/">
+                                <span className={`hidden lg:block text-sm`}>Explore</span>
+                            </li>
+                        </Link>
+                        <Link to="/">
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/saved' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/saved' ? 'active' : '')}`}>
                                 <SaveCopy className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span
-                                    className={`hidden lg:block text-sm`}>Saved</span>
-                            </Link>
-                        </li>
-                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
-                            <Link to="/">
+                                <span className={`hidden lg:block text-sm`}>Saved</span>
+                            </li>
+                        </Link>
+                        <Link to="/">
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
                                 <MessageAltDetail className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span
-                                    className={`hidden lg:block text-sm`}>Messages</span>
-                            </Link>
-                        </li>
+                                <span className={`hidden lg:block text-sm`}>Messages</span>
+                            </li>
+                        </Link>
                         <li onClick={() => setNotificationsOpen(!notificationsOpen)}
                             className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
                             <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
@@ -76,21 +74,26 @@ export default function Sidebar() {
                             <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Create</span>
                         </li>
-                        <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/settings' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/settings' ? 'active' : '')}`}>
-                            <Link to="/settings">
+                        <Link to="/settings">
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/settings' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/settings' ? 'active' : '')}`}>
                                 <Settings className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm`}>Settings</span>
-                            </Link>
-                        </li>
-                        <li onClick={()=>setDarkState(!darkState)} className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
-                            <ThemeSwitcher size="33"/>
-                        </li>
+                            </li>
+                        </Link>
+                        <ThemeSwitcher>
+                            <li onClick={()=>setDarkState(!darkState)} className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                                {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>}
+                                <span className={`hidden lg:block text-sm`}>
+                                    {localStorage.theme === 'dark' ? 'Light' : 'Dark'} Mode
+                                </span>
+                            </li>
+                        </ThemeSwitcher>
                     </ul>
                     <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange}>
                         <ModalContent>
-                        {(onClose) => (
-                            <>
-                            <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
+                            {(onClose) => (
+                                <>
+                                <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
                             <ModalBody className="w-full">
                             <Textarea
                                 isRequired
