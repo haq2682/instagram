@@ -12,15 +12,18 @@ import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
 import {Popover, PopoverTrigger, PopoverContent, Textarea, Button} from "@nextui-org/react";
 import {Outlet} from 'react-router-dom';
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {NotificationsContext} from "../pages/Home";
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/modal";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
+import {SunFill} from "@styled-icons/bootstrap/SunFill";
+import {Moon} from "@styled-icons/heroicons-solid/Moon";
 
 export default function Bottombar() {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const {open, setOpen} = useContext(NotificationsContext);
+    const [darkState, setDarkState] = useState(false);
     const content = (
         <PopoverContent className="sm:hidden">
             <ul className="px-1 py-3">
@@ -71,9 +74,11 @@ export default function Bottombar() {
                 <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <MessageAltDetail size="34"/>
                 </li>
-                <li>
-                    <ThemeSwitcher size="34"/>
-                </li>
+                <ThemeSwitcher>
+                    <li onClick={()=>setDarkState(!darkState)} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>}
+                    </li>
+                </ThemeSwitcher>
                 <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Person size="34"/>
                 </li>

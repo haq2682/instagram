@@ -28,7 +28,7 @@ export default function Sidebar() {
     let location = useLocation();
     const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
     return (
-        <div className="sidebar shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/6">
+        <div className="sidebar fixed left-0 shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/5">
             <div className="sidebar-contents">
                 <div className="logo hidden lg:block">
                     <img src={Logo} alt="Instagram Clone Logo"/>
@@ -62,7 +62,7 @@ export default function Sidebar() {
                         <Link to="/">
                             <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
                                 <MessageAltDetail className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <div className="absolute top-1 text-xs font-black">
+                                <div className="absolute top-2.5 lg:top-1 text-xs font-black">
                                     <p className="min-w-4 w-auto h-auto text-center bg-red-600 px-0.5 rounded-full text-white">99+</p>
                                 </div>
                                 <span className={`hidden lg:block text-sm`}>Messages</span>
@@ -71,7 +71,7 @@ export default function Sidebar() {
                         <li onClick={() => setNotificationsOpen(!notificationsOpen)}
                             className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer relative">
                             <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                            <div className="absolute top-1 text-xs font-black">
+                            <div className="absolute top-2.5 lg:top-1 text-xs font-black">
                                 <p className="min-w-4 w-auto h-auto text-center bg-red-600 px-0.5 rounded-full text-white">9</p>
                             </div>
                             <span className={`hidden lg:block text-sm`}>Notifications</span>
