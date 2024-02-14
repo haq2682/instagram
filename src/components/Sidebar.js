@@ -60,18 +60,25 @@ export default function Sidebar() {
                             </li>
                         </Link>
                         <Link to="/">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
+                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
                                 <MessageAltDetail className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                <div className="absolute top-1 text-xs font-black">
+                                    <p className="min-w-4 w-auto h-auto text-center bg-red-600 px-0.5 rounded-full text-white">99+</p>
+                                </div>
                                 <span className={`hidden lg:block text-sm`}>Messages</span>
                             </li>
                         </Link>
                         <li onClick={() => setNotificationsOpen(!notificationsOpen)}
-                            className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
+                            className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer relative">
                             <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                            <div className="absolute top-1 text-xs font-black">
+                                <p className="min-w-4 w-auto h-auto text-center bg-red-600 px-0.5 rounded-full text-white">9</p>
+                            </div>
                             <span className={`hidden lg:block text-sm`}>Notifications</span>
                         </li>
-                        <li onClick={onOpen} className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
-                            <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                        <li onClick={onOpen}
+                            className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
+                        <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                             <span className={`hidden lg:block text-sm`}>Create</span>
                         </li>
                         <Link to="/settings">
