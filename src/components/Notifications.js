@@ -25,7 +25,7 @@ export default function Notifications() {
                             <div className="flex items-center">
                                 <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d"
                                         className="w-10 h-10 story-gradient"/>
-                                <span className="ml-3 text-sm md:text-md lg:text-lg"><i>khalid_ah_1</i> commented on your photo</span>
+                                <span className="ml-3 text-sm md:text-md lg:text-lg"><i>khalid_ah_1</i> commented on your photo <br/><span className="text-sm text-gray-400 dark:text-gray-500">1m ago</span></span>
                             </div>
                             <img width="50px" src="https://i.pravatar.cc/150?u=a04258114e29026302d"
                                  alt="notification pfp"/>
@@ -35,7 +35,9 @@ export default function Notifications() {
                             <div className="flex items-center">
                                 <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d"
                                         className="w-10 h-10 story-gradient"/>
-                                <span className="ml-3 text-sm md:text-md lg:text-lg"><i>khalid_ah_1</i> added a new post</span>
+                                <span
+                                    className="ml-3 text-sm md:text-md lg:text-lg"><i>khalid_ah_1</i> added a new post <br/><span
+                                    className="text-sm text-gray-400 dark:text-gray-500">1h ago</span></span>
                             </div>
                             <img width="50px" src="https://i.pravatar.cc/150?u=a04258114e29026302d" alt="notification"/>
                         </div>

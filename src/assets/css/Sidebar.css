@@ -3,8 +3,8 @@
 }
 
 .active span {
-    font-weight: 1000;
-    font-size: 20px;
+    font-weight: bold;
+    font-size: 17px;
 }
 
 .dark-active {
@@ -12,8 +12,8 @@
 }
 
 .dark-active span {
-    font-weight: 1000;
-    font-size: 20px;
+    font-weight: bold;
+    font-size: 17px;
 }
 
 @media screen and (min-width: 640px) {

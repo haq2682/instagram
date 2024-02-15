@@ -12,9 +12,7 @@ import {Create} from '@styled-icons/ionicons-solid/Create';
 import {Settings} from '@styled-icons/material/Settings';
 import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/modal";
-import {Button} from "@nextui-org/react";
-import {Textarea} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, Textarea, Badge} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
 import {PhotoLibrary} from '@styled-icons/material-sharp/PhotoLibrary';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
@@ -61,18 +59,20 @@ export default function Sidebar() {
                         </Link>
                         <Link to="/">
                             <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
-                                <MessageAltDetail className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <div className="absolute top-2.5 lg:top-1 text-xs font-black">
-                                    <p className="min-w-4 w-auto h-auto text-center bg-red-600 px-0.5 rounded-full text-white">99+</p>
+                                <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
+                                    <Badge color="danger" content="99+">
+                                        <MessageAltDetail size="33"/>
+                                    </Badge>
                                 </div>
                                 <span className={`hidden lg:block text-sm`}>Messages</span>
                             </li>
                         </Link>
                         <li onClick={() => setNotificationsOpen(!notificationsOpen)}
                             className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer relative">
-                            <NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                            <div className="absolute top-2.5 lg:top-1 text-xs font-black">
-                                <p className="min-w-4 w-auto h-auto text-center bg-red-600 px-0.5 rounded-full text-white">9</p>
+                            <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
+                                <Badge color="danger" content="5">
+                                    <NotificationsCircle size="33"/>
+                                </Badge>
                             </div>
                             <span className={`hidden lg:block text-sm`}>Notifications</span>
                         </li>
