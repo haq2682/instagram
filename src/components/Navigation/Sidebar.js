@@ -1,7 +1,6 @@
-import '../assets/css/Sidebar.css';
-import Logo from '../assets/instagram-logo.svg';
-import ThemeSwitcher from './ThemeSwitcher';
-import { NotificationsContext } from '../pages/Home';
+import Logo from '../../assets/instagram-logo.svg';
+import ThemeSwitcher from '../ThemeSwitcher';
+import { NotificationsContext } from '../../pages/Home';
 import {useContext, useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import {Home} from '@styled-icons/material/Home';

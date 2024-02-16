@@ -1,10 +1,9 @@
-import '../assets/css/Home.css';
 import { ReadMoreWeb } from 'react-shorten';
 import {LinkIt, LinkItUrl, LinkItEmail} from 'react-linkify-it';
 import {FC} from 'react';
 import {useState, createContext} from 'react';
-import Sidebar from "../components/Sidebar";
-import Bottombar from "../components/Bottombar";
+import Sidebar from "../components/Navigation/Sidebar";
+import Bottombar from "../components/Navigation/Bottombar";
 import Suggestion from "../components/Suggestion";
 import Notifications from "../components/Notifications";
 import {Heart} from '@styled-icons/boxicons-solid/Heart';

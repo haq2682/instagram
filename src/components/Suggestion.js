@@ -1,4 +1,3 @@
-import '../assets/css/Suggestion.css';
 import {User, Link as UserLink} from "@nextui-org/react";
 
 export default function Suggestion() {

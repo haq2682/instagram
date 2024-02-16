@@ -8,7 +8,6 @@ import {Facebook} from '@styled-icons/fa-brands/Facebook';
 import {TwitterWithCircle} from '@styled-icons/entypo-social/TwitterWithCircle';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
 import {Modal, ModalContent, ModalHeader, ModalBody, Button, useDisclosure} from "@nextui-org/react";
-import '../assets/css/Welcome.css';
 export default function App() {
     const {onOpen} = useDisclosure();
     const [isVisible, setIsVisible] = useState(false);

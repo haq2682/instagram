@@ -1,4 +1,3 @@
-import '../assets/css/Notifications.css';
 import {useContext} from 'react';
 import {NotificationsContext} from '../pages/Home';
 import {Close} from '@styled-icons/ionicons-solid/Close';

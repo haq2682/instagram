@@ -1,4 +1,4 @@
-import PFP from '../assets/profile-photo.png';
+import PFP from '../../assets/profile-photo.png';
 import {useState} from 'react';
 import {
     Button,

@@ -1,5 +1,4 @@
-import '../assets/css/Bottombar.css';
-import ThemeSwitcher from './ThemeSwitcher';
+import ThemeSwitcher from '../ThemeSwitcher';
 import {Home} from '@styled-icons/material/Home';
 import {Search} from '@styled-icons/evaicons-solid/Search';
 import {MessageAltDetail} from '@styled-icons/boxicons-solid/MessageAltDetail';
@@ -13,7 +12,7 @@ import {Person} from '@styled-icons/evaicons-solid/Person';
 import {Popover, PopoverTrigger, PopoverContent, Textarea, Button} from "@nextui-org/react";
 import {Outlet} from 'react-router-dom';
 import {useContext, useState} from "react";
-import {NotificationsContext} from "../pages/Home";
+import {NotificationsContext} from "../../pages/Home";
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/modal";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
