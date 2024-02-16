@@ -1,3 +1,4 @@
+import '../assets/css/Settings.css';
 import Sidebar from "../components/Sidebar";
 import {NotificationsContext} from "./Home";
 import {useCallback, useState} from "react";
@@ -54,27 +55,27 @@ export default function Settings() {
                         <h1 className="my-3 mx-8 text-center text-2xl font-bold">Additional Settings</h1>
                         <Divider/>
                         <ul className="my-7 mx-4">
-                            <li onClick={() => handleSettingsPageChange('profile')} className="cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700">
+                            <li onClick={() => handleSettingsPageChange('profile')} className={`cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700 ${(currentSettingsPage === 'profile' && localStorage.theme === 'dark') ? 'dark-active' : (currentSettingsPage === 'profile' ? 'active' : '')}`}>
                                 <span className="mr-2"><AccountCircle size="35"/></span>
                                 <span className="relative top-0.5">Profile</span>
                             </li>
-                            <li onClick={() => handleSettingsPageChange('notifications')} className="cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700">
+                            <li onClick={() => handleSettingsPageChange('notifications')} className={`cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700 ${(currentSettingsPage === 'notifications' && localStorage.theme === 'dark') ? 'dark-active' : (currentSettingsPage === 'notifications' ? 'active' : '')}`}>
                                 <span className="mr-2"><NotificationsActive size="35"/></span>
                                 <span className="relative top-0.5">Notifications</span>
                             </li>
-                            <li onClick={() => handleSettingsPageChange('privacy')} className="cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700">
+                            <li onClick={() => handleSettingsPageChange('privacy')} className={`cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700 ${(currentSettingsPage === 'privacy' && localStorage.theme === 'dark') ? 'dark-active' : (currentSettingsPage === 'privacy' ? 'active' : '')}`}>
                                 <span className="mr-2"><LockShield size="35"/></span>
                                 <span className="relative top-0.5">Privacy</span>
                             </li>
-                            <li onClick={() => handleSettingsPageChange('close-friends')} className="cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700">
+                            <li onClick={() => handleSettingsPageChange('close-friends')} className={`cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700 ${(currentSettingsPage === 'close-friends' && localStorage.theme === 'dark') ? 'dark-active' : (currentSettingsPage === 'close-friends' ? 'active' : '')}`}>
                                 <span className="mr-2"><VideoPersonStar size="35"/></span>
                                 <span className="relative top-0.5">Close Friends</span>
                             </li>
-                            <li onClick={() => handleSettingsPageChange('blocked')} className="cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700">
+                            <li onClick={() => handleSettingsPageChange('blocked')} className={`cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700 ${(currentSettingsPage === 'blocked' && localStorage.theme === 'dark') ? 'dark-active' : (currentSettingsPage === 'blocked' ? 'active' : '')}`}>
                                 <span className="mr-2"><Block size="35"/></span>
                                 <span className="relative top-0.5">Blocked</span>
                             </li>
-                            <li onClick={() => handleSettingsPageChange('help')} className="cursor-pointer  my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700">
+                            <li onClick={() => handleSettingsPageChange('help')} className={`cursor-pointer my-2 py-3 px-3 text-lg rounded-lg transition-color duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-700 ${(currentSettingsPage === 'help' && localStorage.theme === 'dark') ? 'dark-active' : (currentSettingsPage === 'help' ? 'active' : '')}`}>
                                 <span className="mr-2"><HelpCircle size="35"/></span>
                                 <span className="relative top-0.5">Help</span>
                             </li>

@@ -1,0 +1,17 @@
+.active {
+    background-color: #e0e0e0;
+}
+
+.active span {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.dark-active {
+    background-color: #333333;
+}
+
+.dark-active span {
+    font-weight: bold;
+    font-size: 17px;
+}

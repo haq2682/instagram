@@ -16,6 +16,10 @@ import {Save as SaveFill} from '@styled-icons/ionicons-sharp/Save';
 import {Paperclip} from '@styled-icons/feather/Paperclip';
 import {Comments} from '@styled-icons/fa-solid/Comments';
 import {ArrowForward} from '@styled-icons/typicons/ArrowForward';
+import {CloseOutline} from '@styled-icons/zondicons/CloseOutline';
+import {ZoomIn} from '@styled-icons/open-iconic/ZoomIn';
+import {ZoomOut} from '@styled-icons/open-iconic/ZoomOut';
+import {TransformWrapper, TransformComponent, useControls} from "react-zoom-pan-pinch";
 import {Avatar, Divider, Card, Skeleton, Input, Modal, ModalContent, ModalHeader, ModalBody, Tooltip} from "@nextui-org/react";
 
 export const NotificationsContext = createContext(false);
@@ -23,6 +27,8 @@ export default function Home() {
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [commentSectionOpen, setCommentSectionOpen] = useState(false);
     const [replyInput, setReplyInput] = useState(false);
+    const [enlargeView, setEnlargeView] = useState(false);
+    const {zoomIn, zoomOut} = useControls();
     const mention = /@([\w_]+)/;
     const hashTag = /#([\w_]+)/;
 
@@ -127,9 +133,10 @@ export default function Home() {
                                             </StyledReadMore>
                                         </p>
                                         <img
+                                            onClick={()=>setEnlargeView(true)}
                                             alt="card background"
                                             className="card-image mt-2 object-cover w-full h-auto max-h-[800px] cursor-pointer active:blur-sm transition-all duration-75"
-                                            src="https://cdn.theatlantic.com/assets/media/img/posts/NbYbNrs.png"
+                                            src="https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                                         />
                                     </div>
                                     <div className="flex justify-between w-full my-3">
@@ -553,6 +560,21 @@ export default function Home() {
                     <Suggestion/>
                     <Bottombar/>
                     <Notifications/>
+                    <div className={`post-enlarge w-screen flex justify-between h-screen bg-black bg-opacity-75 backdrop-blur fixed ${enlargeView ? 'block' : 'hidden'}`}>
+                            <div className="m-5 flex">
+                                <div onClick={() => zoomIn()} className='mx-1.5 cursor-pointer'><ZoomIn size="30"/></div>
+                                <div onClick={() => zoomOut()} className='mx-1.5 cursor-pointer'><ZoomOut size="30"/></div>
+                            </div>
+                            <div className="enlarge-view-photo max-h-screen max-w-screen flex justify-between items-center relative right-7">
+                                <TransformComponent>
+                                    <img src="https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                                             alt="enlarged-view" className="max-h-full max-w-full"/>
+                                </TransformComponent>
+                            </div>
+                        <div onClick={() => setEnlargeView(false)} className='enlarge-view-close cursor-pointer m-5'>
+                            <CloseOutline size="30"/>
+                        </div>
+                    </div>
                 </div>
             </NotificationsContext.Provider>
         </div>

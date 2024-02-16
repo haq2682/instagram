@@ -1,5 +1,6 @@
 import {Input, Divider, Textarea, Button} from "@nextui-org/react";
 import {useState} from "react";
+import ImageUploading from 'react-images-uploading';
 
 export default function HelpSettings() {
     const [issueSubject, setIssueSubject] = useState('');
@@ -14,11 +15,9 @@ export default function HelpSettings() {
         setIssueDescription(event.target.value)
     }
 
-    const handleImageUpload = (event) => {
-        setIssueImages([...issueImages, event.target.files]);
-        issueImages.map((img) => {
-            console.log(img.File);
-        })
+    const handleImageUpload = (imageList, addUpdateIndex) => {
+        console.log(imageList, addUpdateIndex);
+        setIssueImages(imageList);
     }
     return (
         <div className="help">
@@ -31,19 +30,38 @@ export default function HelpSettings() {
                            className="shadow-md rounded-xl" endContent={(<div className="text-gray-500">{issueSubject.length}/100</div>)}/>
                     <Textarea onChange={handleDescription} className="mt-4 shadow-md rounded-xl" variant="bordered" size="lg"
                               placeholder="Description of the issue"/>
-                    <input onChange={handleImageUpload} type="file" multiple id="issueImage" name="issueImage" className="hidden" accept="image/gif, image/jpeg, image/png, image/heic, image/hevc, image/webp"/>
-                    <Button className="mt-8 float-left shadow-md bg-blue-400 text-white font-bold text-lg">
-                        <label htmlFor="issueImage" className="py-8 px-8 cursor-pointer w-full">
-                            Add a photo of the issue
-                        </label>
-                    </Button>
+                    <div className="float-left">
+                        <ImageUploading
+                            multiple
+                            value={issueImages}
+                            onChange={handleImageUpload}
+                            maxNumber={3}
+                            dataURLKey="data_url"
+                            acceptType={["jpg", "png", "heic", "hevc", "gif", "webp"]}>
+                            {({
+                                  imageList,
+                                  onImageUpload,
+                              }) => (
+                                <div className="upload__image-wrapper">
+                                    <Button onClick={onImageUpload} className="mt-8 shadow-md bg-blue-400 text-white font-bold text-lg">
+                                        Add photos of the issue
+                                    </Button>
+                                    <div className="flex flex-wrap mt-10">
+                                        {imageList.map((image, index) => (
+                                            <img key={index} src={image.data_url} alt="issue" className="w-32 h-32 object-cover mx-1.5"/>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </ImageUploading>
+                    </div>
                     <Button className="mt-8 float-right shadow-md bg-green-400 text-white font-bold text-lg">
                         Submit
                     </Button>
                 </div>
             </form>
             <div className="mt-24 flex flex-wrap">
-                <img src="https://cdn.pixabay.com/photo/2022/01/28/18/32/leaves-6975462_1280.png" alt="issue" className="h-32 w-32 object-cover"/>
+
             </div>
         </div>
     );

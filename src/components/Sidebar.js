@@ -14,17 +14,22 @@ import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, Textarea, Badge} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
-import {PhotoLibrary} from '@styled-icons/material-sharp/PhotoLibrary';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
 import {SunFill} from "@styled-icons/bootstrap/SunFill";
+import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Moon} from "@styled-icons/heroicons-solid/Moon";
+import ImageUploading from "react-images-uploading";
 
 export default function Sidebar() {
     console.log(localStorage.theme);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [darkState, setDarkState] = useState(null);
+    const [postImages, setPostImages] = useState([]);
     let location = useLocation();
     const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
+    const handleImageUpload = (imageList) => {
+        setPostImages(imageList);
+    }
     return (
         <div className="sidebar fixed left-0 shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/5">
             <div className="sidebar-contents">
@@ -110,10 +115,34 @@ export default function Sidebar() {
                             />
                             </ModalBody>
                             <ModalFooter className="block">
-                                <Button className="w-full mb-4">
-                                    Add Photos/Videos <PhotoLibrary/>
-                                </Button>
-                                <Button onPress={onClose} className="w-full bg-black text-white dark:bg-white dark:text-black">
+                                <div>
+                                    <ImageUploading
+                                        multiple
+                                        value={postImages}
+                                        onChange={handleImageUpload}
+                                        maxNumber={90}
+                                        dataURLKey="data_url"
+                                        acceptType={["jpg", "png", "heic", "hevc", "gif", "webp", "mp4", "mkv", "m4v"]}>
+                                        {({
+                                              imageList,
+                                              onImageUpload,
+                                          }) => (
+                                            <div className="upload__image-wrapper">
+                                                <div className="flex flex-wrap mb-6">
+                                                    {imageList.map((image, index) => (
+                                                        <img key={index} src={image.data_url} alt="issue"
+                                                             className="w-32 h-32 object-cover mx-1.5 my-1"/>
+                                                    ))}
+                                                </div>
+                                                <Button onClick={onImageUpload} className="w-full mb-4">
+                                                    Add photos/videos <PhotoLibrary/>
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </ImageUploading>
+                                </div>
+                                <Button onPress={onClose}
+                                        className="w-full bg-black text-white dark:bg-white dark:text-black">
                                     Submit <Enter/>
                                 </Button>
                             </ModalFooter>
