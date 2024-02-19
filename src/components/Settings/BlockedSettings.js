@@ -4,7 +4,7 @@ import {CircleWithCross} from '@styled-icons/entypo/CircleWithCross';
 export default function BlockedSettings() {
     return (
         <div className="close-friends">
-            <h1 className="font-bold text-lg sm:text-2xl my-4">Blocked</h1>
+            <h1 className="font-black text-lg sm:text-2xl my-4">Blocked</h1>
             <Divider/>
             <div className="my-8 w-full h-full overflow-scroll">
                 <h1 className="text-center text-lg text-gray-500 hidden">You have blocked no one</h1>

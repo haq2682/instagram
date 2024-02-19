@@ -45,7 +45,7 @@ export default function NotificationSettings() {
     return (
         <div className="notifications-settings">
             <form action="/settings" method="post">
-                <h1 className="font-bold text-lg sm:text-2xl my-4">Notification Settings</h1>
+                <h1 className="font-black text-lg sm:text-2xl my-4">Notification Settings</h1>
                 <Divider/>
                 <div className="my-8">
                     <Accordion variant="shadow">

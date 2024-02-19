@@ -26,7 +26,7 @@ export default function ProfileSettings() {
     return (
         <div className="profile-settings">
             <form action="/settings" method="post">
-                <h1 className="font-bold text-lg sm:text-2xl my-4">Profile Settings</h1>
+                <h1 className="font-black text-lg sm:text-2xl my-4">Profile Settings</h1>
                 <Divider/>
                 <div
                     className="profile-photo w-full my-8 flex justify-between rounded-lg bg-neutral-200 dark:bg-neutral-800 p-4">

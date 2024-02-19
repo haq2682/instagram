@@ -21,7 +21,7 @@ export default function HelpSettings() {
     }
     return (
         <div className="help">
-            <h1 className="font-bold text-lg sm:text-2xl my-4">Help</h1>
+            <h1 className="font-black text-lg sm:text-2xl my-4">Help</h1>
             <Divider/>
             <form action="/settings" method="post">
                 <div className="mt-8">
