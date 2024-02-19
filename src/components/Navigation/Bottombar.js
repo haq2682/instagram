@@ -9,7 +9,7 @@ import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
 import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
-import {Popover, PopoverTrigger, PopoverContent, Textarea, Button} from "@nextui-org/react";
+import {Popover, PopoverTrigger, PopoverContent, Textarea, Button, Badge} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
 import {useContext, useState} from "react";
 import {NotificationsContext} from "../../pages/Home";
@@ -28,34 +28,36 @@ export default function Bottombar() {
             <ul className="px-1 py-3">
                 <Link to="/search">
                     <li className="flex mb-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        <Search size="25" className=""/>
+                        <Search size="25"/>
                         <span className="text-[15px] ml-2 mt-0.5">Search</span>
                     </li>
                 </Link>
                 <hr/>
-                <li onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <NotificationsCircle size="25" className=""/>
-                    <span className="text-[15px] ml-2 mt-0.5">Notifications</span>
-                </li>
+                <ThemeSwitcher>
+                    <li onClick={()=>setDarkState(!darkState)}
+                        className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        {localStorage.theme === 'dark' ? <SunFill size="25"/> : <Moon size="25"/>}
+                        <span className="text-[15px] ml-2 mt-0.5">{localStorage.theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
+                    </li>
+                </ThemeSwitcher>
                 <hr/>
                 <Link to="/saved">
                     <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        <SaveCopy size="25" className=""/>
+                        <SaveCopy size="25"/>
                         <span className="text-[15px] ml-2 mt-0.5">Saved</span>
                     </li>
                 </Link>
                 <hr/>
                 <Link to="/explore">
                     <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        <Explore size="25" className=""/>
+                        <Explore size="25"/>
                         <span className="text-[15px] ml-2 mt-0.5">Explore</span>
                     </li>
                 </Link>
                 <hr/>
                 <Link to="/settings">
                     <li className="flex mt-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        <Settings size="25" className=""/>
+                        <Settings size="25"/>
                         <span className="text-[15px] ml-2 mt-0.5">Settings</span>
                     </li>
                 </Link>
@@ -84,14 +86,12 @@ export default function Bottombar() {
                 </li>
                 <Link to="/messages">
                     <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        <MessageAltDetail size="34"/>
+                        <Badge color="danger" content="99+"><MessageAltDetail size="34"/></Badge>
                     </li>
                 </Link>
-                <ThemeSwitcher>
-                    <li onClick={()=>setDarkState(!darkState)} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>}
-                    </li>
-                </ThemeSwitcher>
+                <li onClick={() => setNotificationsOpen(!notificationsOpen)} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                    <Badge color="danger" content="99+"><NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/></Badge>
+                </li>
                 <Link to="/profile">
                     <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                         <Person size="34"/>
