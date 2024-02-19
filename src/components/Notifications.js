@@ -7,9 +7,9 @@ export default function Notifications() {
     const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
     return (
         <>
-            <div className={`z-0 h-screen w-screen bg-neutral-900/[0.7] backdrop-blur-sm transition-all duration-200 fixed ${notificationsOpen ? 'block' : 'hidden'}`}></div>
+            <div className={`z-40 h-screen w-screen bg-neutral-900/[0.7] backdrop-blur-sm transition-all duration-200 fixed ${notificationsOpen ? 'block' : 'hidden'}`}></div>
             <div
-                className={`notifications h-screen fixed right-0 bottom-0 border-l-1 drop-shadow-lg rounded-md border-black dark:border-neutral-600 rounded-r-none bg-white dark:bg-black ${notificationsOpen ? 'w-[80%] md:w-1/2 lg:w-1/3' : 'w-0'}`}>
+                className={`z-40 notifications h-screen fixed bottom-0 border-l-1 drop-shadow-lg rounded-md border-black dark:border-neutral-600 rounded-r-none bg-white dark:bg-black w-[80%] md:w-1/2 lg:w-1/3 ${notificationsOpen ? 'right-0' : '-right-full'}`}>
                 <div className="notifications-content m-1.5">
                     <div className="notifications-header flex justify-between mb-4">
                         <h1 className="text-3xl font-extrabold ml-2 mt-2">Notifications</h1>
