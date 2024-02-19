@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {NextUIProvider} from "@nextui-org/react";
-import {TransformWrapper} from "react-zoom-pan-pinch";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

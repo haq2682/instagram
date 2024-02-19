@@ -10,7 +10,7 @@ import {Explore} from '@styled-icons/material-rounded/Explore';
 import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
 import {Popover, PopoverTrigger, PopoverContent, Textarea, Button} from "@nextui-org/react";
-import {Outlet} from 'react-router-dom';
+import {Link, Outlet} from 'react-router-dom';
 import {useContext, useState} from "react";
 import {NotificationsContext} from "../../pages/Home";
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/modal";
@@ -21,35 +21,44 @@ import {Moon} from "@styled-icons/heroicons-solid/Moon";
 
 export default function Bottombar() {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const {open, setOpen} = useContext(NotificationsContext);
+    const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
     const [darkState, setDarkState] = useState(false);
     const content = (
         <PopoverContent className="sm:hidden">
             <ul className="px-1 py-3">
-                <li className="flex mb-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <Search size="25" className=""/>
-                    <span className="text-[15px] ml-2 mt-0.5">Search</span>
-                </li>
+                <Link to="/search">
+                    <li className="flex mb-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <Search size="25" className=""/>
+                        <span className="text-[15px] ml-2 mt-0.5">Search</span>
+                    </li>
+                </Link>
                 <hr/>
-                <li onClick={()=>setOpen(!open)} className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                <li onClick={() => setNotificationsOpen(!notificationsOpen)}
+                    className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <NotificationsCircle size="25" className=""/>
                     <span className="text-[15px] ml-2 mt-0.5">Notifications</span>
                 </li>
                 <hr/>
-                <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <SaveCopy size="25" className=""/>
-                    <span className="text-[15px] ml-2 mt-0.5">Saved</span>
-                </li>
+                <Link to="/saved">
+                    <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <SaveCopy size="25" className=""/>
+                        <span className="text-[15px] ml-2 mt-0.5">Saved</span>
+                    </li>
+                </Link>
                 <hr/>
-                <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <Explore size="25" className=""/>
-                    <span className="text-[15px] ml-2 mt-0.5">Explore</span>
-                </li>
+                <Link to="/explore">
+                    <li className="flex my-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <Explore size="25" className=""/>
+                        <span className="text-[15px] ml-2 mt-0.5">Explore</span>
+                    </li>
+                </Link>
                 <hr/>
-                <li className="flex mt-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <Settings size="25" className=""/>
-                    <span className="text-[15px] ml-2 mt-0.5">Settings</span>
-                </li>
+                <Link to="/settings">
+                    <li className="flex mt-3 py-2 px-3 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <Settings size="25" className=""/>
+                        <span className="text-[15px] ml-2 mt-0.5">Settings</span>
+                    </li>
+                </Link>
             </ul>
         </PopoverContent>
     );
@@ -64,23 +73,30 @@ export default function Bottombar() {
                         {content}
                     </Popover>
                 </li>
-                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <Home size="34"/>
+                <Link to="/">
+                    <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <Home size="34"/>
+                    </li>
+                </Link>
+                <li onClick={onOpen}
+                    className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                <Create size="34"/>
                 </li>
-                <li onClick={onOpen} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <Create size="34"/>
-                </li>
-                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <MessageAltDetail size="34"/>
-                </li>
+                <Link to="/messages">
+                    <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <MessageAltDetail size="34"/>
+                    </li>
+                </Link>
                 <ThemeSwitcher>
                     <li onClick={()=>setDarkState(!darkState)} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                         {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>}
                     </li>
                 </ThemeSwitcher>
-                <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                    <Person size="34"/>
-                </li>
+                <Link to="/profile">
+                    <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                        <Person size="34"/>
+                    </li>
+                </Link>
             </ul>
             <Outlet/>
             <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange}>

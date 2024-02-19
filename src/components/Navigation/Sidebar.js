@@ -43,25 +43,25 @@ export default function Sidebar() {
                                 <span className={`hidden lg:block text-sm`}>Home</span>
                             </li>
                         </Link>
-                        <Link to="/">
+                        <Link to="/search">
                             <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/search' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/search' ? 'active' : '')}`}>
                                 <Search className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm`}>Search</span>
                             </li>
                         </Link>
-                        <Link to="/">
+                        <Link to="/explore">
                             <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/explore' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/explore' ? 'active' : '')}`}>
                                 <Explore className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm`}>Explore</span>
                             </li>
                         </Link>
-                        <Link to="/">
+                        <Link to="/saved">
                             <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/saved' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/saved' ? 'active' : '')}`}>
                                 <SaveCopy className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
                                 <span className={`hidden lg:block text-sm`}>Saved</span>
                             </li>
                         </Link>
-                        <Link to="/">
+                        <Link to="/messages">
                             <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
                                 <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
                                     <Badge color="danger" content="99+">
