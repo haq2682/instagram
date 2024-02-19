@@ -1,6 +1,5 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
-import {Divider, Input} from "@nextui-org/react";
 import Post from "../components/Post/Post";
 export default function Saved() {
     return (
