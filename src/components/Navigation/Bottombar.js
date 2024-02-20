@@ -99,7 +99,7 @@ export default function Bottombar() {
                 </Link>
             </ul>
             <Outlet/>
-            <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange} placement={'center'}>
                 <ModalContent>
                     {(onClose) => (
                         <>

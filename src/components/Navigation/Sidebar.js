@@ -30,88 +30,97 @@ export default function Sidebar() {
         setPostImages(imageList);
     }
     return (
-        <div className="sidebar fixed left-0 shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/5">
-            <div className="sidebar-contents">
-                <div className="logo hidden lg:block">
-                    <img src={Logo} alt="Instagram Clone Logo"/>
-                </div>
-                <div className="sidebar-pages">
-                    <ul className="pages">
-                        <Link to="/">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/' ? 'active' : '')}`}>
-                                <Home className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Home</span>
-                            </li>
-                        </Link>
-                        <Link to="/search">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/search' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/search' ? 'active' : '')}`}>
-                                <Search className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Search</span>
-                            </li>
-                        </Link>
-                        <Link to="/explore">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/explore' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/explore' ? 'active' : '')}`}>
-                                <Explore className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Explore</span>
-                            </li>
-                        </Link>
-                        <Link to="/saved">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/saved' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/saved' ? 'active' : '')}`}>
-                                <SaveCopy className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Saved</span>
-                            </li>
-                        </Link>
-                        <Link to="/messages">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
+        <div>
+            <div
+                className="sidebar fixed left-0 shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/5">
+                <div className="sidebar-contents">
+                    <div className="logo hidden lg:block">
+                        <img src={Logo} alt="Instagram Clone Logo"/>
+                    </div>
+                    <div className="sidebar-pages">
+                        <ul className="pages">
+                            <Link to="/">
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/' ? 'active' : '')}`}>
+                                    <Home className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                    <span className={`hidden lg:block text-sm`}>Home</span>
+                                </li>
+                            </Link>
+                            <Link to="/search">
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/search' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/search' ? 'active' : '')}`}>
+                                    <Search className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                    <span className={`hidden lg:block text-sm`}>Search</span>
+                                </li>
+                            </Link>
+                            <Link to="/explore">
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/explore' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/explore' ? 'active' : '')}`}>
+                                    <Explore className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                    <span className={`hidden lg:block text-sm`}>Explore</span>
+                                </li>
+                            </Link>
+                            <Link to="/saved">
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/saved' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/saved' ? 'active' : '')}`}>
+                                    <SaveCopy className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                    <span className={`hidden lg:block text-sm`}>Saved</span>
+                                </li>
+                            </Link>
+                            <Link to="/messages">
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
+                                    <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
+                                        <Badge color="danger" content="99+">
+                                            <MessageAltDetail size="33"/>
+                                        </Badge>
+                                    </div>
+                                    <span className={`hidden lg:block text-sm`}>Messages</span>
+                                </li>
+                            </Link>
+                            <li onClick={() => setNotificationsOpen(!notificationsOpen)}
+                                className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer relative">
                                 <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
-                                    <Badge color="danger" content="99+">
-                                        <MessageAltDetail size="33"/>
+                                    <Badge color="danger" content="5">
+                                        <NotificationsCircle size="33"/>
                                     </Badge>
                                 </div>
-                                <span className={`hidden lg:block text-sm`}>Messages</span>
+                                <span className={`hidden lg:block text-sm`}>Notifications</span>
                             </li>
-                        </Link>
-                        <li onClick={() => setNotificationsOpen(!notificationsOpen)}
-                            className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer relative">
-                            <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
-                                <Badge color="danger" content="5">
-                                    <NotificationsCircle size="33"/>
-                                </Badge>
-                            </div>
-                            <span className={`hidden lg:block text-sm`}>Notifications</span>
-                        </li>
-                        <li onClick={onOpen}
-                            className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
-                        <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                            <span className={`hidden lg:block text-sm`}>Create</span>
-                        </li>
-                        <Link to="/settings">
-                            <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/settings' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/settings' ? 'active' : '')}`}>
-                                <Settings className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
-                                <span className={`hidden lg:block text-sm`}>Settings</span>
+                            <li onClick={onOpen}
+                                className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer">
+                                <Create className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                <span className={`hidden lg:block text-sm`}>Create</span>
                             </li>
-                        </Link>
-                        <ThemeSwitcher>
-                            <li onClick={()=>setDarkState(!darkState)} className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
-                                {localStorage.theme === 'dark' ? <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/> : <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>}
-                                <span className={`hidden lg:block text-sm`}>
+                            <Link to="/settings">
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 ${(location.pathname === '/settings' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/settings' ? 'active' : '')}`}>
+                                    <Settings className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>
+                                    <span className={`hidden lg:block text-sm`}>Settings</span>
+                                </li>
+                            </Link>
+                            <ThemeSwitcher>
+                                <li onClick={() => setDarkState(!darkState)}
+                                    className="cursor-pointer mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900">
+                                    {localStorage.theme === 'dark' ?
+                                        <SunFill className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/> :
+                                        <Moon className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/>}
+                                    <span className={`hidden lg:block text-sm`}>
                                     {localStorage.theme === 'dark' ? 'Light' : 'Dark'} Mode
                                 </span>
-                            </li>
-                        </ThemeSwitcher>
-                    </ul>
-                    <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange}>
-                        <ModalContent>
-                            {(onClose) => (
-                                <>
-                                <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
+                                </li>
+                            </ThemeSwitcher>
+                        </ul>
+                    </div>
+                </div>
+                <Outlet/>
+            </div>
+            <Modal size='4xl' isOpen={isOpen} onOpenChange={onOpenChange} placement={'center'}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
                             <ModalBody className="w-full">
-                            <Textarea
-                                isRequired
-                                label="Caption"
-                                placeholder="Enter your caption here..."
-                                className="w-full"
-                            />
+                                <Textarea
+                                    isRequired
+                                    label="Caption"
+                                    placeholder="Enter your caption here..."
+                                    className="w-full"
+                                />
                             </ModalBody>
                             <ModalFooter className="block">
                                 <div>
@@ -145,13 +154,10 @@ export default function Sidebar() {
                                     Submit <Enter/>
                                 </Button>
                             </ModalFooter>
-                            </>
-                        )}
-                        </ModalContent>
-                    </Modal>
-                </div>
-            </div>
-            <Outlet/>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 }
