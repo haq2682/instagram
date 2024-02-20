@@ -46,7 +46,7 @@ export default function Settings() {
                             <span className={`${settingsSidebarOpen ? 'hidden' : 'block'}`}><SubSettings size="33"/></span>
                         </div>
                     </div>
-                    <div className={`settings-sidebar block fixed top-0 right-0 dark:border-l-1 bg-white dark:bg-black dark:border-neutral-600 transition-all duration-200 lg:w-1/4 h-screen shadow-lg ${settingsSidebarOpen ? 'w-96' : 'w-0'}`}>
+                    <div className={`settings-sidebar block fixed top-0 dark:border-l-1 w-96 bg-white dark:bg-black dark:border-neutral-600 transition-all duration-200 lg:w-1/4 h-screen shadow-lg ${settingsSidebarOpen ? 'right-0' : '-right-full'}`}>
                         <div className="settings-sidebar-close lg:hidden flex flex-row-reverse mr-3 rounded-lg"
                              onClick={() => setSettingsSidebarOpen(false)}>
                             <Close size="33"/>

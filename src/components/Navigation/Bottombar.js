@@ -85,11 +85,11 @@ export default function Bottombar() {
                 <Create size="34"/>
                 </li>
                 <Link to="/messages">
-                    <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                    <li className="mt-2.5 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                         <Badge color="danger" content="99+"><MessageAltDetail size="34"/></Badge>
                     </li>
                 </Link>
-                <li onClick={() => setNotificationsOpen(!notificationsOpen)} className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                <li onClick={() => setNotificationsOpen(!notificationsOpen)} className="mt-2.5 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Badge color="danger" content="99+"><NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/></Badge>
                 </li>
                 <Link to="/profile">
