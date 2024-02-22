@@ -61,7 +61,6 @@ export default function Comment(props) {
                                                     </Tooltip>
                                                 </label>
                                             </>
-
                                         }
                                     />
                                 </form>
