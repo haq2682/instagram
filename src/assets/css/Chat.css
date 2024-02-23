@@ -1,0 +1,7 @@
+.reaction-buttons {
+    display: none;
+}
+
+.message:hover .reaction-buttons {
+    display: block;
+}

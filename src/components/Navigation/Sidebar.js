@@ -8,7 +8,7 @@ import {Search} from '@styled-icons/evaicons-solid/Search';
 import {MessageAltDetail} from '@styled-icons/boxicons-solid/MessageAltDetail';
 import {NotificationsCircle} from '@styled-icons/ionicons-solid/NotificationsCircle';
 import {Create} from '@styled-icons/ionicons-solid/Create';
-import {Settings} from '@styled-icons/material/Settings';
+import {Settings} from '@styled-icons/ionicons-sharp/Settings';
 import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, Textarea, Badge} from "@nextui-org/react";

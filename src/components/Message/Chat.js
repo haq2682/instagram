@@ -9,6 +9,9 @@ import ChatPeople from "./ChatPeople";
 import ChatGroups from "./ChatGroups";
 import {Paperclip} from "@styled-icons/feather/Paperclip";
 import {ArrowForward} from "@styled-icons/typicons/ArrowForward";
+import {Reply} from "@styled-icons/fa-solid/Reply";
+import {Heart} from "@styled-icons/boxicons-solid/Heart";
+import "../../assets/css/Chat.css";
 export default function Chat() {
     const messages = [
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n' +
@@ -78,30 +81,48 @@ export default function Chat() {
                             <div className="m-2">
                                 <div className="message w-full flex">
                                     <div
-                                        className="recepient-message my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6">
+                                        className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6">
                                         <p>{messages[0]}</p>
                                     </div>
-                                    <div className="my-auto mx-4">
-                                        Icons
+                                    <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Reply size="25"/></div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Heart size="25"/></div>
                                     </div>
                                 </div>
                                 <div className="message w-full flex justify-end">
-                                    <div className="my-auto mx-4">
-                                        Icons
+                                    <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-500">
+                                            <Heart size="25"/></div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <Reply size="25"/></div>
                                     </div>
                                     <div
-                                        className="sender-message my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block text-white w-4/6">
-                                        <p>{messages[1]}</p>
+                                        className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6">
+                                        <div
+                                            className="recepient-reply text-xs bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2">{messages[0]}</div>
+                                        <p className="text-white">{messages[1]}</p>
+                                        <div
+                                            className="absolute -bottom-3 right-3 text-red-500 bg-neutral-200 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-600 rounded-xl px-2 w-auto h-6 my-auto">
+                                            <Heart size="22"/><span className="ml-1 my-auto">1</span></div>
                                     </div>
                                 </div>
                                 <div className="message w-full flex">
                                     <div
-                                        className="recepient-message my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6">
+                                        className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6">
+                                        <div
+                                            className="sender-reply text-xs bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white bg-opacity-60 p-2 rounded-xl mb-2">{messages[1]}</div>
                                         <p>{messages[0]}</p>
+                                        <div className="absolute -bottom-3 text-red-500 bg-neutral-200 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-600 rounded-xl px-2 w-auto h-6 my-auto"><Heart size="22"/><span className="ml-1 my-auto">1</span></div>
                                     </div>
-                                    <div className="my-auto mx-4">
-                                        Icons
+                                    <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <Reply size="25"/></div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-500">
+                                            <Heart size="25"/></div>
                                     </div>
+                                </div>
+                                <div className="message w-full flex">
+
                                 </div>
                             </div>
                         </div>
