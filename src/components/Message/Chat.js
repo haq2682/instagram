@@ -1,4 +1,15 @@
-import {Tabs, Tab, Avatar, Input, Badge, Tooltip} from "@nextui-org/react";
+import {
+    Avatar,
+    Badge, Button, Divider,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalHeader,
+    Tab,
+    Tabs,
+    Tooltip,
+} from "@nextui-org/react";
 import {useState} from 'react';
 import {Video} from '@styled-icons/fa-solid/Video';
 import {Telephone} from '@styled-icons/foundation/Telephone';
@@ -12,6 +23,7 @@ import {ArrowForward} from "@styled-icons/typicons/ArrowForward";
 import {Reply} from "@styled-icons/fa-solid/Reply";
 import {Heart} from "@styled-icons/boxicons-solid/Heart";
 import "../../assets/css/Chat.css";
+
 export default function Chat() {
     const messages = [
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n' +
@@ -35,6 +47,7 @@ export default function Chat() {
     const [chatBarOpen, setChatBarOpen] = useState(false);
     const [detailsBarOpen, setDetailsBarOpen] = useState(false);
     const [replyingToMessage, setReplyingToMessage] = useState('');
+    const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
     return (
         <div className="w-screen">
             <div className="w-full flex h-screen">
@@ -91,10 +104,10 @@ export default function Chat() {
                                 </div>
                                 <div className="message w-full flex justify-end">
                                     <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
-                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-500">
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-600">
                                             <Heart size="25"/></div>
                                         <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
-                                            <Reply size="25"/></div>
+                                            <Reply size="25" onClick={()=>setReplyingToMessage(messages[0])}/></div>
                                     </div>
                                     <div
                                         className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6">
@@ -102,7 +115,7 @@ export default function Chat() {
                                             className="recepient-reply text-xs bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2">{messages[0]}</div>
                                         <p className="text-white">{messages[1]}</p>
                                         <div
-                                            className="absolute -bottom-3 right-3 text-red-500 bg-neutral-200 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-600 rounded-xl px-2 w-auto h-6 my-auto">
+                                            className="absolute -bottom-3 right-3 text-red-600 bg-neutral-200 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-600 rounded-xl px-2 w-auto h-6 my-auto" onClick={()=>setReactionsModalOpen(true)}>
                                             <Heart size="22"/><span className="ml-1 my-auto">1</span></div>
                                     </div>
                                 </div>
@@ -112,17 +125,29 @@ export default function Chat() {
                                         <div
                                             className="sender-reply text-xs bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white bg-opacity-60 p-2 rounded-xl mb-2">{messages[1]}</div>
                                         <p>{messages[0]}</p>
-                                        <div className="absolute -bottom-3 text-red-500 bg-neutral-200 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-600 rounded-xl px-2 w-auto h-6 my-auto"><Heart size="22"/><span className="ml-1 my-auto">1</span></div>
+                                        <div className="absolute -bottom-3 text-red-600 bg-neutral-200 dark:bg-neutral-800 border border-neutral-400 dark:border-neutral-600 rounded-xl px-2 w-auto h-6 my-auto"><Heart size="22"/><span className="ml-1 my-auto">1</span></div>
                                     </div>
                                     <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
                                         <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
                                             <Reply size="25"/></div>
-                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-500">
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-600">
                                             <Heart size="25"/></div>
                                     </div>
                                 </div>
-                                <div className="message w-full flex">
-
+                                <div className="message w-full flex justify-end">
+                                    <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
+                                        <div
+                                            className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <Heart size="25"/></div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <Reply size="25" onClick={() => setReplyingToMessage(messages[0])}/></div>
+                                    </div>
+                                    <div
+                                        className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6">
+                                        <img
+                                            src="https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                                            alt="message" className="object-contain max-h-[800px]"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -131,7 +156,8 @@ export default function Chat() {
                                 {replyingToMessage &&
                                     <div>
                                         <div className="message opacity-40">
-                                            <div className="float-right"><Close size="20"/></div>
+                                            <div className="float-right" onClick={() => setReplyingToMessage('')}><Close
+                                                size="20"/></div>
                                             <div
                                                 className="sender-message my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block text-white">
                                                 <p>{replyingToMessage}</p>
@@ -187,7 +213,54 @@ export default function Chat() {
             <div className="float-right" onClick={() => setDetailsBarOpen(false)}>
                     <Close size="33"/>
                 </div>
+                <div className="chat-details flex flex-col justify-between mt-8 w-full h-full">
+                    <div>
+                        <h1 className="mx-4 text-2xl font-black mb-6">Details</h1>
+                        <div className="flex justify-between mx-8 mb-3">
+                            <p>Mute Messages</p>
+                            <span>Button</span>
+                        </div>
+                        <Divider/>
+                        <h1 className="mx-4 text-lg font-black mt-4">Members</h1>
+                        <div className="overflow-scroll h-[490px]">
+                            <div className="group-member flex mx-4 my-2.5">
+                                <Avatar src="https://avatars.githubusercontent.com/u/30373425?v=4" size="lg"/>
+                                <div className="my-auto mx-2">
+                                    <p className="font-bold">Junior Garcia</p>
+                                    <p className="text-sm opacity-60">@juniorgarciadev</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mb-10">
+                        <Divider/>
+                        <div className="mt-2 mx-4 flex justify-between">
+                            <Button className="bg-red-500 text-white">Report</Button>
+                            <Button className="bg-red-500 text-white">Block</Button>
+                            <Button className="bg-red-500 text-white">Delete</Button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <Modal isOpen={reactionsModalOpen} onClose={() => setReactionsModalOpen(false)} placement="center">
+                <ModalContent>
+                <ModalHeader>
+                        <h1 className="text-center w-full">Likes to the message</h1>
+                    </ModalHeader>
+                    <ModalBody>
+                        <div className="user-like flex justify-between my-1.5">
+                            <div className="w-full">
+                                <Avatar src="https://avatars.githubusercontent.com/u/30373425?v=4"
+                                        className="inline-block"/>
+                                <p className="my-auto mx-3 inline-block">Junior Garcia</p>
+                            </div>
+                            <div>
+                                <Heart size="33" className="text-red-600"/>
+                            </div>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }
