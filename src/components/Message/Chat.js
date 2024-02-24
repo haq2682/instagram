@@ -5,7 +5,7 @@ import {
     Modal,
     ModalBody,
     ModalContent,
-    ModalHeader,
+    ModalHeader, Switch,
     Tab,
     Tabs,
     Tooltip,
@@ -218,7 +218,7 @@ export default function Chat() {
                         <h1 className="mx-4 text-2xl font-black mb-6">Details</h1>
                         <div className="flex justify-between mx-8 mb-3">
                             <p>Mute Messages</p>
-                            <span>Button</span>
+                            <Switch color="secondary" size="sm"/>
                         </div>
                         <Divider/>
                         <h1 className="mx-4 text-lg font-black mt-4">Members</h1>

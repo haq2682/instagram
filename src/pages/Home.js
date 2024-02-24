@@ -1,4 +1,4 @@
-import {useState, createContext, Fragment} from 'react';
+import {useState, createContext} from 'react';
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
 import Suggestion from "../components/Suggestion";
