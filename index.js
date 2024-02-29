@@ -1,14 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const main = require('./db_config/db');
+const connectToDb = require('./db_config/db');
+const dotenv = require('dotenv');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
-const port = 8000;
+dotenv.config();
+let port = process.env.PORT;
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-app.use(main);
+connectToDb();
 
-app.get('/get', (req, res) => res.send("Hello World"));
+app.use('/auth', authRoutes);
 
 app.listen(port, () => console.log('Listening on port: ' + port));

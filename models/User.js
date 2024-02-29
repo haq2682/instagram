@@ -17,21 +17,20 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
-    profile_photo: {
-        type: File,
-    },
     password: {
         type: String,
         required: true,
     },
     bio: {
         type: String,
+        max: 150,
     },
     website: {
         type: String,
     },
     gender: {
         type: String,
+        max: 40,
     },
 });
 
