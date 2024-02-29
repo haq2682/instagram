@@ -40,7 +40,7 @@ export default function App() {
                         <div className="divide-x divide-neutral-800 flex justify-around">
                             <div className="w-full flex flex-col items-center">
                                 <span className="text-lg">Sign Up with Email</span>
-                                <form action="/welcome" method="post" className="w-[90%]">
+                                <form action="/auth/register" method="post" className="w-[90%]">
                                     <div>
                                         <Input isClearable type="text" name="first_name" variant={'underlined'} label="First Name"/>
                                         <Input isClearable type="text" name="last_name" variant={'underlined'} label="Last Name"/>
