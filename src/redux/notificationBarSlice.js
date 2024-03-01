@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    open: true,
+    open: false,
 }
 
 export const notificationBarSlice = createSlice({
