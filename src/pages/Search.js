@@ -2,6 +2,7 @@ import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
 import {Input, Divider, User} from "@nextui-org/react";
 import {Link as UserLink} from "@nextui-org/link";
+import Notifications from "../components/Notifications";
 
 export default function Search() {
     return (
@@ -41,6 +42,7 @@ export default function Search() {
             </div>
             <Sidebar/>
             <Bottombar/>
+            <Notifications/>
         </div>
     );
 }
