@@ -1,8 +1,8 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
-import {Input, Divider, User, Tooltip} from "@nextui-org/react";
+import {Input, Divider, User} from "@nextui-org/react";
 import {Link as UserLink} from "@nextui-org/link";
-import {CircleWithCross} from "@styled-icons/entypo/CircleWithCross";
+
 export default function Search() {
     return (
         <div className="flex justify-center">

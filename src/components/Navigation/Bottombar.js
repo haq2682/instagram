@@ -11,17 +11,18 @@ import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
 import {Popover, PopoverTrigger, PopoverContent, Textarea, Button, Badge} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
-import {useContext, useState} from "react";
-import {NotificationsContext} from "../../pages/Home";
+import {useState} from "react";
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/modal";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {SunFill} from "@styled-icons/bootstrap/SunFill";
 import {Moon} from "@styled-icons/heroicons-solid/Moon";
+import {useDispatch} from 'react-redux';
+import { openNotificationBar } from '../../redux/notificationBarSlice';
 
 export default function Bottombar() {
+    const dispatch = useDispatch();
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
     const [darkState, setDarkState] = useState(false);
     const content = (
         <PopoverContent className="sm:hidden">
@@ -89,7 +90,7 @@ export default function Bottombar() {
                         <Badge color="danger" content="99+"><MessageAltDetail size="34"/></Badge>
                     </li>
                 </Link>
-                <li onClick={() => setNotificationsOpen(!notificationsOpen)} className="mt-2.5 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
+                <li onClick={() => dispatch(openNotificationBar())} className="mt-2.5 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Badge color="danger" content="99+"><NotificationsCircle className="lg:float-left lg:relative lg:bottom-2 lg:mr-4" size="33"/></Badge>
                 </li>
                 <Link to="/profile">

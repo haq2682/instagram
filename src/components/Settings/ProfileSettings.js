@@ -9,15 +9,12 @@ import {
     AutocompleteItem,
     Modal,
     ModalContent,
-    ModalBody,
-    useDisclosure
 } from "@nextui-org/react";
 import {Edit} from '@styled-icons/material/Edit';
 
 export default function ProfileSettings() {
     const [bio, setBio] = useState('');
     const [pfpChangeOpen, setPfpChangeOpen] = useState(false);
-    const {onOpenChange} = useDisclosure();
     const handleBioChange = (event) => {
         setBio(event.target.value);
     }

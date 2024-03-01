@@ -1,7 +1,6 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
 import {Button, Divider, Tab, Tabs} from "@nextui-org/react";
-import {FilePost} from "@styled-icons/bootstrap/FilePost";
 import Post from "../components/Post/Post";
 export default function Profile() {
     return (
