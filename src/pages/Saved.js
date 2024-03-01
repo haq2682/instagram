@@ -1,6 +1,7 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
 import Post from "../components/Post/Post";
+import Notifications from "../components/Notifications";
 import {Divider} from '@nextui-org/react';
 export default function Saved() {
     return (
@@ -15,6 +16,7 @@ export default function Saved() {
             </div>
             <Sidebar/>
             <Bottombar/>
+            <Notifications/>
         </div>
     );
 }

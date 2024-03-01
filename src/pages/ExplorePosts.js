@@ -1,5 +1,6 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
+import Notifications from "../components/Notifications";
 import {
     Divider,
     Input,
@@ -22,6 +23,7 @@ export default function ExplorePosts() {
             </div>
             <Sidebar/>
             <Bottombar/>
+            <Notifications/>
         </div>
     )
 }
