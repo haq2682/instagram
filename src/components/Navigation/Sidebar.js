@@ -1,7 +1,6 @@
 import Logo from '../../assets/instagram-logo.svg';
 import ThemeSwitcher from '../ThemeSwitcher';
-import { NotificationsContext } from '../../pages/Home';
-import {useContext, useState} from 'react';
+import {useState} from 'react';
 import {useLocation} from 'react-router-dom';
 import {Home} from '@styled-icons/material/Home';
 import {Search} from '@styled-icons/evaicons-solid/Search';
@@ -18,14 +17,16 @@ import {SunFill} from "@styled-icons/bootstrap/SunFill";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Moon} from "@styled-icons/heroicons-solid/Moon";
 import ImageUploading from "react-images-uploading";
+import { useDispatch } from 'react-redux';
+import {openNotificationBar} from '../../redux/notificationBarSlice';
 
 export default function Sidebar() {
+    const dispatch = useDispatch();
     console.log(localStorage.theme);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [darkState, setDarkState] = useState(null);
     const [postImages, setPostImages] = useState([]);
     let location = useLocation();
-    const {notificationsOpen, setNotificationsOpen} = useContext(NotificationsContext);
     const handleImageUpload = (imageList) => {
         setPostImages(imageList);
     }
@@ -73,7 +74,7 @@ export default function Sidebar() {
                                     <span className={`hidden lg:block text-sm`}>Messages</span>
                                 </li>
                             </Link>
-                            <li onClick={() => setNotificationsOpen(!notificationsOpen)}
+                            <li onClick={() => dispatch(openNotificationBar())}
                                 className="mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 cursor-pointer relative">
                                 <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
                                     <Badge color="danger" content="5">

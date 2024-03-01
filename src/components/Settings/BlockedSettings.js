@@ -1,4 +1,4 @@
-import {Link as UserLink, Button, Divider, User, Tooltip} from "@nextui-org/react";
+import {Link as UserLink, Divider, User, Tooltip} from "@nextui-org/react";
 import {CircleWithCross} from '@styled-icons/entypo/CircleWithCross';
 
 export default function BlockedSettings() {

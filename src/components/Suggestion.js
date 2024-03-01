@@ -1,14 +1,16 @@
 import {User, Link as UserLink} from "@nextui-org/react";
+import { useSelector } from "react-redux";
 
 export default function Suggestion() {
+    const auth = useSelector(state => state.auth);
     return (
         <div className="suggestions fixed right-0 h-screen bg-white dark:bg-black dark:border-l-2 dark:border-neutral-600 shadow-lg hidden lg:block w-1/4">
             <div className="logged-user shadow-md mt-10 ml-5 bg-neutral-100 dark:bg-neutral-900 rounded-xl px-4 py-2 inline-block w-[90%]">
                 <User   
-                    name="Junior Garcia"
+                    name={`${auth.name}`}
                     description={(
                         <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                            @jrgarciadev
+                            {auth.username}
                         </UserLink>
                     )}
                     avatarProps={{
