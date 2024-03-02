@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Logo from '../assets/instagram-logo.svg';
 import {useState} from 'react';
 import {Input} from "@nextui-org/react";
@@ -8,12 +9,44 @@ import {Facebook} from '@styled-icons/fa-brands/Facebook';
 import {TwitterWithCircle} from '@styled-icons/entypo-social/TwitterWithCircle';
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
 import {Modal, ModalContent, ModalHeader, ModalBody, Button, useDisclosure} from "@nextui-org/react";
-export default function App() {
+import {useDispatch} from 'react-redux';
+import {authenticate} from '../redux/authSlice';
+export default function Welcome() {
+    const dispatch = useDispatch();
     const {onOpen} = useDisclosure();
     const [isVisible, setIsVisible] = useState(false);
     const [login, setLogin] = useState(false);
     const [signup, setSignup] = useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
+
+    const [loginData, setLoginData] = useState({
+        email: '',
+        password: '',
+    });
+
+    const handleLoginEmailChange = (event) => {
+        setLoginData(prevState => {
+            return {...prevState, email: event.target.value}
+        })
+    }
+
+    const handleLoginPasswordChange = (event) => {
+        setLoginData(prevState => {
+            return {...prevState, password: event.target.value}
+        })
+    }
+
+    const handleSubmit = async () => {
+        try {
+            const response = await axios.post('/auth/login', loginData, {
+                headers: {'Content-Type' : 'application/x-www-form-urlencoded'}
+            });
+            dispatch(authenticate(response));
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
     return (
         <div className="h-screen">
             <div className="welcome-background flex justify-center items-center h-full w-screen flex-col">
@@ -33,7 +66,7 @@ export default function App() {
             </div>
             <Modal size={'3xl'} isOpen={signup} onOpenChange={()=>setSignup(false)} className="pb-8" placement={'center'}>
                 <ModalContent>
-                {(signup) => (
+                {() => (
                     <>
                     <ModalHeader className="flex flex-col gap-1 text-center text-2xl">Sign Up</ModalHeader>
                     <ModalBody>
@@ -77,20 +110,20 @@ export default function App() {
             </Modal>
             <Modal size={'3xl'} isOpen={login} onOpenChange={()=>setLogin(false)} placement={'center'}>
                 <ModalContent>
-                {(login) => (
+                {() => (
                     <>
                     <ModalHeader className="flex flex-col gap-1 text-center text-2xl">Log In</ModalHeader>
                         <ModalBody>
                             <div className="divide-x divide-neutral-800 flex justify-around">
                                 <div className="w-full flex flex-col items-center">
                                     <span className="text-lg">Log In with Email</span>
-                                    <form action="/welcome" method="post" className="w-[90%]">
+                                    <form method="post" className="w-[90%]">
                                         <div>
                                             <Input isClearable errorMessage="Please enter a valid email." color="danger"
-                                                   type="email" name="email" variant={'underlined'}
-                                                   label="Email Address"/>
+                                                   type="email" name="email" variant='underlined'
+                                                   label="Email Address" value={loginData.email} onChange={handleLoginEmailChange}/>
                                             <Input description="Password must be at least 8 characters long"
-                                                   name="password" variant={'underlined'} label="Password" endContent={
+                                                   name="password" variant='underlined' label="Password" endContent={
                                                 <button className="focus:outline-none" type="button"
                                                         onClick={toggleVisibility}>
                                                     {isVisible ? (
@@ -102,8 +135,8 @@ export default function App() {
                                                     )}
                                                 </button>
                                             }
-                                                   type={isVisible ? "text" : "password"}/>
-                                            <Button type="submit"
+                                                   type={isVisible ? "text" : "password"} value={loginData.password} onChange={handleLoginPasswordChange}/>
+                                            <Button onClick={handleSubmit}
                                                     className="mt-5 w-full bg-gradient-to-tl from-yellow-400 to-pink-600 text-white text-lg">Submit <Enter
                                                 size="25"/></Button>
                                         </div>
