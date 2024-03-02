@@ -8,8 +8,22 @@ import Search from './pages/Search';
 import Message from './pages/Message';
 import Saved from './pages/Saved';
 import Profile from './pages/Profile';
+import {useDispatch} from 'react-redux';
+import {useEffect} from "react";
+import {authenticate} from './redux/authSlice';
+import axios from "axios";
 
 function App() {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        axios.get('/auth/user')
+            .then((response) => {
+                if(response.data) dispatch(authenticate(response));
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }, []);
   return (
       <main>
           <BrowserRouter>
