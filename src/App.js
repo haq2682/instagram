@@ -22,11 +22,11 @@ function App() {
         axios.get('/auth/user')
             .then((response) => {
                 if(response.data) dispatch(authenticate(response));
+                setTimeout(()=>setLoader(false), 1000);
             })
             .catch((error) => {
                 console.log(error);
             })
-        setTimeout(()=>setLoader(false), 1000);
     }, []);
   return (
       <main>

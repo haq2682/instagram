@@ -17,42 +17,88 @@ export default function Welcome() {
     const [isVisible, setIsVisible] = useState(false);
     const [login, setLogin] = useState(false);
     const [signup, setSignup] = useState(false);
-    const toggleVisibility = () => setIsVisible(!isVisible);
+
+    const [signupData, setSignupData] = useState({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const [signupError, setSignupError] = useState({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
 
     const [loginError, setLoginError] = useState('');
     const [loginEmailError, setLoginEmailError] = useState('');
+    const [loginPasswordError, setLoginPasswordError] = useState('');
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
+
+    const toggleVisibility = () => setIsVisible(!isVisible);
+
+    const handleSignupFirstnameChange = (event) => {
+        setSignupData(prevState => {
+            return {...prevState, firstName: event.target.value};
+        })
+        if(event.target.value === '') setSignupError(prevState => {return {...prevState, firstName: 'First Name is required'}});
+        else if(event.target.value.match('^[A-Za-z]+( [A-Za-z]+)*$')) setSignupError(prevState => {return {...prevState, firstName: 'First Name is incorrect'}});
+        else setSignupError(prevState => {return {...prevState, firstName: ''}});
+    }
+
+    const handleSignupLastnameChange = (event) => {
+
+    }
+
+    const handleSignupUsernameChange = (event) => {
+
+    }
+
+    const handleSignupEmailChange = (event) => {
+
+    }
+
+    const handleSignupPasswordChange = (event) => {
+
+    }
+
+    const handleSignupConfirmPasswordChange = (event) => {
+
+    }
+
+    const handleSignupSubmit = async (event) => {
+
+    }
 
     const handleLoginEmailChange = async (event) => {
         setLoginEmail(event.target.value);
         if(event.target.value === '') setLoginEmailError('Email is required');
         else if(!event.target.value.match('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')) setLoginEmailError('Please enter a valid Email');
-        else {
-            try {
-                const email = await axios.post('/auth/findEmail', {email: event.target.value});
-                console.log(email.data);
-            }
-            catch(e) {
-                console.log(e);
-            }
-        }
+        else setLoginEmailError('');
     }
 
     const handleLoginPasswordChange = (event) => {
         setLoginPassword(event.target.value);
+        if(event.target.value === '') setLoginPasswordError('Password is required');
+        else setLoginPasswordError('');
     }
 
-    const handleSubmit = async (event) => {
+    const handleLoginSubmit = async (event) => {
         try {
             event.preventDefault();
-            const response = await axios.post('/auth/login', {loginEmail, loginPassword}, {
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            });
+            const response = await axios.post('/auth/login', {email: loginEmail, password: loginPassword});
             dispatch(authenticate(response));
         }
         catch (error) {
-            console.log(error);
+            if(error.response.status === 401) setLoginError('Incorrect Username or Password');
+            if(error.response.status === 400) setLoginError('Please fill in required fields above');
         }
     }
     return (
@@ -81,13 +127,13 @@ export default function Welcome() {
                         <div className="divide-x divide-neutral-800 flex justify-around">
                             <div className="w-full flex flex-col items-center">
                                 <span className="text-lg">Sign Up with Email</span>
-                                <form action="/auth/register" method="post" className="w-[90%]">
+                                <form action="/auth/register" method="post" className="w-[90%]" onSubmit={handleSignupSubmit}>
                                     <div>
-                                        <Input type="text" name="first_name" variant={'underlined'} label="First Name"/>
-                                        <Input type="text" name="last_name" variant={'underlined'} label="Last Name"/>
-                                        <Input type="text" name="user_name" variant={'underlined'} label="Username"/>
-                                        <Input errorMessage="Please enter a valid email." color="danger" type="email" name="email" variant={'underlined'} label="Email Address"/>
-                                        <Input description="Password must be at least 8 characters long" name="password" variant={'underlined'} label="Password" endContent={
+                                        <Input errorMessage={signupError.firstName} color={signupError.firstName ? 'danger' : 'default'} value={signupData.firstName} onChange={handleSignupFirstnameChange} type="text" name="first_name" variant={'underlined'} label="First Name"/>
+                                        <Input value={signupData.lastName} onChange={handleSignupLastnameChange} type="text" name="last_name" variant={'underlined'} label="Last Name"/>
+                                        <Input value={signupData.username} onChange={handleSignupUsernameChange} type="text" name="user_name" variant={'underlined'} label="Username"/>
+                                        <Input value={signupData.email} onChange={handleSignupEmailChange} errorMessage="Please enter a valid email." color="danger" type="email" name="email" variant={'underlined'} label="Email Address"/>
+                                        <Input value={signupData.password} onChange={handleSignupPasswordChange} description="Password must be at least 8 characters long" name="password" variant={'underlined'} label="Password" endContent={
                                             <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                                                 {isVisible ? (
                                                     <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
@@ -97,7 +143,7 @@ export default function Welcome() {
                                             </button>
                                         }
                                                type={isVisible ? "text" : "password"}/>
-                                        <Input type="password" name="confirm_password" variant={'underlined'} label="Confirm Password"/>
+                                        <Input value={signupData.confirmPassword} onChange={handleSignupConfirmPasswordChange} type="password" name="confirm_password" variant={'underlined'} label="Confirm Password"/>
                                         <Button type="submit" className="mt-5 w-full bg-gradient-to-tl from-yellow-400 to-pink-600 text-white text-lg">Submit <Enter size="25"/></Button>
                                     </div>
                                 </form>
@@ -125,10 +171,10 @@ export default function Welcome() {
                             <div className="divide-x divide-neutral-800 flex justify-around">
                                 <div className="w-full flex flex-col items-center">
                                     <span className="text-lg">Log In with Email</span>
-                                    <form method="post" className="w-[90%]" onSubmit={handleSubmit}>
+                                    <form method="post" className="w-[90%]" onSubmit={handleLoginSubmit}>
                                         <div>
-                                            <Input errorMessage={loginEmailError} color={loginEmailError ? 'danger' : 'default'} type="email" name="email" variant='underlined' label="Email Address" value={loginEmail} onChange={handleLoginEmailChange}/>
-                                            <Input name="password" variant='underlined' label="Password" value={loginPassword} endContent={
+                                            <Input errorMessage={loginEmailError} color={loginEmailError || loginError ? 'danger' : 'default'} type="email" name="email" variant='underlined' label="Email Address" value={loginEmail} onChange={handleLoginEmailChange}/>
+                                            <Input errorMessage={loginPasswordError} color={loginPasswordError || loginError ? 'danger' : 'default'} name="password" variant='underlined' label="Password" value={loginPassword} endContent={
                                                 <button className="focus:outline-none" type="button"
                                                         onClick={toggleVisibility}>
                                                     {isVisible ? (

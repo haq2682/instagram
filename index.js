@@ -21,7 +21,7 @@ app.use(express.static("public"));
 app.use(cors());
 app.use(cookieParser());
 connectToDb();
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 
 app.use(session({
     secret: "I'm death, the destroyer of worlds",
