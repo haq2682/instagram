@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
-async function connectToDb() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/instagram_clone');
-    console.log("Successfully connected to the database");
+function connectToDb() {
+    mongoose.connect('mongodb://127.0.0.1:27017/instagram_clone')
+        .then(() => console.log('Successfully Connected to the Database'))
+        .catch(error => console.log(error));
 }
-
-connectToDb().catch(err => console.log(err));
 
 module.exports = connectToDb;

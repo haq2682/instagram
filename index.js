@@ -5,9 +5,11 @@ const cors = require('cors')
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const session = require('express-session')
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy
 const authController = require('./controllers/authController');
+const MongoStore = require('connect-mongo');
 
 
 const app = express();
@@ -16,12 +18,17 @@ let port = process.env.EXPRESS_PORT;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.use(cors());
+app.use(cookieParser());
 connectToDb();
 
 app.use(session({
     secret: "I'm death, the destroyer of worlds",
     resave: false,
     saveUninitialized: true,
+    cooke: {
+        maxAge: 1000*60*60*24*7
+    },
+    store: MongoStore.create({mongoUrl: 'mongodb://127.0.0.1:27017/instagram_clone'})
 }))
 
 app.use(passport.initialize());

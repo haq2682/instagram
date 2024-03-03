@@ -28,6 +28,21 @@ module.exports = {
         if(user && password !== user.password) return done(null, false, {message: "Incorrect Password"});
         return done(null, user);
     },
+    logout: (req, res, next) => {
+        req.logout(function (error) {
+            if(error) return next(error);
+            req.session.destroy(function(err){
+                if(err){
+                    console.log("error: " + err);
+                    res.status(500).json({message: "Error destroying session"});
+                } else {
+                    console.log("destroying session");
+                    res.clearCookie('mcookie');
+                    res.status(200).json({message: "Logged out successfully"});
+                }
+            });
+        })
+    },
     getUser: (req, res) => {
         if(!req.user) res.send(null);
         res.send(req.user);
