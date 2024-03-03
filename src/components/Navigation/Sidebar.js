@@ -22,7 +22,6 @@ import {openNotificationBar} from '../../redux/notificationBarSlice';
 
 export default function Sidebar() {
     const dispatch = useDispatch();
-    console.log(localStorage.theme);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [darkState, setDarkState] = useState(null);
     const [postImages, setPostImages] = useState([]);

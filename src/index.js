@@ -6,6 +6,9 @@ import reportWebVitals from './reportWebVitals';
 import {NextUIProvider} from "@nextui-org/react";
 import {Provider} from 'react-redux';
 import {store} from './store';
+import axios from 'axios';
+
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
