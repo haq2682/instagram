@@ -1,7 +1,18 @@
 import {User, Link as UserLink} from "@nextui-org/react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import axios from 'axios';
+import {logout} from "../redux/authSlice";
 
 export default function Suggestion() {
+    const dispatch = useDispatch();
+    const handleLogout = () => {
+        axios.get('/auth/logout')
+            .then((response) => {
+                dispatch(logout());
+                window.location.reload();
+            })
+            .catch((error) => console.log(error));
+    }
     const auth = useSelector(state => state.auth);
     return (
         <div className="suggestions fixed right-0 h-screen bg-white dark:bg-black dark:border-l-2 dark:border-neutral-600 shadow-lg hidden lg:block w-1/4">
@@ -17,7 +28,7 @@ export default function Suggestion() {
                         src: "https://avatars.githubusercontent.com/u/30373425?v=4"
                     }}
                 />
-                <div className="float-end mt-3 text-blue-500 hover:text-blue-600 cursor-pointer transition-all duration-100 text-sm">Log Out</div>
+                <div onClick={handleLogout} className="float-end mt-3 text-blue-500 hover:text-blue-600 cursor-pointer transition-all duration-100 text-sm">Log Out</div>
             </div>
             <div className="suggestion-text ml-5 mt-5 text-neutral-400 dark:text-neutral-600">Suggested for You</div>
             <div className="suggested-users shadow-md mt-5 ml-5 bg-neutral-100 dark:bg-neutral-900 rounded-xl px-4 py-2 inline-block w-[90%]">
