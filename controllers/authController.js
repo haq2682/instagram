@@ -49,6 +49,11 @@ module.exports = {
     findEmail: async (req, res) => {
         const email = req.body.email;
         const user = await UserModel.findOne({email});
-        res.send(user.email);
+        if(user) res.send(user.email);
+    },
+    findUsername: async (req, res) => {
+        const username = req.body.username;
+        const user = await UserModel.findOne({username});
+        if(user) res.send(user.username);
     }
 }
