@@ -7,6 +7,7 @@ router.post('/register', authController.register);
 router.post('/login', passport.authenticate('local'), authController.login);
 router.get('/logout', authController.logout);
 router.post('/findEmail', authController.findEmail);
+router.post('/findUsername', authController.findUsername);
 router.get('/user', authController.getUser);
 
 module.exports = router;
