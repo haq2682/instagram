@@ -13,6 +13,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.7",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",

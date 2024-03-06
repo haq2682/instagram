@@ -24,8 +24,10 @@ export default function Signup(props) {
         }
         if(!values.firstName) errors.firstName = 'First Name is required';
         else if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(values.firstName)) errors.firstName = 'First Name is invalid';
+        else errors.firstName = '';
         if(!values.lastName) errors.lastName = 'Last Name is required';
         else if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(values.lastName)) errors.lastName = 'Last Name is invalid';
+        else errors.lastName = '';
         if(!values.email) errors.email = 'Email is required';
         else if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(values.email)) errors.email = 'Email is invalid';
         else {
@@ -39,8 +41,10 @@ export default function Signup(props) {
         }
         if(!values.password) errors.password = 'Password is required';
         else if(values.password.length < 8) errors.password = 'Password must be at least 8 characters long';
+        else errors.password = '';
         if(!values.confirmPassword) errors.confirmPassword = 'Confirm Password is required';
         else if(values.confirmPassword !== values.password) errors.confirmPassword = 'Passwords do not match';
+        else errors.confirmPassword = '';
         return errors;
     }
 
@@ -54,7 +58,7 @@ export default function Signup(props) {
             confirmPassword: ''
         },
         validate,
-        onSubmit: async (values) => {
+        onSubmit: (values) => {
             setSubmitLoader(true);
             console.log(values);
         }
