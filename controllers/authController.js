@@ -1,20 +1,23 @@
 const UserModel = require('../models/User');
+const bcrypt = require("bcrypt");
 
 module.exports = {
     register: async (req, res) => {
-        const newUser = new UserModel(req.body);
+        const newUser = new UserModel(req.body.values);
         try {
-            await newUser.save()
-            res.status(200).json({
-                status: 'Success',
-                message: 'User saved to database successfully'
-            })
+            await newUser.save();
+            req.login(newUser, function(err) {
+                if (err) {
+                    return res.status(500).json(err);
+                }
+                return res.status(200).json({
+                    status: 'Success',
+                    message: 'User saved to database and logged in successfully'
+                });
+            });
         }
         catch(error) {
-            res.status(500).json({
-                status: 'Failed',
-                message: error.message
-            })
+            res.status(500).json(error);
         }
     },
     login: (req, res) => {
@@ -23,10 +26,9 @@ module.exports = {
     authenticateUser: async (email, password, done) => {
         const user = await UserModel.findOne({email}).exec();
         if(!user) return done(null, false, {message: "User not found"});
-        user.comparePassword(password, (error, match) => {
+        bcrypt.compare(password, user.password, (error, match) => {
             if(error) return done(error);
-            if(match) return done(null, user);
-            return done(null, false, {message: 'Incorrect Password'});
+            done(null, match);
         })
         return done(null, user);
     },

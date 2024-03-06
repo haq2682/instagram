@@ -8,7 +8,7 @@ const userSchema = new Schema({
     username: {
         type: String,
         required: true,
-        unique: true,
+        unique: [true, 'Username already exists, try a different one'],
         validate: {
             validator: function(value) {
                 return /^[a-zA-Z0-9._%+-]*$/.test(value);
@@ -85,7 +85,7 @@ const userSchema = new Schema({
 
 userSchema.plugin(passportLocalMongoose, {usernameQueryFields: ["email", "username"]});
 
-userSchema.pre('save', (next) => {
+userSchema.pre('save', function(next){
     if(!this.isModified('password')) return next();
     bcrypt.hash(this.password, saltRounds, (error, salt) => {
         if(error) return next(error);
@@ -93,13 +93,6 @@ userSchema.pre('save', (next) => {
         next();
     });
 });
-
-userSchema.methods.comparePassword = (password, callback) => {
-    bcrypt.compare(password, this.password, (error, match) => {
-        if(error) return callback(error);
-        callback(null, match);
-    })
-}
 
 const User = mongoose.model('User', userSchema);
 

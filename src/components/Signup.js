@@ -5,46 +5,29 @@ import {EyeFilledIcon} from "../assets/js/EyeFilledIcon";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {useState} from "react";
 import {useFormik} from "formik";
+import {authenticate} from "../redux/authSlice";
+import {useDispatch} from "react-redux";
 
 export default function Signup(props) {
 
+    const [serverError, setServerError] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [submitLoader, setSubmitLoader] = useState(false);
-    const validate = async (values) => {
+    const validate = values => {
         const errors = {}
         if(!values.username) errors.username = 'Username is required';
         else if(!/^[a-zA-Z0-9._%+-]*$/.test(values.username)) errors.username = 'Username is invalid';
-        else {
-            try {
-                const response = await axios.post('/auth/findUsername', {username: values.username});
-                if(response) errors.username = 'Username is already taken, try another one';
-            }
-            catch(error) {
-                errors.username = '';
-            }
-        }
         if(!values.firstName) errors.firstName = 'First Name is required';
         else if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(values.firstName)) errors.firstName = 'First Name is invalid';
-        else errors.firstName = '';
         if(!values.lastName) errors.lastName = 'Last Name is required';
         else if(!/^[A-Za-z]+( [A-Za-z]+)*$/.test(values.lastName)) errors.lastName = 'Last Name is invalid';
-        else errors.lastName = '';
         if(!values.email) errors.email = 'Email is required';
         else if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(values.email)) errors.email = 'Email is invalid';
-        else {
-            try {
-                const response = await axios.post('/auth/findEmail', {email: values.email});
-                if(response) errors.email = 'This Email is already registered'
-            }
-            catch(e) {
-                errors.email = '';
-            }
-        }
         if(!values.password) errors.password = 'Password is required';
         else if(values.password.length < 8) errors.password = 'Password must be at least 8 characters long';
-        else errors.password = '';
         if(!values.confirmPassword) errors.confirmPassword = 'Confirm Password is required';
         else if(values.confirmPassword !== values.password) errors.confirmPassword = 'Passwords do not match';
-        else errors.confirmPassword = '';
         return errors;
     }
 
@@ -58,11 +41,29 @@ export default function Signup(props) {
             confirmPassword: ''
         },
         validate,
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             setSubmitLoader(true);
-            console.log(values);
+            try {
+                const response = await axios.post('/auth/register', {
+                    values
+                });
+                console.log(response);
+                const user = await axios.post('/auth/login', {email: values.email, password: values.password});
+                dispatch(authenticate(user));
+            }
+            catch(error) {
+                console.log(error.response.data.keyPattern.username);
+                if(error.response.data.keyPattern.username) setUsernameError(`The Username "${error.response.data.keyValue.username}" is already taken. Please try a different Username`);
+                else if(error.response.data.keyPattern.email) setEmailError(`The Email "${error.response.data.keyValue.email}" is already registered. Please try logging in`);
+                else setServerError(error.response.data);
+            }
+            finally {
+                setSubmitLoader(false);
+            }
         }
     })
+
+    const dispatch = useDispatch();
 
     const [isVisible, setIsVisible] = useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
@@ -81,8 +82,8 @@ export default function Signup(props) {
                                             <div>
                                                 <Input errorMessage={formik.touched.firstName && formik.errors?.firstName} color={formik.touched.firstName && formik.errors.firstName ? "danger" : "default"} value={formik.values.firstName} onBlur={formik.handleBlur} onChange={formik.handleChange} type="text" name="firstName" variant={'underlined'} label="First Name"/>
                                                 <Input errorMessage={formik.touched.lastName && formik.errors?.lastName} color={formik.touched.lastName && formik.errors.lastName ? "danger" : "default"} value={formik.values.lastName} onBlur={formik.handleBlur} onChange={formik.handleChange} type="text" name="lastName" variant={'underlined'} label="Last Name"/>
-                                                <Input errorMessage={formik.touched.username && formik.errors?.username} color={formik.touched.username && formik.errors.username ? "danger" : "default"} value={formik.values.username} onBlur={formik.handleBlur} onChange={formik.handleChange} type="text" name="username" variant={'underlined'} label="Username"/>
-                                                <Input errorMessage={formik.touched.email && formik.errors?.email} color={formik.touched.email && formik.errors.email ? "danger" : "default"} value={formik.values.email} onBlur={formik.handleBlur} onChange={formik.handleChange} type="email" name="email" variant={'underlined'} label="Email Address"/>
+                                                <Input errorMessage={usernameError || formik.touched.username && formik.errors?.username} color={usernameError || formik.touched.username && formik.errors.username ? "danger" : "default"} value={formik.values.username} onBlur={formik.handleBlur} onChange={formik.handleChange} type="text" name="username" variant={'underlined'} label="Username"/>
+                                                <Input errorMessage={emailError || formik.touched.email && formik.errors?.email} color={emailError || formik.touched.email && formik.errors.email ? "danger" : "default"} value={formik.values.email} onBlur={formik.handleBlur} onChange={formik.handleChange} type="email" name="email" variant={'underlined'} label="Email Address"/>
                                                 <Input errorMessage={formik.touched.password && formik.errors?.password} color={formik.touched.password && formik.errors.password ? "danger" : "default"} value={formik.values.password} onBlur={formik.handleBlur} onChange={formik.handleChange} description="Password must be at least 8 characters long" name="password" variant={'underlined'} label="Password" endContent={
                                                     <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                                                         {isVisible ? (
@@ -97,6 +98,7 @@ export default function Signup(props) {
                                                 <Button type="submit" className="mt-5 w-full bg-gradient-to-tl from-yellow-400 to-pink-600 text-white text-lg" spinnerPlacement='end' isLoading={submitLoader}>Submit <Enter size="25"/></Button>
                                             </div>
                                         </form>
+                                        <div className="server-errors text-red-500 mt-5">{serverError}</div>
                                     </div>
                                 </div>
                             </ModalBody>
