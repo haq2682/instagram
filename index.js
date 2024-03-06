@@ -24,7 +24,7 @@ connectToDb();
 
 
 app.use(session({
-    secret: "I'm death, the destroyer of worlds",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cooke: {

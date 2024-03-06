@@ -7,9 +7,7 @@ module.exports = {
             await newUser.save()
             res.status(200).json({
                 status: 'Success',
-                data: {
-                    newUser
-                }
+                message: 'User saved to database successfully'
             })
         }
         catch(error) {
@@ -25,7 +23,11 @@ module.exports = {
     authenticateUser: async (email, password, done) => {
         const user = await UserModel.findOne({email}).exec();
         if(!user) return done(null, false, {message: "User not found"});
-        if(user && password !== user.password) return done(null, false, {message: "Incorrect Password"});
+        user.comparePassword(password, (error, match) => {
+            if(error) return done(error);
+            if(match) return done(null, user);
+            return done(null, false, {message: 'Incorrect Password'});
+        })
         return done(null, user);
     },
     logout: (req, res, next) => {

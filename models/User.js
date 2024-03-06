@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const userSchema = new Schema({
     username: {
@@ -82,6 +84,22 @@ const userSchema = new Schema({
 });
 
 userSchema.plugin(passportLocalMongoose, {usernameQueryFields: ["email", "username"]});
+
+userSchema.pre('save', (next) => {
+    if(!this.isModified('password')) return next();
+    bcrypt.hash(this.password, saltRounds, (error, salt) => {
+        if(error) return next(error);
+        this.password = salt;
+        next();
+    });
+});
+
+userSchema.methods.comparePassword = (password, callback) => {
+    bcrypt.compare(password, this.password, (error, match) => {
+        if(error) return callback(error);
+        callback(null, match);
+    })
+}
 
 const User = mongoose.model('User', userSchema);
 
