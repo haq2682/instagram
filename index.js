@@ -10,7 +10,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy
 const authController = require('./controllers/authController');
 const MongoStore = require('connect-mongo');
-const axios = require('axios');
 
 
 const app = express();
@@ -24,7 +23,7 @@ connectToDb();
 
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'Now I have become death',
     resave: false,
     saveUninitialized: true,
     cooke: {

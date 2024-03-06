@@ -35,8 +35,9 @@ export default function Login(props) {
                 dispatch(authenticate(response));
             }
             catch(error) {
-                if(error.response.status === 401) setServerError('Incorrect Email or Password');
+                if(error.response.status === 401 || error.response.status === 500) setServerError('Incorrect Email or Password');
                 if(error.response.status === 400) setServerError('Please fill in required fields above');
+                console.log(error);
             }
             finally {
                 setSubmitLoader(false);
