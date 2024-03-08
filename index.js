@@ -39,7 +39,18 @@ passport.use(new LocalStrategy({usernameField: 'email'}, authController.authenti
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
-        cb(null, { id: user.id, email: user.email, username: user.username, firstName: user.firstName, lastName: user.lastName });
+        cb(null, {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            verify_token: user.verify_token,
+            email_verified: user.email_verified,
+            private: user.private,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        });
     });
 });
 

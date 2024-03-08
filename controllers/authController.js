@@ -50,14 +50,19 @@ module.exports = {
     getUser: (req, res) => {
         res.send(req.user);
     },
-    findEmail: async (req, res) => {
-        const email = req.body.email;
-        const user = await UserModel.findOne({email});
-        if(user) res.send(user.email);
-    },
-    findUsername: async (req, res) => {
-        const username = req.body.username;
-        const user = await UserModel.findOne({username});
-        if(user) res.send(user.username);
+    verifyEmail: async (req, res) => {
+        const token = req.params.verify_token;
+        const user = await UserModel.findOne({verify_token: token});
+        if(!user) return res.status(404).json({message: "User not found"});
+        if(user.email_verified) return res.status(200).json({message: "User is already verified"});
+        user.email_verified = true;
+        try {
+             await user.save();
+             res.status(200).json({message: "User verified successfully"});
+        }
+        catch(error) {
+             console.log(error);
+             res.status(500).json(error);
+        }
     }
 }

@@ -13,21 +13,25 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from "react";
-import {authenticate} from './redux/authSlice';
+import {authenticate, verifyEmail} from './redux/authSlice';
 import axios from "axios";
 import WelcomeLoader from "./components/WelcomeLoader";
 
 function App() {
     const [loader, setLoader] = useState(true);
-    // const is_authenticated = useSelector(state => state.auth.is_authenticated);
-    const is_authenticated = useState(true);
-    const is_verified = useState(false);
+    const is_authenticated = useSelector(state => state.auth.is_authenticated);
+    const is_verified = useSelector(state => state.auth.is_verified);
+    const is_password_reset = useSelector(state => state.auth.is_password_reset);
     const dispatch = useDispatch();
     useEffect(() => {
         setLoader(true);
         axios.get('/auth/user')
             .then((response) => {
-                if(response.data) dispatch(authenticate(response));
+                console.log(response.data);
+                if(response.data) {
+                    if(response.data.email_verified) dispatch(verifyEmail);
+                    dispatch(authenticate(response));
+                }
             })
             .catch((error) => {
                 console.log(error);
@@ -40,54 +44,50 @@ function App() {
     function getPage(page) {
         switch(page) {
             case "settings":
-                if(is_authenticated === true && is_verified === true) return <Settings/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
+                if(is_authenticated && is_verified) return <Settings/>
+                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
                 else return <Navigate to={"/"}/>
-                break;
 
             case "explore":
-                if(is_authenticated === true && is_verified === true) return <ExplorePosts/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
+                if(is_authenticated && is_verified) return <ExplorePosts/>
+                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
                 else return <Navigate to={"/"}/>
 
             case "search":
-                if(is_authenticated === true && is_verified === true) return <Search/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
+                if(is_authenticated && is_verified) return <Search/>
+                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
                 else return <Navigate to={"/"}/>
 
             case "messages":
-                if(is_authenticated === true && is_verified === true) return <Message/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
+                if(is_authenticated && is_verified) return <Message/>
+                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
                 else return <Navigate to={"/"}/>
 
             case "saved":
-                if(is_authenticated === true && is_verified === true) return <Saved/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
+                if(is_authenticated && is_verified) return <Saved/>
+                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
                 else return <Navigate to={"/"}/>
 
             case "profile":
-                if(is_authenticated === true && is_verified === true) return <Profile/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
+                if(is_authenticated && is_verified) return <Profile/>
+                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
                 else return <Navigate to={"/"}/>
 
             case "verify":
-                if(is_authenticated === true && is_verified === false) return <VerifyEmail/>
-                else if(is_authenticated === true && is_verified === true) return <Navigate to={"/verified"}/>
+                if(is_authenticated && !is_verified) return <VerifyEmail/>
+                else if(is_authenticated && is_verified) return <Navigate to={"/verified"}/>
                 else return <Navigate to={"/"}/>
 
             case "verified":
-                if(is_authenticated === true && is_verified === true) return <VerifiedEmail/>
-                else if(is_authenticated === true && is_verified === false) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
+                return <VerifiedEmail/>
 
             case "forgotPassword":
-                if(is_authenticated === false) return <ForgotPassword/>
+                if(!is_authenticated) return <ForgotPassword/>
                 else return <Navigate to={"/"}/>
 
             case "resetPassword":
-                if(is_authenticated === false) return <ResetPassword/>
+                if(!is_authenticated && is_password_reset) return <ResetPassword/>
                 else return <Navigate to={"/"}/>
-                break;
 
             default:
                 break;
@@ -106,9 +106,9 @@ function App() {
                   <Route path="saved" element={getPage("saved")}/>
                   <Route path="profile" element={getPage("profile")}/>
                   <Route path="verify" element={getPage("verify")}/>
-                  <Route path="verified" element={getPage("verified")}/>
-                  <Route path="forgotPassword" element={getPage("forgotPassword")}/>
-                  <Route path="resetPassword" element={getPage("resetPassword")}/>
+                  <Route path="verified/:verify_token" element={getPage("verified")}/>
+                  <Route path="forgotpassword" element={getPage("forgotPassword")}/>
+                  <Route path="resetpassword" element={getPage("resetPassword")}/>
               </Routes>
           </BrowserRouter>
       </main>
