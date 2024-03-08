@@ -4,7 +4,9 @@ const initialState = {
     username: '',
     firstName: '',
     lastName: '',
-    is_authenticated: false
+    is_verified: false,
+    is_authenticated: false,
+    is_password_reset: false,
 }
 
 export const authSlice = createSlice({
@@ -19,12 +21,19 @@ export const authSlice = createSlice({
         },
         logout: (state) => {
             state.is_authenticate = false;
+            state.is_verified = false;
             state.username = '';
             state.firstName = '';
             state.lastName = '';
+        },
+        verifyEmail: (state) => {
+            state.is_verified = true;
+        },
+        togglePasswordReset: (state) => {
+            state.is_password_reset = !state.is_password_reset;
         }
     }
 })
 
-export const {authenticate, logout} = authSlice.actions;
+export const {authenticate, logout, verifyEmail, togglePasswordReset} = authSlice.actions;
 export default authSlice.reducer;

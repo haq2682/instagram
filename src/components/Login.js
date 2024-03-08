@@ -6,7 +6,7 @@ import {Google} from "@styled-icons/bootstrap/Google";
 import {Facebook} from "@styled-icons/fa-brands/Facebook";
 import {TwitterWithCircle} from "@styled-icons/entypo-social/TwitterWithCircle";
 import axios from "axios";
-import {authenticate} from "../redux/authSlice";
+import {authenticate, verifyEmail} from "../redux/authSlice";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
 import { useFormik } from 'formik';
@@ -32,6 +32,7 @@ export default function Login(props) {
             setSubmitLoader(true)
             try {
                 const response = await axios.post('/auth/login', {email: values.email, password: values.password});
+                if(response.data.email_verified) dispatch(verifyEmail())
                 dispatch(authenticate(response));
             }
             catch(error) {

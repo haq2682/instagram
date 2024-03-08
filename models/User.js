@@ -62,7 +62,7 @@ const userSchema = new Schema({
             validator: function(value) {
                 return /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
             },
-            message: props => `${props.value} is not a valid email`
+            message: props => `${props.value} is not a valid website`
         }
     },
     gender: {
@@ -70,6 +70,13 @@ const userSchema = new Schema({
         max: 40,
     },
     private: {
+        type: Boolean,
+        default: false,
+    },
+    verify_token: {
+        type: String
+    },
+    email_verified: {
         type: Boolean,
         default: false,
     },
@@ -90,6 +97,15 @@ userSchema.pre('save', function(next){
     bcrypt.hash(this.password, saltRounds, (error, salt) => {
         if(error) return next(error);
         this.password = salt;
+        let generateToken = () => {
+            return Math.random().toString(35).substring(2);
+        }
+
+        let mergeToken = () => {
+            return generateToken() + generateToken();
+        }
+
+        this.verify_token = mergeToken();
         next();
     });
 });
