@@ -22,14 +22,14 @@ function App() {
     const is_authenticated = useSelector(state => state.auth.is_authenticated);
     const is_verified = useSelector(state => state.auth.is_verified);
     const is_password_reset = useSelector(state => state.auth.is_password_reset);
+    const verify_token = useSelector(state => state.auth.verify_token);
     const dispatch = useDispatch();
     useEffect(() => {
         setLoader(true);
         axios.get('/auth/user')
             .then((response) => {
-                console.log(response.data);
                 if(response.data) {
-                    if(response.data.email_verified) dispatch(verifyEmail);
+                    if(response.data.email_verified) dispatch(verifyEmail());
                     dispatch(authenticate(response));
                 }
             })
@@ -39,7 +39,7 @@ function App() {
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
             })
-    }, []);
+    }, [dispatch]);
 
     function getPage(page) {
         switch(page) {
@@ -75,7 +75,7 @@ function App() {
 
             case "verify":
                 if(is_authenticated && !is_verified) return <VerifyEmail/>
-                else if(is_authenticated && is_verified) return <Navigate to={"/verified"}/>
+                else if(is_authenticated && is_verified) return <Navigate to={"/verified" + verify_token}/>
                 else return <Navigate to={"/"}/>
 
             case "verified":
