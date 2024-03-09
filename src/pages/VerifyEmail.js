@@ -1,6 +1,25 @@
 import {Button} from "@nextui-org/react";
+import {useState, useEffect} from "react";
 
 export default function VerifyEmail() {
+    const [time, setTime] = useState(0);
+    const handleSend = () => {
+        setTime(60);
+        localStorage.emailResendTime = time;
+    }
+
+    useEffect(() => {
+        const getTime = localStorage.emailResendTime - 1;
+        if(time > 0) {
+            const interval = setInterval(() => {
+                setTime(time - 1)
+                localStorage.emailResendTime = time;
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+        setTime(getTime);
+    }, [time]);
+
     return (
         <div className="h-screen">
             <div className="welcome-background flex justify-center items-center h-full w-screen flex-col">
@@ -12,7 +31,9 @@ export default function VerifyEmail() {
                     <div className="m-4">
                         <p className="text-lg">A verification link has been sent to your registered email address. <br/> Please check your "Inbox". If you do not find the link there, <br/> please check your "Spam" folder.</p>
                         <div className="mt-5">
-                            <Button className="text-lg p-7" color="primary">Click Here to Resend the Email</Button>
+                            <Button className="text-lg p-7" color="primary" isDisabled={time > 0} onClick={handleSend}>
+                                {time <= 0 ? 'Click Here to Resend the Email' : 'Wait for ' + time + ' seconds'}
+                            </Button>
                         </div>
                     </div>
                 </div>

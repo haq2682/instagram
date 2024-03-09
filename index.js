@@ -23,13 +23,13 @@ connectToDb();
 
 
 app.use(session({
-    secret: 'Now I have become death',
+    secret: 'Now I have become death, the destroyer of worlds',
     resave: false,
-    saveUninitialized: true,
-    cooke: {
+    saveUninitialized: false,
+    cookie: {
         maxAge: 1000*60*60*24*7
     },
-    store: MongoStore.create({mongoUrl: 'mongodb://127.0.0.1:27017/instagram_clone'})
+    store: MongoStore.create({mongoUrl: "mongodb://127.0.0.1:27017/instagram_clone"})
 }))
 
 app.use(passport.initialize());
@@ -37,27 +37,35 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy({usernameField: 'email'}, authController.authenticateUser));
 
-passport.serializeUser(function(user, cb) {
-    process.nextTick(function() {
-        cb(null, {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            verify_token: user.verify_token,
-            email_verified: user.email_verified,
-            private: user.private,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-        });
-    });
+// passport.serializeUser(function(user, cb) {
+//     process.nextTick(function() {
+//         cb(null, {
+//             id: user.id,
+//             email: user.email,
+//             username: user.username,
+//             firstName: user.firstName,
+//             lastName: user.lastName,
+//             verify_token: user.verify_token,
+//             email_verified: user.email_verified,
+//             private: user.private,
+//             created_at: user.created_at,
+//             updated_at: user.updated_at,
+//         });
+//     });
+// });
+//
+// passport.deserializeUser(function(user, cb) {
+//     process.nextTick(function() {
+//         return cb(null, user);
+//     });
+// });
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
 });
 
-passport.deserializeUser(function(user, cb) {
-    process.nextTick(function() {
-        return cb(null, user);
-    });
+passport.deserializeUser(function(user, done) {
+    done(null, user);
 });
 
 app.use('/auth', authRoutes);

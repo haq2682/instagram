@@ -12,12 +12,12 @@ export default function VerifiedEmail() {
         axios.post('/auth/verify/' + verify_token)
             .then(() => {
                 setStatus(true);
-                dispatch(verifyEmail);
+                dispatch(verifyEmail());
             })
             .catch(() => {
                 setStatus(false);
             });
-    }, []);
+    }, [dispatch, verify_token]);
 
     if(status) {
         return (
