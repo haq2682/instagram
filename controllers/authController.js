@@ -26,11 +26,8 @@ module.exports = {
     authenticateUser: async (email, password, done) => {
         const user = await UserModel.findOne({email}).exec();
         if(!user) return done(null, false, {message: "User not found"});
-        bcrypt.compare(password, user.password, (error, match) => {
-            if(error) return done(error);
-            done(null, match);
-        })
-        return done(null, user);
+        if(await bcrypt.compare(password, user.password)) return done(null, user);
+        else return done(null, false);
     },
     logout: (req, res, next) => {
         req.logout(function (error) {

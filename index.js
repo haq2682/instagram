@@ -37,29 +37,6 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy({usernameField: 'email'}, authController.authenticateUser));
 
-// passport.serializeUser(function(user, cb) {
-//     process.nextTick(function() {
-//         cb(null, {
-//             id: user.id,
-//             email: user.email,
-//             username: user.username,
-//             firstName: user.firstName,
-//             lastName: user.lastName,
-//             verify_token: user.verify_token,
-//             email_verified: user.email_verified,
-//             private: user.private,
-//             created_at: user.created_at,
-//             updated_at: user.updated_at,
-//         });
-//     });
-// });
-//
-// passport.deserializeUser(function(user, cb) {
-//     process.nextTick(function() {
-//         return cb(null, user);
-//     });
-// });
-
 passport.serializeUser(function(user, done) {
     done(null, user);
 });
