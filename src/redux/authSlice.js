@@ -22,12 +22,14 @@ export const authSlice = createSlice({
             state.verify_token = action.payload.data.verify_token;
         },
         logout: (state) => {
-            state.is_authenticate = false;
-            state.is_verified = false;
-            state.username = '';
-            state.firstName = '';
-            state.lastName = '';
-            state.verify_token = '';
+            setTimeout(()=> {
+                state.is_verified = false;
+                state.is_authenticate = false;
+                state.username = '';
+                state.firstName = '';
+                state.lastName = '';
+                state.verify_token = '';
+            }, 3000);
         },
         verifyEmail: (state) => {
             state.is_verified = true;
