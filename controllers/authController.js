@@ -7,15 +7,9 @@ module.exports = {
         const newUser = new UserModel(req.body.values);
         try {
             await newUser.save();
-            req.login(newUser, function(err) {
-                if (err) {
-                    return res.status(500).json(err);
-                }
-                return res.status(200).json({
-                    status: 'Success',
-                    message: 'User saved to database and logged in successfully'
-                });
-            });
+            const token = jwt.sign({user}, 'Now I am become death, the destroyer of worlds', {expiresIn: '1w'});
+            res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
+            return res.status(200).json({message: "User registered successfully"});
         }
         catch(error) {
             res.status(500).json(error);
@@ -43,7 +37,7 @@ module.exports = {
             if(!token) return res.status(401).json({message: "User is not logged in"});
 
             const {user} = jwt.verify(token, 'Now I am become death, the destroyer of worlds');
-            const userFromDB = await UserModel.find({email: user.email});
+            const userFromDB = await UserModel.findOne({email: user.email}).exec();
             if(!userFromDB) return res.status(401).json({message: "User not found"});
             res.send(userFromDB);
         }
