@@ -6,11 +6,7 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const session = require('express-session')
 const cookieParser = require('cookie-parser');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy
-const authController = require('./controllers/authController');
 const MongoStore = require('connect-mongo');
-
 
 const app = express();
 dotenv.config();
@@ -21,7 +17,6 @@ app.use(cors());
 app.use(cookieParser());
 connectToDb();
 
-
 app.use(session({
     secret: 'Now I have become death, the destroyer of worlds',
     resave: false,
@@ -31,19 +26,6 @@ app.use(session({
     },
     store: MongoStore.create({mongoUrl: "mongodb://127.0.0.1:27017/instagram_clone"})
 }))
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(new LocalStrategy({usernameField: 'email'}, authController.authenticateUser));
-
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-    done(null, user);
-});
 
 app.use('/auth', authRoutes);
 

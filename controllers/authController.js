@@ -20,10 +20,7 @@ module.exports = {
             res.status(500).json(error);
         }
     },
-    login: (req, res) => {
-        res.send(req.user);
-    },
-    authenticateUser: async (email, password, done) => {
+    login: async (email, password, done) => {
         const user = await UserModel.findOne({email}).exec();
         if(!user) return done(null, false, {message: "User not found"});
         if(await bcrypt.compare(password, user.password)) return done(null, user);
