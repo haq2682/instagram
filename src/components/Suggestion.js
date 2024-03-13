@@ -7,7 +7,7 @@ export default function Suggestion() {
     const dispatch = useDispatch();
     const handleLogout = () => {
         axios.get('/auth/logout')
-            .then((response) => {
+            .then(() => {
                 dispatch(logout());
                 window.location.reload();
             })
