@@ -1,7 +1,7 @@
 import Logo from '../../assets/instagram-logo.svg';
 import ThemeSwitcher from '../ThemeSwitcher';
 import {useState} from 'react';
-import {useLocation} from 'react-router-dom';
+import {Link, Outlet, useLocation} from 'react-router-dom';
 import {Home} from '@styled-icons/material/Home';
 import {Search} from '@styled-icons/evaicons-solid/Search';
 import {MessageAltDetail} from '@styled-icons/boxicons-solid/MessageAltDetail';
@@ -10,24 +10,32 @@ import {Create} from '@styled-icons/ionicons-solid/Create';
 import {Settings} from '@styled-icons/ionicons-sharp/Settings';
 import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, Textarea, Badge} from "@nextui-org/react";
-import {Link, Outlet} from 'react-router-dom';
+import {
+    Badge,
+    Button,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Textarea, Tooltip,
+    useDisclosure
+} from "@nextui-org/react";
 import {Enter} from '@styled-icons/ionicons-solid/Enter';
 import {SunFill} from "@styled-icons/bootstrap/SunFill";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Moon} from "@styled-icons/heroicons-solid/Moon";
-import ImageUploading from "react-images-uploading";
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {openNotificationBar} from '../../redux/notificationBarSlice';
 
 export default function Sidebar() {
     const dispatch = useDispatch();
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [darkState, setDarkState] = useState(null);
-    const [postImages, setPostImages] = useState([]);
+    const [postFiles, setPostFiles] = useState([]);
     let location = useLocation();
-    const handleImageUpload = (imageList) => {
-        setPostImages(imageList);
+    const handleUpload = (event) => {
+        setPostFiles([...postFiles, ...event.target.files]);
     }
     return (
         <div>
@@ -116,7 +124,6 @@ export default function Sidebar() {
                             <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
                             <ModalBody className="w-full">
                                 <Textarea
-                                    isRequired
                                     label="Caption"
                                     placeholder="Enter your caption here..."
                                     className="w-full"
@@ -124,34 +131,44 @@ export default function Sidebar() {
                             </ModalBody>
                             <ModalFooter className="block">
                                 <div>
-                                    <ImageUploading
-                                        multiple
-                                        value={postImages}
-                                        onChange={handleImageUpload}
-                                        maxNumber={90}
-                                        dataURLKey="data_url"
-                                        acceptType={["jpg", "png", "heic", "hevc", "gif", "webp", "mp4", "mkv", "m4v"]}>
-                                        {({
-                                              imageList,
-                                              onImageUpload,
-                                          }) => (
-                                            <div className="upload__image-wrapper">
-                                                <div className="flex flex-wrap mb-6">
-                                                    {imageList.map((image, index) => (
-                                                        <img key={index} src={image.data_url} alt="issue"
-                                                             className="w-32 h-32 object-cover mx-1.5 my-1"/>
-                                                    ))}
-                                                </div>
-                                                <Button onClick={onImageUpload} className="w-full mb-4">
-                                                    Add photos/videos <PhotoLibrary/>
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </ImageUploading>
+                                    <div className="upload__image-wrapper">
+                                        <div className="flex flex-wrap mb-6">
+                                            {
+                                                postFiles.map((file, index) => {
+                                                    if(file.type.startsWith('image/')) {
+                                                        return <img key={index}
+                                                                    src={URL.createObjectURL(file)}
+                                                                    alt="issue"
+                                                                    className="w-32 h-32 object-cover mx-1.5 my-1"/>
+                                                    }
+                                                    else if(file.type.startsWith('video/')) {
+                                                        return (
+                                                            <video key={index} className="w-32 h-32 object-cover mx-1.5 my-1">
+                                                                <source src={URL.createObjectURL(file)}
+                                                                        type={file.type}/>
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        );
+                                                    } else return null;
+                                                })
+                                            }
+
+                                        </div>
+                                        <input id="post-file-upload"
+                                               name="post-file-upload" type="file"
+                                               className="hidden" multiple onChange={handleUpload}/>
+                                        <label htmlFor="post-file-upload"
+                                               className="cursor-pointer border border-black w-full z-40">
+                                            <Button className="w-full mb-4">
+                                                Add Photos/Videos <PhotoLibrary/>
+                                            </Button>
+                                        </label>
+
+                                    </div>
                                 </div>
                                 <Button onPress={onClose}
                                         className="w-full bg-black text-white dark:bg-white dark:text-black">
-                                    Submit <Enter/>
+                                Submit <Enter/>
                                 </Button>
                             </ModalFooter>
                         </>
