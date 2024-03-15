@@ -29,7 +29,7 @@ export default function Sidebar() {
     return (
         <div>
             <div
-                className="sidebar fixed left-0 shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-24 lg:w-1/4 xl:w-1/5">
+                className="sidebar fixed left-0 shadow-lg bg-white dark:bg-black dark:border-r-2 dark:border-neutral-600 hidden h-screen sm:block sm:w-22 lg:w-1/4 xl:w-1/5">
                 <div className="sidebar-contents">
                     <div className="logo hidden lg:block">
                         <img src={Logo} alt="Instagram Clone Logo"/>
