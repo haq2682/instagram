@@ -71,7 +71,8 @@ function App() {
             case "profile":
                 if(is_authenticated && is_verified) return <Profile/>
                 else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
+                else if(!is_authenticated) return <Navigate to={"/"}/>
+                else return <Navigate to={"/profile"}/>
 
             case "verify":
                 if(is_authenticated && !is_verified) return <VerifyEmail/>
