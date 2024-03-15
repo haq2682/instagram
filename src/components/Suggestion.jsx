@@ -2,6 +2,7 @@ import {User, Link as UserLink} from "@nextui-org/react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import {logout} from "../redux/authSlice";
+import {Link} from "react-router-dom";
 
 export default function Suggestion() {
     const dispatch = useDispatch();
@@ -20,9 +21,9 @@ export default function Suggestion() {
                 <User   
                     name={`${auth.firstName} ${auth.lastName}`}
                     description={(
-                        <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                            {auth.username}
-                        </UserLink>
+                        <Link to={"profile"}>
+                            <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                        </Link>
                     )}
                     avatarProps={{
                         src: "https://avatars.githubusercontent.com/u/30373425?v=4"
@@ -36,9 +37,9 @@ export default function Suggestion() {
                     <User   
                         name="Junior Garcia"
                         description={(
-                            <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                                @jrgarciadev
-                            </UserLink>
+                            <Link to={"profile"}>
+                                <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                            </Link>
                         )}
                         avatarProps={{
                             src: "https://avatars.githubusercontent.com/u/30373425?v=4"
@@ -50,9 +51,9 @@ export default function Suggestion() {
                     <User   
                         name="Junior Garcia"
                         description={(
-                            <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                                @jrgarciadev
-                            </UserLink>
+                            <Link to={"profile"}>
+                                <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                            </Link>
                         )}
                         avatarProps={{
                             src: "https://avatars.githubusercontent.com/u/30373425?v=4"
@@ -64,9 +65,9 @@ export default function Suggestion() {
                     <User   
                         name="Junior Garcia"
                         description={(
-                            <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                                @jrgarciadev
-                            </UserLink>
+                            <Link to={"profile"}>
+                                <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                            </Link>
                         )}
                         avatarProps={{
                             src: "https://avatars.githubusercontent.com/u/30373425?v=4"
@@ -78,9 +79,9 @@ export default function Suggestion() {
                     <User   
                         name="Junior Garcia"
                         description={(
-                            <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                                @jrgarciadev
-                            </UserLink>
+                            <Link to={"profile"}>
+                                <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                            </Link>
                         )}
                         avatarProps={{
                             src: "https://avatars.githubusercontent.com/u/30373425?v=4"
@@ -92,9 +93,9 @@ export default function Suggestion() {
                     <User   
                         name="Junior Garcia"
                         description={(
-                            <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                                @jrgarciadev
-                            </UserLink>
+                            <Link to={"profile"}>
+                                <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                            </Link>
                         )}
                         avatarProps={{
                             src: "https://avatars.githubusercontent.com/u/30373425?v=4"
@@ -106,9 +107,9 @@ export default function Suggestion() {
                     <User   
                         name="Junior Garcia"
                         description={(
-                            <UserLink href="https://twitter.com/jrgarciadev" size="sm">
-                                @jrgarciadev
-                            </UserLink>
+                            <Link to={"profile"}>
+                                <p className="text-sm text-blue-600 hover:text-blue-700 transition-color duration-200">{auth.username}</p>
+                            </Link>
                         )}
                         avatarProps={{
                             src: "https://avatars.githubusercontent.com/u/30373425?v=4"

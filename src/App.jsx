@@ -11,6 +11,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import VerifiedEmail from './pages/VerifiedEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PostPage from "./pages/PostPage";
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from "react";
 import {authenticate, verifyEmail} from './redux/authSlice';
@@ -31,6 +32,8 @@ function App() {
                 if(response.data) {
                     if(response.data.email_verified) dispatch(verifyEmail());
                     dispatch(authenticate(response));
+                    console.log(is_verified);
+                    console.log(is_authenticated);
                 }
             })
             .catch((error) => {
@@ -41,55 +44,40 @@ function App() {
             })
     }, [dispatch]);
 
+    function getAuthenticatedPage(pageComponent, verifyRedirect = "/verify", defaultRedirect = "/") {
+        if(is_authenticated && is_verified) return pageComponent;
+        else if(is_authenticated && !is_verified) return <Navigate to={verifyRedirect}/>;
+        else return <Navigate to={defaultRedirect}/>;
+    }
+
     function getPage(page) {
         switch(page) {
             case "settings":
-                if(is_authenticated && is_verified) return <Settings/>
-                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
-
+                return getAuthenticatedPage(<Settings/>);
             case "explore":
-                if(is_authenticated && is_verified) return <ExplorePosts/>
-                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
-
+                return getAuthenticatedPage(<ExplorePosts/>);
+            case "post":
+                return getAuthenticatedPage(<PostPage/>);
             case "search":
-                if(is_authenticated && is_verified) return <Search/>
-                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
-
+                return getAuthenticatedPage(<Search/>);
             case "messages":
-                if(is_authenticated && is_verified) return <Message/>
-                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
-
+                return getAuthenticatedPage(<Message/>);
             case "saved":
-                if(is_authenticated && is_verified) return <Saved/>
-                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else return <Navigate to={"/"}/>
-
+                return getAuthenticatedPage(<Saved/>);
             case "profile":
-                if(is_authenticated && is_verified) return <Profile/>
-                else if(is_authenticated && !is_verified) return <Navigate to={"/verify"}/>
-                else if(!is_authenticated) return <Navigate to={"/"}/>
-                else return <Navigate to={"/profile"}/>
-
+                return getAuthenticatedPage(<Profile/>);
             case "verify":
-                if(is_authenticated && !is_verified) return <VerifyEmail/>
-                else if(is_authenticated && is_verified) return <Navigate to={"/verified" + verify_token}/>
-                else return <Navigate to={"/"}/>
-
+                if(is_authenticated && !is_verified) return <VerifyEmail/>;
+                else if(is_authenticated && is_verified) return <Navigate to={"/verified" + verify_token}/>;
+                else return <Navigate to={"/"}/>;
             case "verified":
-                return <VerifiedEmail/>
-
+                return <VerifiedEmail/>;
             case "forgotPassword":
-                if(!is_authenticated) return <ForgotPassword/>
-                else return <Navigate to={"/"}/>
-
+                if(!is_authenticated) return <ForgotPassword/>;
+                else return <Navigate to={"/"}/>;
             case "resetPassword":
-                if(!is_authenticated && is_password_reset) return <ResetPassword/>
-                else return <Navigate to={"/"}/>
-
+                if(!is_authenticated && is_password_reset) return <ResetPassword/>;
+                else return <Navigate to={"/"}/>;
             default:
                 break;
         }
@@ -107,6 +95,7 @@ function App() {
                   <Route path="saved" element={getPage("saved")}/>
                   <Route path="profile" element={getPage("profile")}/>
                   <Route path="verify" element={getPage("verify")}/>
+                  <Route path="post" element={getPage("post")}/>
                   <Route path="verified/:verify_token" element={getPage("verified")}/>
                   <Route path="forgotpassword" element={getPage("forgotPassword")}/>
                   <Route path="resetpassword" element={getPage("resetPassword")}/>
