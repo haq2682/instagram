@@ -96,7 +96,7 @@ function App() {
                   <Route path="profile" element={getPage("profile")}/>
                   <Route path="verify" element={getPage("verify")}/>
                   <Route path="post" element={getPage("post")}/>
-                  <Route path="verified/:verify_token" element={getPage("verified")}/>
+                  <Route path="verified/:verify_token?" element={getPage("verified")}/>
                   <Route path="forgotpassword" element={getPage("forgotPassword")}/>
                   <Route path="resetpassword" element={getPage("resetPassword")}/>
               </Routes>

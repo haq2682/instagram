@@ -10,6 +10,7 @@ export default function Suggestion() {
         axios.get('/auth/logout')
             .then(() => {
                 dispatch(logout());
+                localStorage.setItem('persist:root', null);
                 window.location.reload();
             })
             .catch((error) => console.log(error));

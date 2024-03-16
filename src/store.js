@@ -1,24 +1,26 @@
 import {configureStore} from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from 'redux-persist';
-import {combineReducers} from "redux";
+// import {combineReducers} from "redux";
 import storage from 'redux-persist/lib/storage';
 import authReducer from './redux/authSlice';
 import notificationBarReducer from './redux/notificationBarSlice';
 
-const reducers = combineReducers({
-    auth: authReducer,
-    notificationBar: notificationBarReducer
-})
+// const reducers = combineReducers({
+//     auth: authReducer,
+// })
 
 const persistConfig = {
     key: 'root',
     storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, authReducer);
 
 export const store = configureStore({
-    reducer: persistedReducer,
+    reducer: {
+        auth: persistedReducer,
+        notificationBar: notificationBarReducer
+    },
     devTools: 'production'
 })
 
