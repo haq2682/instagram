@@ -1,12 +1,12 @@
 import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader} from "@nextui-org/react";
-import {EyeSlashFilledIcon} from "../assets/js/EyeSlashFilledIcon";
-import {EyeFilledIcon} from "../assets/js/EyeFilledIcon";
+import {EyeSlashFilledIcon} from "../../assets/js/EyeSlashFilledIcon";
+import {EyeFilledIcon} from "../../assets/js/EyeFilledIcon";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {Google} from "@styled-icons/bootstrap/Google";
 import {Facebook} from "@styled-icons/fa-brands/Facebook";
 import {TwitterWithCircle} from "@styled-icons/entypo-social/TwitterWithCircle";
 import axios from "axios";
-import {authenticate, verifyEmail} from "../redux/authSlice";
+import {authenticate, verifyEmail} from "../../redux/authSlice";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
 import { useFormik } from 'formik';

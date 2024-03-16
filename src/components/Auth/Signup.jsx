@@ -1,11 +1,11 @@
 import axios from 'axios';
 import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader} from "@nextui-org/react";
-import {EyeSlashFilledIcon} from "../assets/js/EyeSlashFilledIcon";
-import {EyeFilledIcon} from "../assets/js/EyeFilledIcon";
+import {EyeSlashFilledIcon} from "../../assets/js/EyeSlashFilledIcon";
+import {EyeFilledIcon} from "../../assets/js/EyeFilledIcon";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {useState} from "react";
 import {useFormik} from "formik";
-import {authenticate} from "../redux/authSlice";
+import {authenticate} from "../../redux/authSlice";
 import {useDispatch} from "react-redux";
 
 export default function Signup(props) {

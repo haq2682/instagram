@@ -1,8 +1,8 @@
 import Logo from '../assets/instagram-logo.svg';
 import {useState} from 'react';
 import {Button, useDisclosure} from "@nextui-org/react";
-import Signup from "../components/Signup";
-import Login from "../components/Login";
+import Signup from "../components/Auth/Signup";
+import Login from "../components/Auth/Login";
 
 export default function Welcome() {
 
