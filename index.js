@@ -10,12 +10,12 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const authController = require('./controllers/authController');
-
-let googleUserProfile;
+const jwt = require("jsonwebtoken");
 
 const app = express();
 dotenv.config();
 let port = process.env.EXPRESS_PORT;
+const jwt_secret = process.env.JWT_SECRET;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.use(cors());
@@ -43,11 +43,7 @@ passport.use(new GoogleStrategy({
     clientSecret: google_client_secret,
     callbackURL: "http://localhost:8000/auth/google/callback"
 },
-    function(accessToken, refreshToken, profile, done) {
-        console.log(accessToken);
-        authController.googleLogin(profile);
-        return done(null, profile);
-    }
+    authController.googleAuth
 ))
 
 app.get('/auth/google', passport.authenticate('google', {scope : ['profile', 'email']}));
@@ -55,10 +51,12 @@ app.get('/auth/google', passport.authenticate('google', {scope : ['profile', 'em
 // app.get('/auth/google', (req, res) => console.log('Working'));
 app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/google/error'}),
     function(req, res) {
-        res.redirect('/google/success');
+        const user = req.user;
+        const token = jwt.sign({user}, jwt_secret, {expiresIn: '1w'});
+        res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
+        res.redirect('http://localhost:3000');
     }
 );
-app.get('/google/success', (req, res) => res.send(googleUserProfile));
 app.get('/google/error', (req, res) => res.send("Error Logging In"));
 app.use('/auth', authRoutes);
 
