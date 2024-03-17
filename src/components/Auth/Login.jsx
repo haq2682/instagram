@@ -10,6 +10,7 @@ import {authenticate, verifyEmail} from "../../redux/authSlice";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
 import { useFormik } from 'formik';
+import {Link} from "react-router-dom";
 export default function Login(props) {
 
     const [serverError, setServerError] = useState('');
@@ -88,7 +89,7 @@ export default function Login(props) {
                                     <div className="w-full flex flex-col items-center">
                                         <span className="mb-4 text-lg">Or Log In with</span>
                                         <div className="w-[90%] flex flex-col justify-around h-full">
-                                            <Button className="my-1 text-xl py-10"><Google size="25"/>Google</Button>
+                                            <a href='http://localhost:8000/auth/google'><Button className="my-1 text-xl py-10 w-full"><Google size="25"/>Google</Button></a>
                                             <Button className="my-1 text-xl py-10"><Facebook size="25"/>Facebook</Button>
                                             <Button className="my-1 text-xl py-10"><TwitterWithCircle
                                                 size="25"/>Twitter</Button>
