@@ -1,13 +1,17 @@
 const UserModel = require('../models/User');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
+let jwt_secret = process.env.JWT_SECRET
 
 module.exports = {
     register: async (req, res) => {
         const newUser = new UserModel(req.body.values);
         try {
             await newUser.save();
-            const token = jwt.sign({user}, 'Now I am become death, the destroyer of worlds', {expiresIn: '1w'});
+            const token = jwt.sign({user}, jwt_secret, {expiresIn: '1w'});
             res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
             return res.status(200).json({message: "User registered successfully"});
         }
@@ -22,12 +26,12 @@ module.exports = {
         if(!user) return res.status(401).json({message: "User not found"});
         if(!await bcrypt.compare(password, user.password)) return res.status(401).json({message: "Incorrect Password"});
         else {
-            const token = jwt.sign({user}, 'Now I am become death, the destroyer of worlds', {expiresIn: '1w'});
+            const token = jwt.sign({user}, jwt_secret, {expiresIn: '1w'});
             res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
             return res.status(200).json(user);
         }
     },
-    googleLogin: async (profile) => {
+    googleAuth: async (accessToken, refreshToken, profile, done) => {
         const email = profile.emails[0].value;
         const user = await UserModel.findOne({email}).exec();
         if(!user) {
@@ -39,25 +43,20 @@ module.exports = {
                 return generateToken() + generateToken();
             }
 
-            const verify_token = mergeToken();
-
-            try {
-                const newUser = new UserModel({
-                    username: 'haq2682',
-                    firstName: profile.name.givenName,
-                    lastName: profile.name.familyName,
-                    email_verified: false,
-                    verify_token: verify_token,
-                })
-                await newUser.save();
-            }
-            catch(error) {
-                return error;
-            }
+            const newUser = new UserModel({
+                username: email.substring(0, email.indexOf("@")),
+                email: email,
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
+                password: mergeToken(),
+                email_verified: false,
+                verify_token: mergeToken(),
+            })
+            newUser.save();
+            return done(null, newUser);
         }
-
         else {
-
+            return done(null, user);
         }
     },
     logout: (req, res) => {
@@ -69,7 +68,7 @@ module.exports = {
             const token = req.cookies.token;
             if(!token) return res.status(401).json({message: "User is not logged in"});
 
-            const {user} = jwt.verify(token, 'Now I am become death, the destroyer of worlds');
+            const {user} = jwt.verify(token, jwt_secret);
             const userFromDB = await UserModel.findOne({email: user.email}).exec();
             if(!userFromDB) return res.status(401).json({message: "User not found"});
             res.send(userFromDB);
