@@ -27,6 +27,39 @@ module.exports = {
             return res.status(200).json(user);
         }
     },
+    googleLogin: async (profile) => {
+        const email = profile.emails[0].value;
+        const user = await UserModel.findOne({email}).exec();
+        if(!user) {
+            let generateToken = () => {
+                return Math.random().toString(35).substring(2);
+            }
+
+            let mergeToken = () => {
+                return generateToken() + generateToken();
+            }
+
+            const verify_token = mergeToken();
+
+            try {
+                const newUser = new UserModel({
+                    username: 'haq2682',
+                    firstName: profile.name.givenName,
+                    lastName: profile.name.familyName,
+                    email_verified: false,
+                    verify_token: verify_token,
+                })
+                await newUser.save();
+            }
+            catch(error) {
+                return error;
+            }
+        }
+
+        else {
+
+        }
+    },
     logout: (req, res) => {
         res.clearCookie('token');
         res.status(200).json({message: "User logged out successfully"});

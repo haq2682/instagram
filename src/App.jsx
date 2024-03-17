@@ -36,8 +36,8 @@ function App() {
                     console.log(is_authenticated);
                 }
             })
-            .catch((error) => {
-                console.log(error);
+            .catch(() => {
+                console.log('No logged in user found');
             })
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
