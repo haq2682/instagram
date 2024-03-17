@@ -26,13 +26,13 @@ const google_client_id = process.env.GOOGLE_CLIENT_ID;
 const google_client_secret = process.env.GOOGLE_CLIENT_SECRET;
 
 app.use(session({
-    secret: 'Now I have become death, the destroyer of worlds',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
         maxAge: 1000*60*60*24*7
     },
-    store: MongoStore.create({mongoUrl: "mongodb://127.0.0.1:27017/instagram_clone"})
+    store: MongoStore.create({mongoUrl: process.env.MONGODB_URI})
 }))
 
 app.use(passport.initialize());
@@ -48,7 +48,7 @@ passport.use(new GoogleStrategy({
 
 app.get('/auth/google', passport.authenticate('google', {scope : ['profile', 'email']}));
 
-// app.get('/auth/google', (req, res) => console.log('Working'));
+
 app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/google/error'}),
     function(req, res) {
         const user = req.user;
