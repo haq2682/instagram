@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
 const bcrypt = require('bcrypt');
+const Settings = require('./Settings');
 
 const saltRounds = 10;
 
@@ -113,6 +114,10 @@ userSchema.pre('save', function(next){
         this.verify_token = mergeToken();
         next();
     });
+});
+
+userSchema.pre('remove', function(next) {
+    Settings.remove({user: this._id}).exec();
 });
 
 const User = mongoose.model('User', userSchema);
