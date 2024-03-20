@@ -1,47 +1,49 @@
 import {Accordion, AccordionItem, Divider, Switch} from '@nextui-org/react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import axios from 'axios';
 
 export default function NotificationSettings() {
-    const [pushLike, setPushLike] = useState(false);
-    const [pushComment, setPushComment] = useState(true);
-    const [pushShare, setPushShare] = useState(true);
-    const [pushMention, setPushMention] = useState(false);
+    useEffect(() => {
+        axios.get('/auth/user')
+            .then((response) => {
+                setUserId(response.data._id);
+                let data = response.data.settings;
+                setSettings(data);
+            })
+            .catch((error) => console.log(error));
+    }, []);
 
-    const [emailLike, setEmailLike] = useState(true);
-    const [emailComment, setEmailComment] = useState(true);
-    const [emailShare, setEmailShare] = useState(false);
-    const [emailMention, setEmailMention] = useState(false);
+    const [userId, setUserId] = useState(null);
 
-    const handleChange = (type) => {
-        switch(type) {
-            case 'pushLike':
-                setPushLike(!pushLike);
-                break;
-            case 'pushComment':
-                setPushComment(!pushComment);
-                break;
-            case 'pushShare':
-                setPushShare(!pushShare);
-                break;
-            case 'pushMention':
-                setPushMention(!pushMention);
-                break;
-            case 'emailLike':
-                setEmailLike(!emailLike);
-                break;
-            case 'emailComment':
-                setEmailComment(!emailComment);
-                break;
-            case 'emailShare':
-                setEmailShare(!emailShare);
-                break;
-            case 'emailMention':
-                setEmailMention(!emailMention);
-                break;
-            default:
-                break;
+    const [settings, setSettings] = useState({
+        push_like: false,
+        push_comment: false,
+        push_share: false,
+        push_mention: false,
+        email_like: false,
+        email_comment: false,
+        email_share: false,
+        email_mention: false
+    });
+
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    const handleChange = async (type) => {
+        setIsDisabled(true);
+        let newSettings = { ...settings };
+        newSettings[type] = !newSettings[type];
+        setSettings(newSettings);
+        try {
+            const response = await axios.post('/settings/edit', { id: userId, [type]: newSettings[type], type: type });
+            console.log(response);
         }
-    }
+        catch(error) {
+            console.log(error);
+        }
+        finally {
+            setIsDisabled(false);
+        }
+    };
     return (
         <div className="notifications-settings">
             <form action="/src/pages/Settings" method="post">
@@ -52,52 +54,52 @@ export default function NotificationSettings() {
                         <AccordionItem key="1" title="Push Notifications Settings">
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Like</h1>
-                                <Switch color="success" isSelected={pushLike} onChange={()=>handleChange('pushLike')}>
-                                    {pushLike ? 'On' : 'Off'}
+                                <Switch color="success" isSelected={settings.push_like} onChange={()=>handleChange('push_like')} isDisabled={isDisabled}>
+                                    {settings.push_like ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Comment</h1>
-                                <Switch color="success" isSelected={pushComment} onChange={()=>handleChange('pushComment')}>
-                                    {pushComment ? 'On' : 'Off'}
+                                <Switch color="success" isSelected={settings.push_comment} onChange={()=>handleChange('push_comment')} isDisabled={isDisabled}>
+                                    {settings.push_comment ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Share</h1>
-                                <Switch color="success" isSelected={pushShare} onChange={()=>handleChange('pushShare')}>
-                                    {pushShare ? 'On' : 'Off'}
+                                <Switch color="success" isSelected={settings.push_share} onChange={()=>handleChange('push_share')} isDisabled={isDisabled}>
+                                    {settings.push_share ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Mention</h1>
-                                <Switch color="success" isSelected={pushMention} onChange={()=>handleChange('pushMention')}>
-                                    {pushMention ? 'On' : 'Off'}
+                                <Switch color="success" isSelected={settings.push_mention} onChange={()=>handleChange('push_mention')} isDisabled={isDisabled}>
+                                    {settings.push_mention ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                         </AccordionItem>
                         <AccordionItem key="2" title="Email Notifications Settings">
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Like</h1>
-                                <Switch color="danger" isSelected={emailLike} onChange={()=>handleChange('emailLike')}>
-                                    {emailLike ? 'On' : 'Off'}
+                                <Switch color="danger" isSelected={settings.email_like} onChange={()=>handleChange('email_like')} isDisabled={isDisabled}>
+                                    {settings.email_like ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Comment</h1>
-                                <Switch color="danger" isSelected={emailComment} onChange={()=>handleChange('emailComment')}>
-                                    {emailComment ? 'On' : 'Off'}
+                                <Switch color="danger" isSelected={settings.email_comment} onChange={()=>handleChange('email_comment')} isDisabled={isDisabled}>
+                                    {settings.email_comment ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Share</h1>
-                                <Switch color="danger" isSelected={emailShare} onChange={()=>handleChange('emailShare')}>
-                                    {emailShare ? 'On' : 'Off'}
+                                <Switch color="danger" isSelected={settings.email_share} onChange={()=>handleChange('email_share')} isDisabled={isDisabled}>
+                                    {settings.email_share ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg sm:text-xl my-4">Mention</h1>
-                                <Switch color="danger" isSelected={emailMention} onChange={()=>handleChange('emailMention')}>
-                                    {emailMention ? 'On' : 'Off'}
+                                <Switch color="danger" isSelected={settings.email_mention} onChange={()=>handleChange('email_mention')} isDisabled={isDisabled}>
+                                    {settings.email_mention ? 'On' : 'Off'}
                                 </Switch>
                             </div>
                         </AccordionItem>

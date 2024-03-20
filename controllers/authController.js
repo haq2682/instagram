@@ -1,17 +1,21 @@
-const UserModel = require('../models/User');
+const User = require('../models/User');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const Settings = require("../models/Settings");
 
 dotenv.config();
 let jwt_secret = process.env.JWT_SECRET
 
 module.exports = {
     register: async (req, res) => {
-        const newUser = new UserModel(req.body.values);
+        const newUser = new User(req.body.values);
         try {
+            const newSettings = new Settings({user: newUser._id});
+            await newSettings.save();
+            newUser.settings = newSettings._id;
             await newUser.save();
-            const token = jwt.sign({user}, jwt_secret, {expiresIn: '1w'});
+            const token = jwt.sign({newUser}, jwt_secret, {expiresIn: '1w'});
             res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
             return res.status(200).json({message: "User registered successfully"});
         }
@@ -22,7 +26,7 @@ module.exports = {
     login: async (req, res) => {
         const email = req.body.email;
         const password = req.body.password;
-        const user = await UserModel.findOne({email}).exec();
+        const user = await User.findOne({email}).exec();
         if(!user) return res.status(401).json({message: "User not found"});
         if(!await bcrypt.compare(password, user.password)) return res.status(401).json({message: "Incorrect Password"});
         else {
@@ -41,7 +45,7 @@ module.exports = {
             if(!token) return res.status(401).json({message: "User is not logged in"});
 
             const {user} = jwt.verify(token, jwt_secret);
-            const userFromDB = await UserModel.findOne({email: user.email}).exec();
+            const userFromDB = await User.findOne({email: user.email}).populate('settings').exec();
             if(!userFromDB) return res.status(401).json({message: "User not found"});
             res.send(userFromDB);
         }
@@ -51,7 +55,7 @@ module.exports = {
     },
     verifyEmail: async (req, res) => {
         const token = req.params.verify_token;
-        const user = await UserModel.findOne({verify_token: token});
+        const user = await User.findOne({verify_token: token});
         if(!user) return res.status(404).json({message: "User not found"});
         if(user.email_verified) return res.status(200).json({message: "User is already verified"});
         user.email_verified = true;

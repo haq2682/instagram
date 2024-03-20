@@ -22,6 +22,8 @@ import {Paperclip} from "@styled-icons/feather/Paperclip";
 import {ArrowForward} from "@styled-icons/typicons/ArrowForward";
 import {Reply} from "@styled-icons/fa-solid/Reply";
 import {Heart} from "@styled-icons/boxicons-solid/Heart";
+import {DeleteForever} from "@styled-icons/material/DeleteForever";
+import {CommentEdit} from "@styled-icons/fluentui-system-regular/CommentEdit";
 import "../../assets/css/Chat.css";
 
 export default function Chat() {
@@ -104,14 +106,23 @@ export default function Chat() {
                                 </div>
                                 <div className="message w-full flex justify-end">
                                     <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
-                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-600">
-                                            <Heart size="25"/></div>
+                                        <div
+                                            className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-600">
+                                            <Heart size="25"/>
+                                        </div>
                                         <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
-                                            <Reply size="25" onClick={()=>setReplyingToMessage(messages[0])}/></div>
+                                            <Reply size="25" onClick={() => setReplyingToMessage(messages[0])}/>
+                                        </div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <DeleteForever size="25"/>
+                                        </div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <CommentEdit size="25"/>
+                                        </div>
                                     </div>
                                     <div
                                         className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6">
-                                        <div
+                                    <div
                                             className="recepient-reply text-xs bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2">{messages[0]}</div>
                                         <p className="text-white">{messages[1]}</p>
                                         <div
@@ -141,6 +152,12 @@ export default function Chat() {
                                             <Heart size="25"/></div>
                                         <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
                                             <Reply size="25" onClick={() => setReplyingToMessage(messages[0])}/></div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <DeleteForever size="25"/>
+                                        </div>
+                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60">
+                                            <CommentEdit size="25"/>
+                                        </div>
                                     </div>
                                     <div
                                         className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6">

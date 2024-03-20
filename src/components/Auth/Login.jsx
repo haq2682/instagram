@@ -4,13 +4,11 @@ import {EyeFilledIcon} from "../../assets/js/EyeFilledIcon";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {Google} from "@styled-icons/bootstrap/Google";
 import {Facebook} from "@styled-icons/fa-brands/Facebook";
-import {TwitterWithCircle} from "@styled-icons/entypo-social/TwitterWithCircle";
 import axios from "axios";
 import {authenticate, verifyEmail} from "../../redux/authSlice";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
 import { useFormik } from 'formik';
-import {Link} from "react-router-dom";
 export default function Login(props) {
 
     const [serverError, setServerError] = useState('');
@@ -91,8 +89,6 @@ export default function Login(props) {
                                         <div className="w-[90%] flex flex-col justify-around h-full">
                                             <a href='http://localhost:8000/googleAuth/google'><Button className="my-1 text-xl py-10 w-full"><Google size="25"/>Google</Button></a>
                                             <a href='http://localhost:8000/facebookAuth/facebook'><Button className="my-1 text-xl py-10 w-full"><Facebook size="25"/>Facebook</Button></a>
-                                            <Button className="my-1 text-xl py-10"><TwitterWithCircle
-                                                size="25"/>Twitter</Button>
                                         </div>
                                     </div>
                                 </div>
