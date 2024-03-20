@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
 const bcrypt = require('bcrypt');
+
 const saltRounds = 10;
 
 const userSchema = new Schema({
@@ -79,6 +80,10 @@ const userSchema = new Schema({
     email_verified: {
         type: Boolean,
         default: false,
+    },
+    settings: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Settings'
     },
     created_at: {
         type: Date,

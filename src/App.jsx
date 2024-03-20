@@ -32,8 +32,6 @@ function App() {
                 if(response.data) {
                     if(response.data.email_verified) dispatch(verifyEmail());
                     dispatch(authenticate(response));
-                    console.log(is_verified);
-                    console.log(is_authenticated);
                 }
             })
             .catch(() => {
