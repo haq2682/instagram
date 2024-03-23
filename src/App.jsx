@@ -80,27 +80,29 @@ function App() {
                 break;
         }
     }
-  return (
-      <main>
-          {loader ? <WelcomeLoader/> : null}
-          <BrowserRouter>
-              <Routes>
-                  <Route index element={<Home/>}/>
-                  <Route path="settings" element={getPage("settings")}/>
-                  <Route path="explore" element={getPage("explore")}/>
-                  <Route path="search" element={getPage("search")}/>
-                  <Route path="messages" element={getPage("messages")}/>
-                  <Route path="saved" element={getPage("saved")}/>
-                  <Route path="profile" element={getPage("profile")}/>
-                  <Route path="verify" element={getPage("verify")}/>
-                  <Route path="post" element={getPage("post")}/>
-                  <Route path="verified/:verify_token?" element={getPage("verified")}/>
-                  <Route path="forgotpassword" element={getPage("forgotPassword")}/>
-                  <Route path="resetpassword" element={getPage("resetPassword")}/>
-              </Routes>
-          </BrowserRouter>
-      </main>
-  );
+    return (
+        <main>
+            {loader ? <WelcomeLoader/> : null}
+            <BrowserRouter>
+                <Routes>
+                    <Route index element={<Home/>}/>
+                    <Route path="settings" element={getPage("settings")}/>
+                    <Route path="explore" element={getPage("explore")}/>
+                    <Route path="search" element={getPage("search")}/>
+                    <Route path="messages" element={getPage("messages")}/>
+                    <Route path="saved" element={getPage("saved")}/>
+                    <Route path="profile" element={getPage("profile")}/>
+                    <Route path="verify" element={getPage("verify")}/>
+                    <Route path="post" element={getPage("post")}/>
+                    <Route path="verified">
+                        <Route path=":verified_token" element={getPage("verified")}/>
+                    </Route>
+                    <Route path="forgotpassword" element={getPage("forgotPassword")}/>
+                    <Route path="resetpassword" element={getPage("resetPassword")}/>
+                </Routes>
+            </BrowserRouter>
+        </main>
+    );
 }
 
 export default App;

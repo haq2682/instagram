@@ -1,23 +1,31 @@
 import {Button} from "@nextui-org/react";
 import {useState, useEffect} from "react";
+import {useSelector} from 'react-redux';
+import axios from 'axios';
 
 export default function VerifyEmail() {
+    const username = useSelector(state => state.auth.username);
     const [time, setTime] = useState(0);
     const handleSend = () => {
+        axios.post('/user/generate_token', {username: username})
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error));
         setTime(60);
         localStorage.emailResendTime = time;
     }
 
     useEffect(() => {
-        const getTime = localStorage.emailResendTime - 1;
-        if(time > 0) {
-            const interval = setInterval(() => {
-                setTime(time - 1)
-                localStorage.emailResendTime = time;
-            }, 1000);
-            return () => clearInterval(interval);
+        if(localStorage.emailResendTime) {
+            const getTime = localStorage.emailResendTime - 1;
+            if(time > 0) {
+                const interval = setInterval(() => {
+                    setTime(time - 1)
+                    localStorage.emailResendTime = time;
+                }, 1000);
+                return () => clearInterval(interval);
+            }
+            setTime(getTime);
         }
-        setTime(getTime);
     }, [time]);
 
     return (

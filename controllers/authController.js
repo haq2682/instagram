@@ -43,7 +43,6 @@ module.exports = {
         try {
             const token = req.cookies.token;
             if(!token) return res.status(401).json({message: "User is not logged in"});
-
             const {user} = jwt.verify(token, jwt_secret);
             const userFromDB = await User.findOne({email: user.email}).populate('settings').exec();
             if(!userFromDB) return res.status(401).json({message: "User not found"});
@@ -60,12 +59,12 @@ module.exports = {
         if(user.email_verified) return res.status(200).json({message: "User is already verified"});
         user.email_verified = true;
         try {
-             await user.save();
-             res.status(200).json({message: "User verified successfully"});
+            await user.save();
+            res.status(200).json({message: "User verified successfully"});
         }
         catch(error) {
-             console.log(error);
-             res.status(500).json(error);
+            console.log(error);
+            res.status(500).json(error);
         }
     }
 }
