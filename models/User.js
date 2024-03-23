@@ -110,7 +110,6 @@ userSchema.pre('save', function(next){
         let mergeToken = () => {
             return generateToken() + generateToken();
         }
-
         this.verify_token = mergeToken();
         next();
     });

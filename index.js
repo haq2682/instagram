@@ -3,14 +3,16 @@ const bodyParser = require('body-parser');
 const connectToDb = require('./db_config/db');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const authRoutes = require('./routes/authRoutes');
-const googleAuthRoutes = require('./routes/googleAuthRoutes');
-const facebookAuthRoutes = require('./routes/facebookAuthRoutes');
-const settingsRoutes = require('./routes/settingsRoutes');
 const session = require('express-session')
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
+
+const authRoutes = require('./routes/authRoutes');
+const googleAuthRoutes = require('./routes/googleAuthRoutes');
+const facebookAuthRoutes = require('./routes/facebookAuthRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 dotenv.config();
@@ -38,6 +40,7 @@ app.use('/googleAuth', googleAuthRoutes);
 app.use('/facebookAuth', facebookAuthRoutes);
 app.use('/auth', authRoutes);
 app.use('/settings', settingsRoutes);
+app.use('/user', userRoutes);
 
 passport.serializeUser(function(user, done) {
     done(null, user);
