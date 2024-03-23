@@ -34,7 +34,7 @@ export default function NotificationSettings() {
         newSettings[type] = !newSettings[type];
         setSettings(newSettings);
         try {
-            const response = await axios.post('/settings/edit', { id: userId, [type]: newSettings[type], type: type });
+            const response = await axios.post('/settings/edit_notifications', { id: userId, [type]: newSettings[type], type: type });
             console.log(response);
         }
         catch(error) {
