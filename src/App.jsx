@@ -66,7 +66,7 @@ function App() {
                 return getAuthenticatedPage(<Profile/>);
             case "verify":
                 if(is_authenticated && !is_verified) return <VerifyEmail/>;
-                else if(is_authenticated && is_verified) return <Navigate to={"/verified" + verify_token}/>;
+                else if(is_authenticated && is_verified) return <Navigate to={"/verified/" + verify_token}/>;
                 else return <Navigate to={"/"}/>;
             case "verified":
                 return <VerifiedEmail/>;

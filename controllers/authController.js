@@ -40,17 +40,27 @@ module.exports = {
         res.status(200).json({message: "User logged out successfully"});
     },
     getUser: async (req, res) => {
-        try {
-            const token = req.cookies.token;
-            if(!token) return res.status(401).json({message: "User is not logged in"});
-            const {user} = jwt.verify(token, jwt_secret);
-            const userFromDB = await User.findOne({email: user.email}).populate('settings').exec();
-            if(!userFromDB) return res.status(401).json({message: "User not found"});
-            res.send(userFromDB);
-        }
-        catch(error) {
-            res.status(500).json({message: error});
-        }
+        // try {
+        //     const token = req.cookies.token;
+        //     if(!token) return res.status(401).json({message: "User is not logged in"});
+        //     const {user} = jwt.verify(token, jwt_secret);
+        //     const userFromDB = await User.findOne({email: user.email}).populate('settings').exec();
+        //     if(!userFromDB) return res.status(401).json({message: "User not found"});
+        //     res.send(userFromDB);
+        // }
+        // catch(error) {
+        //     res.status(500).json({message: error});
+        // }
+        res.send(req.user);
+    },
+    attachUser: async (req, res, next) => {
+        const token = req.cookies.token;
+        if(!token) return res.sendStatus(401).json({message: "User is not logged in"});
+        const {user} = jwt.verify(token, jwt_secret);
+        const userFromDB = await User.findOne({_id: user._id}).populate('settings').exec();
+        if(!userFromDB) return res.sendStatus(500).json({message: "Invalid Token"});
+        req.user = userFromDB;
+        next();
     },
     verifyEmail: async (req, res) => {
         const token = req.params.verify_token;

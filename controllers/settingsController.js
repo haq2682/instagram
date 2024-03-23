@@ -1,7 +1,8 @@
 const Settings = require('../models/Settings');
+const User = require("../models/User");
 
 module.exports = {
-    edit: async (req, res) => {
+    editNotifications: async (req, res) => {
         const setting = await Settings.findOne({user: req.body.id});
         const resType = req.body.type;
         setting[resType] = req.body[resType];
@@ -13,5 +14,12 @@ module.exports = {
             console.log(error);
             res.send(500);
         }
+    },
+    togglePrivacy: async (req, res) => {
+        const email = req.user.email;
+        const user = await User.findOne({email: email});
+        user.private = req.body.privacy;
+        await user.save();
+        res.sendStatus(200);
     }
 }
