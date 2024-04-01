@@ -7,16 +7,14 @@ import {verifyEmail} from "../redux/authSlice";
 export default function VerifiedEmail() {
     const dispatch = useDispatch();
     const {verify_token} = useParams();
-    const [status, setStatus] = useState(true);
+    const [status, setStatus] = useState(false);
     useEffect(() => {
         axios.post('/auth/verify/' + verify_token)
             .then(() => {
                 setStatus(true);
                 dispatch(verifyEmail());
             })
-            .catch(() => {
-                setStatus(false);
-            });
+            .catch(() => setStatus(false));
     }, [dispatch, verify_token]);
 
     if(status) {
