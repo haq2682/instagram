@@ -55,7 +55,7 @@ module.exports = {
     },
     attachUser: async (req, res, next) => {
         const token = req.cookies.token;
-        if(!token) return res.sendStatus(401).json({message: "User is not logged in"});
+        if(!token) return res.sendStatus(401);
         const {user} = jwt.verify(token, jwt_secret);
         const userFromDB = await User.findOne({_id: user._id}).populate('settings').exec();
         if(!userFromDB) return res.sendStatus(500).json({message: "Invalid Token"});
@@ -64,6 +64,7 @@ module.exports = {
     },
     verifyEmail: async (req, res) => {
         const token = req.params.verify_token;
+        console.log(token);
         const user = await User.findOne({verify_token: token});
         if(!user) return res.status(404).json({message: "User not found"});
         if(user.email_verified) return res.status(200).json({message: "User is already verified"});
