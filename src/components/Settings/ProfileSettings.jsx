@@ -23,6 +23,7 @@ export default function ProfileSettings() {
     const [pfpChangeOpen, setPfpChangeOpen] = useState(false);
     const [usernameChangeOpen, setUsernameChangeOpen] = useState(false);
     const [nameChangeOpen, setNameChangeOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get('/auth/user')
@@ -32,6 +33,7 @@ export default function ProfileSettings() {
                 setLastName(response.data.lastName);
                 setWebsite(response.data.website);
                 setGender(response.data.gender);
+                setLoading(false);
             })
             .catch((error) => console.log(error));
     }, []);
@@ -40,6 +42,10 @@ export default function ProfileSettings() {
     }
 
     const genders = ['Male', 'Female', 'Prefer not to Say'];
+
+    if(loading) {
+        return <div className="flex justify-center items-center h-full"><div className="loader"></div></div>;
+    }
     return (
         <div className="profile-settings">
             <form action="/src/pages/Settings" method="post">
@@ -51,8 +57,8 @@ export default function ProfileSettings() {
                         <img src={PFP} alt="profile"
                              className="h-10 w-10 sm:h-14 sm:w-14 lg:h-18 lg:w-18 rounded-full"/>
                         <div className="mx-3 self-center">
-                            <h1 className="font-bold text-sm sm:text-lg">{username}<span><Edit size="20"/></span></h1>
-                            <p className="text-xs sm:text-sm">{firstName} {lastName} <span><Edit size="15"/></span></p>
+                            <h1 className="font-bold text-sm sm:text-lg">{username}<span className="hover:text-neutral-600 dark:hover:text-neutral-400 cursor-pointer transition-colors duration-200"><Edit size="20"/></span></h1>
+                            <p className="text-xs sm:text-sm">{firstName} {lastName} <span className="hover:text-neutral-600 dark:hover:text-neutral-400 cursor-pointer transition-colors duration-200"><Edit size="15"/></span></p>
                         </div>
                     </div>
                     <span className="sm:mt-2"><Button onClick={() => setPfpChangeOpen(true)}

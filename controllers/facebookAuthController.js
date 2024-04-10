@@ -1,5 +1,6 @@
 const UserModel = require('../models/User');
 const dotenv = require('dotenv');
+const Settings = require("../models/Settings");
 
 dotenv.config();
 
@@ -25,7 +26,10 @@ module.exports = {
                 email_verified: false,
                 verify_token: mergeToken(),
             })
-            newUser.save();
+            const newSettings = new Settings({user: newUser._id});
+            await newSettings.save();
+            newUser.settings = newSettings._id;
+            await newUser.save();
             return done(null, newUser);
         }
         else {

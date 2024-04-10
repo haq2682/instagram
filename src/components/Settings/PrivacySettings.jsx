@@ -5,9 +5,14 @@ import axios from 'axios';
 export default function PrivacySettings() {
     const [privateAccount, setPrivateAccount] = useState(false);
     const [isDisabled, setIsDisabled] = useState(false);
+    const [loading, setLoading] = useState(true);
     const handleChange = () => {
         setIsDisabled(true);
-        axios.post('/settings/toggle_privacy', {privacy: !privateAccount});
+        axios.put('/settings/toggle_privacy', {privacy: !privateAccount}, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
         setPrivateAccount(!privateAccount);
         setIsDisabled(false);
     }
@@ -19,8 +24,15 @@ export default function PrivacySettings() {
                 setPrivateAccount(response.data.private);
             })
             .catch((error) => console.log(error))
-            .finally(()=>setIsDisabled(false));
+            .finally(()=> {
+                setIsDisabled(false);
+                setLoading(false);
+            });
     }, []);
+
+    if(loading) {
+        return <div className="flex justify-center items-center h-full"><div className="loader"></div></div>;
+    }
 
     return (
         <div className="privacy-settings">

@@ -3,17 +3,8 @@ import {useEffect, useState} from 'react';
 import axios from 'axios';
 
 export default function NotificationSettings() {
-    useEffect(() => {
-        axios.get('/auth/user')
-            .then((response) => {
-                setUserId(response.data._id);
-                let data = response.data.settings;
-                setSettings(data);
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
     const [userId, setUserId] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const [settings, setSettings] = useState({
         push_like: false,
@@ -26,6 +17,17 @@ export default function NotificationSettings() {
         email_mention: false
     });
 
+    useEffect(() => {
+        axios.get('/auth/user')
+            .then((response) => {
+                setUserId(response.data._id);
+                let data = response.data.settings;
+                setSettings(data);
+                setLoading(false);
+            })
+            .catch((error) => console.log(error));
+    }, []);
+
     const [isDisabled, setIsDisabled] = useState(false);
 
     const handleChange = async (type) => {
@@ -34,7 +36,11 @@ export default function NotificationSettings() {
         newSettings[type] = !newSettings[type];
         setSettings(newSettings);
         try {
-            const response = await axios.post('/settings/edit_notifications', { id: userId, [type]: newSettings[type], type: type });
+            const response = await axios.put('/settings/edit_notifications', { id: userId, [type]: newSettings[type], type: type }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
             console.log(response);
         }
         catch(error) {
@@ -44,6 +50,11 @@ export default function NotificationSettings() {
             setIsDisabled(false);
         }
     };
+
+    if(loading) {
+        return <div className="flex justify-center items-center h-full"><div className="loader"></div></div>
+    }
+
     return (
         <div className="notifications-settings">
             <form action="/src/pages/Settings" method="post">

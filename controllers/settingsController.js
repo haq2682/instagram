@@ -8,11 +8,11 @@ module.exports = {
         setting[resType] = req.body[resType];
         try {
             await setting.save();
-            res.send(200);
+            res.sendStatus(200);
         }
         catch(error) {
             console.log(error);
-            res.send(500);
+            res.sendStatus(500);
         }
     },
     togglePrivacy: async (req, res) => {
