@@ -4,6 +4,10 @@ const initialState = {
     username: '',
     firstName: '',
     lastName: '',
+    website: '',
+    gender: '',
+    bio: '',
+    email: '',
     is_verified: false,
     is_authenticated: false,
     is_password_reset: false,
@@ -20,6 +24,10 @@ export const authSlice = createSlice({
             state.firstName = action.payload.data.firstName;
             state.lastName = action.payload.data.lastName;
             state.verify_token = action.payload.data.verify_token;
+            state.website = action.payload.data.website;
+            state.gender = action.payload.data.gender;
+            state.bio = action.payload.data.bio;
+            state.email = action.payload.data.email;
         },
         logout: (state) => {
             setTimeout(()=> {
@@ -29,10 +37,17 @@ export const authSlice = createSlice({
                 state.firstName = '';
                 state.lastName = '';
                 state.verify_token = '';
+                state.website = '';
+                state.gender = '';
+                state.bio = '';
+                state.email = '';
             }, 3000);
         },
         verifyEmail: (state) => {
             state.is_verified = true;
+        },
+        unVerifyEmail: (state) => {
+            state.is_verified = false;
         },
         togglePasswordReset: (state) => {
             state.is_password_reset = !state.is_password_reset;
@@ -40,5 +55,5 @@ export const authSlice = createSlice({
     }
 })
 
-export const {authenticate, logout, verifyEmail, togglePasswordReset} = authSlice.actions;
+export const {authenticate, logout, verifyEmail, togglePasswordReset, unVerifyEmail} = authSlice.actions;
 export default authSlice.reducer;
