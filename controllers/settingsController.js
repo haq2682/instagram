@@ -6,6 +6,7 @@ module.exports = {
         const setting = await Settings.findOne({user: req.body.id});
         const resType = req.body.type;
         setting[resType] = req.body[resType];
+        setting.updated_at = new Date();
         try {
             await setting.save();
             res.sendStatus(200);
@@ -19,6 +20,7 @@ module.exports = {
         const email = req.user.email;
         const user = await User.findOne({email: email});
         user.private = req.body.privacy;
+        user.updated_at = new Date();
         await user.save();
         res.sendStatus(200);
     }

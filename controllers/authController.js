@@ -64,7 +64,6 @@ module.exports = {
     },
     verifyEmail: async (req, res) => {
         const token = req.params.verify_token;
-        console.log(token);
         const user = await User.findOne({verify_token: token});
         if(!user) return res.status(404).json({message: "User not found"});
         if(user.email_verified) return res.status(200).json({message: "User is already verified"});
