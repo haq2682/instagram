@@ -86,6 +86,10 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Settings'
     },
+    profile_picture: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Photo',
+    },
     created_at: {
         type: Date,
         default: new Date(),

@@ -3,24 +3,36 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
+const Photo = require("../models/Photo");
+const fs = require('fs');
+let imageFile = fs.readFileSync('./uploads/pfp/default.png');
+imageFile = imageFile.toString('base64');
 
 dotenv.config();
 let jwt_secret = process.env.JWT_SECRET
 
 module.exports = {
     register: async (req, res) => {
-        const newUser = new User(req.body.values);
+        const newUser = new User(req.body);
         try {
             const newSettings = new Settings({user: newUser._id});
             await newSettings.save();
-            newUser.settings = newSettings._id;
+            const defaultPhoto = new Photo({
+                filename: 'default.png',
+                contentType: 'image/png',
+                data: imageFile,
+                user: newUser._id
+            });
+            await defaultPhoto.save();
+            newUser.settings = newSettings;
+            newUser.profile_picture = defaultPhoto;
             await newUser.save();
             const token = jwt.sign({newUser}, jwt_secret, {expiresIn: '1w'});
             res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
             return res.status(200).json({message: "User registered successfully"});
         }
         catch(error) {
-            res.status(500).json(error);
+            res.status(400).json(error);
         }
     },
     login: async (req, res) => {
@@ -57,8 +69,8 @@ module.exports = {
         const token = req.cookies.token;
         if(!token) return res.sendStatus(401);
         const {user} = jwt.verify(token, jwt_secret);
-        const userFromDB = await User.findOne({_id: user._id}).populate('settings').exec();
-        if(!userFromDB) return res.sendStatus(500).json({message: "Invalid Token"});
+        const userFromDB = await User.findOne({_id: user._id}).populate('settings').populate('profile_picture').exec();
+        if(!userFromDB) return res.status(500).json({message: "Invalid Token"});
         req.user = userFromDB;
         next();
     },

@@ -27,6 +27,7 @@ export default function ProfileSettings() {
         gender: null,
         bio: null,
         email: null,
+        profile_picture: null,
     });
     const [auth, setAuth] = useState({
         username: state.username,
@@ -36,6 +37,7 @@ export default function ProfileSettings() {
         gender: state.gender,
         bio: state.bio,
         email: state.email,
+        profile_picture: state.profile_picture
     });
     const [pfpChangeOpen, setPfpChangeOpen] = useState(false);
     const [usernameChangeOpen, setUsernameChangeOpen] = useState(false);
@@ -150,7 +152,8 @@ export default function ProfileSettings() {
                             lastName: null,
                             website: null,
                             gender: null,
-                            bio: null
+                            bio: null,
+                            profile_picture: null,
                         });
                     });
             }
@@ -170,8 +173,8 @@ export default function ProfileSettings() {
             <div
                 className="profile-photo w-full my-8 flex justify-between rounded-lg bg-neutral-200 dark:bg-neutral-800 p-4">
                 <div className="flex mr-10">
-                    <img src={PFP} alt="profile"
-                         className="h-10 w-10 sm:h-14 sm:w-14 lg:h-18 lg:w-18 rounded-full"/>
+                    <img src={`data:${auth.profile_picture.contentType};base64,${auth.profile_picture.data}`} alt="profile"
+                         className="h-10 w-10 sm:h-14 sm:w-14 lg:h-18 lg:w-18 rounded-full object-cover"/>
                     <div className="mx-3 self-center">
                         <h1 className="font-bold text-sm sm:text-lg">{auth.username}<span
                             onClick={() => setUsernameChangeOpen(true)}

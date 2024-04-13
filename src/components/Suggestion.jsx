@@ -1,4 +1,4 @@
-import {User, Link as UserLink} from "@nextui-org/react";
+import {User} from "@nextui-org/react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import {logout} from "../redux/authSlice";
@@ -27,7 +27,7 @@ export default function Suggestion() {
                         </Link>
                     )}
                     avatarProps={{
-                        src: "https://avatars.githubusercontent.com/u/30373425?v=4"
+                        src: `data:${auth.profile_picture.contentType};base64,${auth.profile_picture.data}`
                     }}
                 />
                 <div onClick={handleLogout} className="float-end mt-3 text-blue-500 hover:text-blue-600 cursor-pointer transition-all duration-100 text-sm">Log Out</div>

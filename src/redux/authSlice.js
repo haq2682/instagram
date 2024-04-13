@@ -8,6 +8,7 @@ const initialState = {
     gender: '',
     bio: '',
     email: '',
+    profile_picture: null,
     is_verified: false,
     is_authenticated: false,
     is_password_reset: false,
@@ -28,6 +29,7 @@ export const authSlice = createSlice({
             state.gender = action.payload.data.gender;
             state.bio = action.payload.data.bio;
             state.email = action.payload.data.email;
+            state.profile_picture = action.payload.data.profile_picture;
         },
         logout: (state) => {
             setTimeout(()=> {
@@ -41,6 +43,7 @@ export const authSlice = createSlice({
                 state.gender = '';
                 state.bio = '';
                 state.email = '';
+                state.profile_picture = null;
             }, 3000);
         },
         verifyEmail: (state) => {
