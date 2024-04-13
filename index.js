@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const connectToDb = require('./db_config/db');
+const {connectToDb} = require('./db_config/db');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const session = require('express-session')
@@ -19,6 +19,7 @@ dotenv.config();
 let port = process.env.EXPRESS_PORT;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+app.use('/uploads', express.static('uploads'));
 app.use(cors());
 app.use(cookieParser());
 connectToDb();

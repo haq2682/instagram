@@ -1,6 +1,9 @@
 const UserModel = require('../models/User');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
+const Photo = require("../models/Photo");
+const fs = require('fs');
+let imageFile = fs.readFileSync('./uploads/pfp/default.png');
 
 dotenv.config();
 
@@ -27,8 +30,16 @@ module.exports = {
                 verify_token: mergeToken(),
             })
             const newSettings = new Settings({user: newUser._id});
+            const defaultPhoto = new Photo({
+                filename: 'default.png',
+                contentType: 'image/png',
+                data: imageFile,
+                user: newUser._id
+            });
             await newSettings.save();
-            newUser.settings = newSettings._id;
+            await defaultPhoto.save();
+            newUser.settings = newSettings;
+            newUser.profile_picture = defaultPhoto;
             await newUser.save();
             return done(null, newUser);
         }

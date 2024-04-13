@@ -44,15 +44,11 @@ export default function Signup(props) {
         onSubmit: async (values) => {
             setSubmitLoader(true);
             try {
-                const response = await axios.post('/auth/register', {
-                    values
-                });
-                console.log(response);
+                const response = await axios.post('/auth/register', values);
                 const user = await axios.post('/auth/login', {email: values.email, password: values.password});
                 dispatch(authenticate(user));
             }
             catch(error) {
-                console.log(error.response.data.keyPattern.username);
                 if(error.response.data.keyPattern.username) setUsernameError(`The Username "${error.response.data.keyValue.username}" is already taken. Please try a different Username`);
                 else if(error.response.data.keyPattern.email) setEmailError(`The Email "${error.response.data.keyValue.email}" is already registered. Please try logging in`);
                 else setServerError(error.response.data);
