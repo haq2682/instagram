@@ -1,4 +1,3 @@
-import PFP from '../../assets/profile-photo.png';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {
@@ -166,6 +165,8 @@ export default function ProfileSettings() {
 
     const genders = ['Male', 'Female', 'Prefer not to Say'];
 
+    console.log(auth.profile_picture);
+
     return (
         <div className="profile-settings">
             <h1 className="font-black text-lg sm:text-2xl my-4">Profile Settings</h1>
@@ -254,7 +255,7 @@ export default function ProfileSettings() {
                     {() => (
                         <>
                             <ModalHeader className="flex justify-center">
-                                Change Username
+                                Change Name
                             </ModalHeader>
                             <ModalBody>
                                 <div className="pb-2 flex flex-col">

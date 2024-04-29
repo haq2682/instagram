@@ -3,6 +3,8 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
 const bcrypt = require('bcrypt');
 const Settings = require('./Settings');
+const Photo = require('./Photo');
+const crypto = require("crypto");
 
 const saltRounds = 10;
 
@@ -107,20 +109,14 @@ userSchema.pre('save', function(next){
     bcrypt.hash(this.password, saltRounds, (error, salt) => {
         if(error) return next(error);
         this.password = salt;
-        let generateToken = () => {
-            return Math.random().toString(35).substring(2);
-        }
-
-        let mergeToken = () => {
-            return generateToken() + generateToken();
-        }
-        this.verify_token = mergeToken();
+        this.verify_token = crypto.randomBytes(16).toString('hex');
         next();
     });
 });
 
 userSchema.pre('remove', function(next) {
     Settings.remove({user: this._id}).exec();
+    Photo.remove({user: this._id}).exec();
 });
 
 const User = mongoose.model('User', userSchema);

@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const crypto = require("crypto");
 
 module.exports = {
     generateNewToken: async (req, res) => {
@@ -6,14 +7,7 @@ module.exports = {
             const username = req.body.username;
             const user = await User.findOne({username}).exec();
             if(user) {
-                let generateToken = () => {
-                    return Math.random().toString(35).substring(2);
-                }
-    
-                let mergeToken = () => {
-                    return generateToken() + generateToken();
-                }
-                user.verify_token = mergeToken();
+                user.verify_token = crypto.randomBytes(16).toString('hex');
                 await user.save();
                 res.status(200).json({message: 'Token renewed successfully'});
             }
