@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
 const Photo = require("../models/Photo");
 const fs = require('fs');
-let imageFile = fs.readFileSync('./uploads/pfp/default.png');
+let imageFile = fs.readFileSync('./uploads/pfp/default.jpg');
 imageFile = imageFile.toString('base64');
 
 dotenv.config();
@@ -18,8 +18,8 @@ module.exports = {
             const newSettings = new Settings({user: newUser._id});
             await newSettings.save();
             const defaultPhoto = new Photo({
-                filename: 'default.png',
-                contentType: 'image/png',
+                filename: 'default.jpg',
+                contentType: 'image/jpg',
                 data: imageFile,
                 user: newUser._id
             });

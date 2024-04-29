@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
 const Photo = require("../models/Photo");
 const fs = require('fs');
-let imageFile = fs.readFileSync('./uploads/pfp/default.png');
+const crypto = require("crypto");
+let imageFile = fs.readFileSync('./uploads/pfp/default.jpg');
 
 dotenv.config();
 
@@ -12,13 +13,7 @@ module.exports = {
         const email = profile.emails[0].value;
         const user = await UserModel.findOne({email}).exec();
         if(!user) {
-            let generateToken = () => {
-                return Math.random().toString(35).substring(2);
-            }
-
-            let mergeToken = () => {
-                return generateToken() + generateToken();
-            }
+            const token = crypto.randomBytes(16).toString('hex');
 
             const newUser = new UserModel({
                 username: email.substring(0, email.indexOf("@")),
@@ -27,12 +22,12 @@ module.exports = {
                 lastName: profile.name.familyName,
                 password: mergeToken(),
                 email_verified: false,
-                verify_token: mergeToken(),
+                verify_token: token,
             })
             const newSettings = new Settings({user: newUser._id});
             const defaultPhoto = new Photo({
-                filename: 'default.png',
-                contentType: 'image/png',
+                filename: 'default.jpg',
+                contentType: 'image/jpg',
                 data: imageFile,
                 user: newUser._id
             });
