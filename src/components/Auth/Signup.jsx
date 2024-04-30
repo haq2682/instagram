@@ -41,34 +41,23 @@ export default function Signup(props) {
             confirmPassword: ''
         },
         validate,
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             setSubmitLoader(true);
-            axios.post('/auth/register', values)
-                .then(() => {
-                    axios.post('/auth/login', {email: values.email, password: values.password})
-                        .then((response) => dispatch(authenticate(response.data)));
-                })
-                // .catch((error) => {
-                //     if(error.response.data.keyPattern.username) setUsernameError(`The Username "${error.response.data.keyValue.username}" is already taken. Please try a different Username`);
-                //     else if(error.response.data.keyPattern.email) setEmailError(`The Email "${error.response.data.keyValue.email}" is already registered. Please try logging in`);
-                //     else setServerError(error.response.data);
-                // })
-                .finally(() => setSubmitLoader(false));
-            // try {
-            //     const response = await axios.post('/auth/register', values);
-            //     if(response) {
-            //         const user = await axios.post('/auth/login', {email: values.email, password: values.password});
-            //         dispatch(authenticate(user));
-            //     }
-            // }
-            // catch(error) {
-            //     if(error.response.data.keyPattern.username) setUsernameError(`The Username "${error.response.data.keyValue.username}" is already taken. Please try a different Username`);
-            //     else if(error.response.data.keyPattern.email) setEmailError(`The Email "${error.response.data.keyValue.email}" is already registered. Please try logging in`);
-            //     else setServerError(error.response.data);
-            // }
-            // finally {
-            //     setSubmitLoader(false);
-            // }
+            try {
+                const response = await axios.post('http://localhost:8000/auth/register', values);
+                if(response) {
+                    const user = await axios.post('/auth/login', {email: values.email, password: values.password});
+                    dispatch(authenticate(user));
+                }
+            }
+            catch(error) {
+                if(error.response.data.keyPattern.username) setUsernameError(`The Username "${error.response.data.keyValue.username}" is already taken. Please try a different Username`);
+                else if(error.response.data.keyPattern.email) setEmailError(`The Email "${error.response.data.keyValue.email}" is already registered. Please try logging in`);
+                else setServerError(error.response.data);
+            }
+            finally {
+                setSubmitLoader(false);
+            }
         }
     })
 

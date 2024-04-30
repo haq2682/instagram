@@ -1,5 +1,7 @@
 const User = require('../models/User');
+const Photo = require('../models/Photo');
 const crypto = require("crypto");
+const fs = require("fs");
 
 module.exports = {
     generateNewToken: async (req, res) => {
@@ -36,5 +38,16 @@ module.exports = {
         user.updated_at = new Date();
         await user.save();
         res.sendStatus(200);
+    },
+    removePfp: async (req, res) => {
+        const user = await User.findOne({_id: req.user._id}).exec();
+        const pfp = await Photo.findOne({_id: user.profile_picture._id}).exec();
+        let imageFile = fs.readFileSync('./uploads/pfp/default.jpg');
+        imageFile = imageFile.toString('base64');
+        pfp.filename = 'default.jpg';
+        pfp.data = imageFile;
+        pfp.updated_at = new Date();
+        await pfp.save();
+        return res.send(pfp);
     }
 }
