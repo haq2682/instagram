@@ -163,9 +163,20 @@ export default function ProfileSettings() {
         setSubmitLoading(false);
     }
 
-    const genders = ['Male', 'Female', 'Prefer not to Say'];
+    const removePfp = async () => {
+        try {
+            const response = await axios.get('/user/removepfp');
+            if(response) {
+                setAuth({...auth, profile_picture: response.data});
+                setPfpChangeOpen(false);
+            }
+        }
+        catch(error) {
+            console.log("An error occurred while removing the profile picture.");
+        }
+    }
 
-    console.log(auth.profile_picture);
+    const genders = ['Male', 'Female', 'Prefer not to Say'];
 
     return (
         <div className="profile-settings">
@@ -229,7 +240,7 @@ export default function ProfileSettings() {
                     {() => (
                         <div className="py-10 text-center flex flex-col">
                             <Button className="text-lg mx-5 my-2 py-10">Change Photo</Button>
-                            <Button className="text-lg mx-5 my-2 py-10">Remove Photo</Button>
+                            <Button onClick={removePfp} className="text-lg mx-5 my-2 py-10">Remove Photo</Button>
                         </div>
                     )}
                 </ModalContent>

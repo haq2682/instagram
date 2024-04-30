@@ -14,7 +14,7 @@ import ResetPassword from './pages/ResetPassword';
 import PostPage from "./pages/PostPage";
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from "react";
-import {authenticate, verifyEmail} from './redux/authSlice';
+import {authenticate, verifyEmail, logout} from './redux/authSlice';
 import axios from "axios";
 import WelcomeLoader from "./components/WelcomeLoader";
 
@@ -32,6 +32,10 @@ function App() {
                 if(response.data) {
                     if(response.data.email_verified) dispatch(verifyEmail());
                     dispatch(authenticate(response));
+                }
+                else {
+                    dispatch(logout());
+                    localStorage.clear();
                 }
             })
             .catch(() => {

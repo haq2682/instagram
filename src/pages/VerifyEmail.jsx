@@ -1,7 +1,8 @@
 import {Button} from "@nextui-org/react";
 import {useState, useEffect} from "react";
-import {useSelector} from 'react-redux';
 import axios from 'axios';
+import { useSelector, useDispatch } from "react-redux";
+import {logout} from "../redux/authSlice";
 
 export default function VerifyEmail() {
     const username = useSelector(state => state.auth.username);
@@ -28,6 +29,17 @@ export default function VerifyEmail() {
         }
     }, [time]);
 
+    const dispatch = useDispatch();
+    const handleLogout = () => {
+        axios.get('/auth/logout')
+            .then(() => {
+                dispatch(logout());
+                localStorage.setItem('persist:root', null);
+                window.location.reload();
+            })
+            .catch((error) => console.log(error));
+    }
+
     return (
         <div className="h-screen">
             <div className="welcome-background flex justify-center items-center h-full w-screen flex-col">
@@ -38,9 +50,12 @@ export default function VerifyEmail() {
                     <hr/>
                     <div className="m-4">
                         <p className="text-lg">A verification link has been sent to your registered email address. <br/> Please check your "Inbox". If you do not find the link there, <br/> please check your "Spam" folder.</p>
-                        <div className="mt-5">
+                        <div className="mt-5 flex flex-col">
                             <Button className="text-lg p-7" color="primary" isDisabled={time > 0} onClick={handleSend}>
                                 {time <= 0 ? 'Click Here to Resend the Email' : 'Wait for ' + time + ' seconds'}
+                            </Button>
+                            <Button onClick={handleLogout} className="text-lg p-7 mt-2" color="danger">
+                                Log Out
                             </Button>
                         </div>
                     </div>
