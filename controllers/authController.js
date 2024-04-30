@@ -16,19 +16,19 @@ module.exports = {
         const newUser = new User(req.body);
         try {
             const newSettings = new Settings({user: newUser._id});
-            await newSettings.save();
             const defaultPhoto = new Photo({
                 filename: 'default.jpg',
                 contentType: 'image/jpg',
                 data: imageFile,
                 user: newUser._id
             });
-            await defaultPhoto.save();
             newUser.settings = newSettings;
             newUser.profile_picture = defaultPhoto;
-            await newUser.save();
             const token = jwt.sign({newUser}, jwt_secret, {expiresIn: '1w'});
             res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
+            await defaultPhoto.save();
+            await newSettings.save();
+            await newUser.save();
             return res.status(200).json({message: "User registered successfully"});
         }
         catch(error) {
