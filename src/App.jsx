@@ -39,6 +39,8 @@ function App() {
                 }
             })
             .catch(() => {
+                dispatch(logout());
+                localStorage.clear();
                 console.log('No logged in user found');
             })
             .finally(()=> {

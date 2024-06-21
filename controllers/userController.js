@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const Photo = require('../models/Photo');
 const crypto = require("crypto");
-const fs = require("fs");
 
 module.exports = {
     generateNewToken: async (req, res) => {
@@ -25,12 +24,12 @@ module.exports = {
         const existing_email = await User.findOne({email: req.body.email}).exec();
         if(existing_email) return res.status(400).json({message: "Entered Email is already registered"});
         const user = await User.findOne({_id: req.user._id}).exec();
-        if(req.body.username) user.username = req.body.username;
-        if(req.body.firstName) user.firstName = req.body.firstName;
-        if(req.body.lastName) user.lastName = req.body.lastName;
-        if(req.body.website) user.website = req.body.website;
-        if(req.body.bio) user.bio = req.body.bio;
-        if(req.body.gender) user.gender = req.body.gender;
+        user.username = req.body.username || user.username;
+        user.firstName = req.body.firstName || user.firstName;
+        user.lastName = req.body.lastName || user.lastName;
+        user.website = req.body.website || user.website;
+        user.bio = req.body.bio || user.bio;
+        user.gender = req.body.gender || user.gender;
         if(req.body.email) {
             user.email = req.body.email;
             user.email_verified = false;
@@ -42,10 +41,8 @@ module.exports = {
     removePfp: async (req, res) => {
         const user = await User.findOne({_id: req.user._id}).exec();
         const pfp = await Photo.findOne({_id: user.profile_picture._id}).exec();
-        let imageFile = fs.readFileSync('./uploads/pfp/default.jpg');
-        imageFile = imageFile.toString('base64');
-        pfp.filename = 'default.jpg';
-        pfp.data = imageFile;
+        let imageFile = './uploads/pfp/default.jpg';
+        pfp.filename = imageFile;
         pfp.updated_at = new Date();
         await pfp.save();
         return res.send(pfp);

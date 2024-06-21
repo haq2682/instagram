@@ -33,17 +33,18 @@ export const authSlice = createSlice({
         },
         logout: (state) => {
             setTimeout(()=> {
-                state.is_verified = false;
-                state.is_authenticated = false;
-                state.username = '';
-                state.firstName = '';
-                state.lastName = '';
-                state.verify_token = '';
-                state.website = '';
-                state.gender = '';
-                state.bio = '';
-                state.email = '';
-                state.profile_picture = null;
+                //state.is_verified = false;
+                //state.is_authenticated = false;
+                //state.username = '';
+                //state.firstName = '';
+                //state.lastName = '';
+                //state.verify_token = '';
+                //state.website = '';
+                //state.gender = '';
+                //state.bio = '';
+                //state.email = '';
+                //state.profile_picture = null;
+                state = null
             }, 3000);
         },
         verifyEmail: (state) => {

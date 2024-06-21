@@ -2,9 +2,7 @@ const UserModel = require('../models/User');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
 const Photo = require("../models/Photo");
-const fs = require('fs');
 const crypto = require("crypto");
-let imageFile = fs.readFileSync('./uploads/pfp/default.jpg');
 
 dotenv.config();
 
@@ -20,15 +18,13 @@ module.exports = {
                 email: email,
                 firstName: profile.name.givenName,
                 lastName: profile.name.familyName,
-                password: mergeToken(),
+                password: token,
                 email_verified: false,
                 verify_token: token,
             })
             const newSettings = new Settings({user: newUser._id});
             const defaultPhoto = new Photo({
-                filename: 'default.jpg',
-                contentType: 'image/jpg',
-                data: imageFile,
+                filename: '/uploads/pfp/default.jpg',
                 user: newUser._id
             });
             await newSettings.save();

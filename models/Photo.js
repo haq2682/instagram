@@ -3,8 +3,6 @@ const {Schema} = mongoose;
 
 const photoSchema = new Schema({
     filename: String,
-    contentType: String,
-    data: String,
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const {GridFsStorage} = require('multer-gridfs-storage');
 const multer  = require('multer');
 const crypto = require('crypto');
+const path = require('path');
 let storage;
-let upload;
 
 async function connectToDb() {
     try {
@@ -31,12 +31,11 @@ async function connectToDb() {
                     });
                 }
             });
-            upload = multer({storage});
         }
     }
     catch(error) {
         console.log(error);
     }
 }
-
+const upload = multer({storage});
 module.exports = {connectToDb, upload};

@@ -31,30 +31,26 @@ module.exports = {
             user.settings = settings;
 
             let imageName = 'default.jpg';
-            let imageBuffer = fs.readFileSync(`./uploads/pfp/${imageName}`);
-            let contentType = 'image/jpg';
+            let imagePath = '/uploads/pfp/default.jpg';
 
             if (profile.photos[0]?.value) {
                 try {
                     imageName = `${crypto.randomBytes(32).toString('hex')}.jpg`;
                     const response = await axios.get(profile.photos[0].value, { responseType: 'stream' });
-                    const imagePath = path.join(__dirname, '../uploads/pfp', imageName);
+                    imagePath = path.join('/uploads/pfp', imageName);
                     const writer = fs.createWriteStream(imagePath);
                     response.data.pipe(writer);
                     await new Promise((resolve, reject) => {
                         writer.on('finish', resolve);
                         writer.on('error', reject);
                     });
-                    imageBuffer = fs.readFileSync(imagePath);
                 } catch (e) {
                     console.error(e);
                 }
             }
 
             const photo = new Photo({
-                filename: imageName,
-                contentType: contentType,
-                data: imageBuffer.toString('base64'),
+                filename: imagePath, 
                 user: user._id
             });
             await photo.save();
