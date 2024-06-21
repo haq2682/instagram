@@ -45,38 +45,15 @@ export default function ProfileSettings() {
     const [isDisabled, setIsDisabled] = useState(true);
     const [emailFlag, setEmailFlag] = useState(false);
 
-    const handleUsernameChange = (event) => {
-        setError('');
+    const handleChange = (type, event) => {
         setDetails({
             ...details,
-            username: event.target.value
+            [type]: (type === 'gender') ? event : event.target.value
         });
         setAuth({
             ...auth,
-            username: event.target.value
-        })
-        setIsDisabled(false);
-    }
-    const handleFirstNameChange = (event) => {
-        setDetails({
-            ...details,
-            firstName: event.target.value
+            [type]: (type === 'gender') ? event : event.target.value
         });
-        setAuth({
-            ...auth,
-            firstName: event.target.value
-        })
-        setIsDisabled(false);
-    }
-    const handleLastNameChange = (event) => {
-        setDetails({
-            ...details,
-            lastName: event.target.value
-        });
-        setAuth({
-            ...auth,
-            lastName: event.target.value
-        })
         setIsDisabled(false);
     }
     useEffect(() => {
@@ -95,42 +72,6 @@ export default function ProfileSettings() {
         })
         setIsDisabled(false);
     }
-
-    const handleWebsiteChange = (event) => {
-        setDetails({
-            ...details,
-            website: event.target.value
-        });
-        setAuth({
-            ...auth,
-            website: event.target.value
-        })
-        setIsDisabled(false);
-    }
-    const handleBioChange = (event) => {
-        setDetails({
-            ...details,
-            bio: event.target.value
-        });
-        setAuth({
-            ...auth,
-            bio: event.target.value
-        })
-        setIsDisabled(false);
-    }
-
-    const handleGenderChange = (event) => {
-        setDetails({
-            ...details,
-            gender: event
-        });
-        setAuth({
-            ...auth,
-            gender: event
-        })
-        setIsDisabled(false);
-    }
-
     const handleSubmit = async () => {
         setSubmitLoading(true);
         setIsDisabled(true);
@@ -169,6 +110,9 @@ export default function ProfileSettings() {
             if(response) {
                 setAuth({...auth, profile_picture: response.data});
                 setPfpChangeOpen(false);
+                axios.get('/auth/user').then((res)=> {
+                    dispatch(authenticate(res));
+                })
             }
         }
         catch(error) {
@@ -185,7 +129,7 @@ export default function ProfileSettings() {
             <div
                 className="profile-photo w-full my-8 flex justify-between rounded-lg bg-neutral-200 dark:bg-neutral-800 p-4">
                 <div className="flex mr-10">
-                    <img src={`data:${auth.profile_picture.contentType};base64,${auth.profile_picture.data}`} alt="profile"
+                    <img src={`${auth.profile_picture.filename}`} alt="profile"
                          className="h-10 w-10 sm:h-14 sm:w-14 lg:h-18 lg:w-18 rounded-full object-cover"/>
                     <div className="mx-3 self-center">
                         <h1 className="font-bold text-sm sm:text-lg">{auth.username}<span
@@ -212,11 +156,11 @@ export default function ProfileSettings() {
                 <h1 className="font-bold text-lg sm:text-2xl my-4">Website</h1>
                 <Input aria-label="website" type="email" variant="underlined" value={auth?.website}
                        description="A website to show off your personal portfolio and such"
-                       onChange={handleWebsiteChange}/>
+                       onChange={event => handleChange('website', event)}/>
             </div>
             <div className="profile-bio my-8">
                 <h1 className="font-bold text-lg sm:text-2xl my-4">Bio</h1>
-                <Textarea aria-label="bio" onChange={handleBioChange} maxLength={150} variant="bordered"
+                <Textarea aria-label="bio" onChange={event => handleChange('bio', event)} maxLength={150} variant="bordered"
                           value={auth?.bio} endContent={<div
                     className="relative top-10 text-gray-400 dark:text-gray-600">{auth?.bio?.length}/150</div>}/>
             </div>
@@ -224,7 +168,7 @@ export default function ProfileSettings() {
             <div className="profile-gender my-8">
                 <h1 className="font-bold text-lg sm:text-2xl my-4">Gender</h1>
                 <Autocomplete aria-label="gender" variant="underlined" defaultSelectedKey={auth?.gender}
-                              onInputChange={handleGenderChange}>{genders.map((gender) => (
+                              onInputChange={event => handleChange('gender', event)}>{genders.map((gender) => (
                     <AutocompleteItem key={gender} value={gender}>
                         {gender}
                     </AutocompleteItem>
@@ -241,6 +185,7 @@ export default function ProfileSettings() {
                         <div className="py-10 text-center flex flex-col">
                             <Button className="text-lg mx-5 my-2 py-10">Change Photo</Button>
                             <Button onClick={removePfp} className="text-lg mx-5 my-2 py-10">Remove Photo</Button>
+                            {(details.profile_picture) ? <p>Image Selected, Click on 'Submit'</p> : ''}
                         </div>
                     )}
                 </ModalContent>
@@ -255,7 +200,7 @@ export default function ProfileSettings() {
                             </ModalHeader>
                             <ModalBody>
                                 <Input variant="bordered" label="Username" value={auth.username}
-                                       onChange={handleUsernameChange}/>
+                                       onChange={event => handleChange('username', event)}/>
                             </ModalBody>
                         </>
                     )}
@@ -271,9 +216,9 @@ export default function ProfileSettings() {
                             <ModalBody>
                                 <div className="pb-2 flex flex-col">
                                     <Input variant="bordered" label="First Name" value={auth.firstName}
-                                           onChange={handleFirstNameChange} className="my-2.5"/>
+                                           onChange={event => handleChange('firstName', event)} className="my-2.5"/>
                                     <Input variant="bordered" label="Last Name" value={auth.lastName}
-                                           onChange={handleLastNameChange} className="my-2.5"/>
+                                           onChange={event => handleChange('lastName', event)} className="my-2.5"/>
                                 </div>
                             </ModalBody>
                         </>

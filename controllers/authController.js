@@ -4,9 +4,6 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
 const Photo = require("../models/Photo");
-const fs = require('fs');
-let imageFile = fs.readFileSync('./uploads/pfp/default.jpg');
-imageFile = imageFile.toString('base64');
 
 dotenv.config();
 let jwt_secret = process.env.JWT_SECRET
@@ -23,9 +20,7 @@ module.exports = {
         try {
             const newSettings = new Settings({user: newUser._id});
             const defaultPhoto = new Photo({
-                filename: 'default.jpg',
-                contentType: 'image/jpg',
-                data: imageFile,
+                filename: '/uploads/pfp/default.jpg',
                 user: newUser._id
             });
             newUser.settings = newSettings;
