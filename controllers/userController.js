@@ -19,32 +19,56 @@ module.exports = {
         }
     },
     edit: async (req, res) => {
-        const existing_username = await User.findOne({username: req.body.username}).exec();
-        if(existing_username) return res.status(400).json({message: "Entered Username is already taken"});
-        const existing_email = await User.findOne({email: req.body.email}).exec();
-        if(existing_email) return res.status(400).json({message: "Entered Email is already registered"});
-        const user = await User.findOne({_id: req.user._id}).exec();
-        user.username = req.body.username || user.username;
-        user.firstName = req.body.firstName || user.firstName;
-        user.lastName = req.body.lastName || user.lastName;
-        user.website = req.body.website || user.website;
-        user.bio = req.body.bio || user.bio;
-        user.gender = req.body.gender || user.gender;
-        if(req.body.email) {
-            user.email = req.body.email;
-            user.email_verified = false;
+        try {
+            const { username, email, firstName, lastName, website, bio, gender } = req.body;
+            const [existingUsername, existingEmail] = await Promise.all([
+                username ? User.findOne({ username }).exec() : null,
+                email ? User.findOne({ email }).exec() : null
+            ]);
+            if (existingUsername) {
+                return res.status(400).json({ message: "Entered Username is already taken" });
+            }
+            if (existingEmail) {
+                return res.status(400).json({ message: "Entered Email is already registered" });
+            }
+            const user = await User.findOne({ _id: req.user._id }).exec();
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            user.username = username || user.username;
+            user.firstName = firstName || user.firstName;
+            user.lastName = lastName || user.lastName;
+            user.website = website || user.website;
+            user.bio = bio || user.bio;
+            user.gender = gender || user.gender;
+            if (email) {
+                user.email = email;
+                user.email_verified = false;
+            }
+            user.updated_at = new Date();
+            await user.save();
+            return res.sendStatus(200);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: "Internal server error" });
         }
-        user.updated_at = new Date();
-        await user.save();
-        res.sendStatus(200);
     },
     removePfp: async (req, res) => {
         const user = await User.findOne({_id: req.user._id}).exec();
         const pfp = await Photo.findOne({_id: user.profile_picture._id}).exec();
-        let imageFile = './uploads/pfp/default.jpg';
+        let imageFile = '/uploads/pfp/default.jpg';
         pfp.filename = imageFile;
         pfp.updated_at = new Date();
         await pfp.save();
         return res.send(pfp);
+    },
+    changePfp: async (req, res) => {
+        const user = await User.findOne({_id: req.user._id}).exec();
+        const pfp = await Photo.findOne({_id: user.profile_picture._id}).exec();
+        let imageFile = '/uploads/pfp/' + req.file.filename;
+        pfp.filename = imageFile;
+        pfp.updated_at = new Date();
+        await pfp.save();
+        return res.sendStatus(200);
     }
 }

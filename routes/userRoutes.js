@@ -1,12 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 
 const userController = require('../controllers/userController');
 const {attachUser} = require("../controllers/authController");
-const {upload} = require('../db_config/db');
+
+const storagePfp = multer.diskStorage({
+    destination: function(req, file, callback) {
+        return callback(null, './uploads/pfp');
+    },
+    filename: function(req, file, callback) {
+        const uniquePrefix = Date.now() + '-' + Math.round(Math.random()*1E9);
+        return callback(null, uniquePrefix + '_' + file.originalname);
+    }
+})
+
+const uploadPfp = multer({storage: storagePfp});
 
 router.post('/generate_token', userController.generateNewToken);
-router.put('/edit', attachUser, upload.single('profile_picture'), userController.edit);
+router.put('/edit', attachUser,  userController.edit);
+router.put('/changepfp', attachUser, uploadPfp.single('profile_picture'), userController.changePfp);
 router.get('/removepfp', attachUser, userController.removePfp);
 
 module.exports = router;
