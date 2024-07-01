@@ -17,6 +17,7 @@ const userRoutes = require('./routes/userRoutes');
 const app = express();
 dotenv.config();
 let port = process.env.EXPRESS_PORT;
+app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.use('/uploads', express.static('uploads'));

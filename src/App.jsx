@@ -26,17 +26,13 @@ function App() {
     const verify_token = useSelector(state => state.auth.verify_token);
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(logout());
+        localStorage.clear();
         setLoader(true);
         axios.get('/auth/user')
             .then((response) => {
-                if(response.data) {
-                    if(response.data.email_verified) dispatch(verifyEmail());
-                    dispatch(authenticate(response));
-                }
-                else {
-                    dispatch(logout());
-                    localStorage.clear();
-                }
+                if (response.data.email_verified) dispatch(verifyEmail());
+                dispatch(authenticate(response));
             })
             .catch(() => {
                 dispatch(logout());
