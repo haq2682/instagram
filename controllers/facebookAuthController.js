@@ -1,7 +1,7 @@
 const UserModel = require('../models/User');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
-const Photo = require("../models/Photo");
+const ProfilePhoto = require("../models/ProfilePhoto");
 const crypto = require("crypto");
 
 dotenv.config();
@@ -23,7 +23,7 @@ module.exports = {
                 verify_token: token,
             })
             const newSettings = new Settings({user: newUser._id});
-            const defaultPhoto = new Photo({
+            const defaultPhoto = new ProfilePhoto({
                 filename: '/uploads/pfp/default.jpg',
                 user: newUser._id
             });

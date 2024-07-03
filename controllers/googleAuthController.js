@@ -1,7 +1,7 @@
 const UserModel = require('../models/User');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
-const Photo = require("../models/Photo");
+const ProfilePhoto = require("../models/ProfilePhoto");
 const fs = require('fs');
 const axios = require('axios');
 const path = require('path');
@@ -49,7 +49,7 @@ module.exports = {
                 }
             }
 
-            const photo = new Photo({
+            const photo = new ProfilePhoto({
                 filename: imagePath, 
                 user: user._id
             });

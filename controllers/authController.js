@@ -3,12 +3,11 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const Settings = require("../models/Settings");
-const Photo = require("../models/Photo");
+const ProfilePhoto = require("../models/ProfilePhoto");
 
 dotenv.config();
 let jwt_secret = process.env.JWT_SECRET
 
-// Helper function to create JWT token and set cookie
 const createTokenAndSetCookie = (user, res) => {
     const token = jwt.sign({user}, jwt_secret, {expiresIn: '1w'});
     res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
@@ -19,7 +18,7 @@ module.exports = {
         const newUser = new User(req.body);
         try {
             const newSettings = new Settings({user: newUser._id});
-            const defaultPhoto = new Photo({
+            const defaultPhoto = new ProfilePhoto({
                 filename: '/uploads/pfp/default.jpg',
                 user: newUser._id
             });

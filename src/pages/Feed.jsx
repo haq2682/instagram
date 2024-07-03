@@ -16,7 +16,7 @@ export default function Feed() {
             <div className="flex justify-center h-screen">
                 <Sidebar/>
                 <div className="home-content relative right-5 ml-10 sm:ml-[20%] lg:ml-10 w-full lg:w-[40%] overflow-auto scrollbar-hide">
-                    <div className="stories overflow-x-auto w-full h-32 whitespace-nowrap custom-scrollbar scrollbar">
+                    {/* <div className="stories overflow-x-auto w-full h-32 whitespace-nowrap custom-scrollbar scrollbar">
                         <div className="story inline-block cursor-pointer transition-all duration-200 hover:bg-neutral-300 dark:hover:bg-neutral-600 px-4 py-2 rounded-lg">
                             <div className="story-image">
                                 <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" className="w-20 h-20"/>
@@ -58,7 +58,7 @@ export default function Feed() {
                             </div>
                         </div>
                     </div>
-                    <Divider/>
+                    <Divider/> */}
                     <div className="feed overflow-y-auto w-full">
                         <Post/>
                     </div>
