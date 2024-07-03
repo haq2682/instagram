@@ -28,7 +28,6 @@ function App() {
     useEffect(() => {
         dispatch(logout());
         localStorage.clear();
-        setLoader(true);
         axios.get('/auth/user')
             .then((response) => {
                 if (response.data.email_verified) dispatch(verifyEmail());
@@ -42,7 +41,7 @@ function App() {
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
             })
-    }, [dispatch]);
+    });
 
     function getAuthenticatedPage(pageComponent, verifyRedirect = "/verify", defaultRedirect = "/") {
         if(is_authenticated && is_verified) return pageComponent;

@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Photo = require('../models/Photo');
+const ProfilePhoto = require('../models/ProfilePhoto');
 const crypto = require("crypto");
 
 module.exports = {
@@ -55,7 +55,7 @@ module.exports = {
     },
     removePfp: async (req, res) => {
         const user = await User.findOne({_id: req.user._id}).exec();
-        const pfp = await Photo.findOne({_id: user.profile_picture._id}).exec();
+        const pfp = await ProfilePhoto.findOne({_id: user.profile_picture._id}).exec();
         let imageFile = '/uploads/pfp/default.jpg';
         pfp.filename = imageFile;
         pfp.updated_at = new Date();
@@ -64,7 +64,7 @@ module.exports = {
     },
     changePfp: async (req, res) => {
         const user = await User.findOne({_id: req.user._id}).exec();
-        const pfp = await Photo.findOne({_id: user.profile_picture._id}).exec();
+        const pfp = await ProfilePhoto.findOne({_id: user.profile_picture._id}).exec();
         let imageFile = '/uploads/pfp/' + req.file.filename;
         pfp.filename = imageFile;
         pfp.updated_at = new Date();

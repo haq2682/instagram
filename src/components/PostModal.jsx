@@ -78,8 +78,8 @@ export default function PostModal(props) {
 
                                         </div>
                                         <input id="post-file-upload"
-                                               name="post-file-upload" type="file"
-                                               className="hidden" multiple onChange={handleUpload}/>
+                                            name="post-file-upload" type="file"
+                                            className="hidden" multiple onChange={handleUpload} />
                                         <Button className="w-full mb-4 lg:hidden">
                                             <label htmlFor="post-file-upload" className="h-full w-full pt-1">
                                                     Add Photos/Videos <PhotoLibrary size="33"/>

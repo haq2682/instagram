@@ -3,7 +3,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const {Schema} = mongoose;
 const bcrypt = require('bcrypt');
 const Settings = require('./Settings');
-const Photo = require('./Photo');
+const ProfilePhoto = require('./ProfilePhoto');
 const crypto = require("crypto");
 
 const saltRounds = 10;
@@ -90,8 +90,44 @@ const userSchema = new Schema({
     },
     profile_picture: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Photo',
+        ref: 'ProfilePhoto',
     },
+    chats: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Chat'
+    }],
+    follow_requests_sent_to: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    follow_requests_received_from: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
+    }],
+    reported_posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportPost'
+    }],
+    saved_posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SavedPost'
+    }],
+    shared_posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SharedPost'
+    }],
     created_at: {
         type: Date,
         default: new Date(),
@@ -99,6 +135,16 @@ const userSchema = new Schema({
     updated_at: {
         type: Date,
         default: new Date(),
+    },
+    deleted: {
+        type: Boolean,
+        default: false
+    },
+    deletion_note: {
+        type: String
+    },
+    deleted_at: {
+        type: Date,
     }
 });
 
@@ -116,8 +162,30 @@ userSchema.pre('save', function(next){
 
 userSchema.pre('remove', function(next) {
     Settings.remove({user: this._id}).exec();
-    Photo.remove({user: this._id}).exec();
+    ProfilePhoto.remove({user: this._id}).exec();
+    return next();
 });
+
+userSchema.pre('find', function(next) {
+    this.where({deleted: false});
+})
+
+userSchema.methods.softDelete = async function(note) {
+    this.deleted = true;
+    this.deleted_at = new Date();
+    this.deleteion_note = note;
+    await this.save();
+}
+
+userSchema.methods.restore = async function(user_id) {
+    const user = this.findOne({_id: user_id, deleted: true});
+    if(user) {
+        user.deleted = false;
+        user.deletion_note = null;
+        user.deleted_at = null;
+        await user.save();
+    }
+}
 
 const User = mongoose.model('User', userSchema);
 
