@@ -24,6 +24,10 @@ const commentSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CommentReply'
     }],
+    hidden_for: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     created_at: {
         type: Date,
         default: new Date()
@@ -36,4 +40,4 @@ const commentSchema = new Schema({
 
 const Comment = mongoose.model('Comment', commentSchema);
 
-export default Comment;
+module.exports = Comment;

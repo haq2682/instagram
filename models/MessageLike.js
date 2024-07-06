@@ -22,4 +22,4 @@ const messageLikeSchema = new Schema({
 
 const MessageLike = mongoose.model('MessageLike', messageLikeSchema);
 
-export default MessageLike;
+module.exports = MessageLike;

@@ -3,8 +3,6 @@ import Bottombar from "../components/Navigation/Bottombar";
 import Suggestion from "../components/Suggestion";
 import Notifications from "../components/Notifications";
 import {
-    Avatar,
-    Divider,
     Card,
     Skeleton,
 } from "@nextui-org/react";

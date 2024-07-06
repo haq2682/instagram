@@ -27,4 +27,4 @@ const sharedPostSchema = new Schema({
 
 const SharedPost = mongoose.model('SharedPost', sharedPostSchema);
 
-export default SharedPost;
+module.exports = SharedPost;

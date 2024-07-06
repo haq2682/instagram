@@ -12,22 +12,44 @@ import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {useCallback, useState} from "react";
 import {useDropzone} from 'react-dropzone';
 import {PeopleCommunityAdd} from "@styled-icons/fluentui-system-filled/PeopleCommunityAdd";
+import axios from 'axios';
 
 export default function PostModal(props) {
     const [caption, setCaption] = useState('');
     const [postFiles, setPostFiles] = useState([]);
     const handleUpload = (event) => {
-        setPostFiles([...postFiles, ...event.target.files]);
+        if(event.target.files[0].type.startsWith('image/') || event.target.files[0].type.startsWith('video/')) setPostFiles([...postFiles, event.target.files[0]]);
     }
 
     const onDrop = useCallback(files => {
-        setPostFiles(prev => [...prev, ...files]);
+        if(files[0].type.startsWith('image/') || files[0].type.startsWith('video/')) setPostFiles(prev => [...prev, files[0]]);
     }, []);
 
     const openChange = () => {
         props.togglePostModal();
         setPostFiles([]);
         setCaption('');
+    }
+
+    const handleSubmit = async () => {
+        props.togglePostModal();
+        try {
+            const formData = new FormData();
+            if (postFiles.length > 0) {
+                postFiles.forEach((file) => {
+                    formData.append('files', file);
+                })
+            }
+            if (caption.length > 0) formData.append('caption', caption);
+            await axios.post('/api/post/add', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+        }
+        catch(error) {
+            console.error(error);
+        } 
     }
     const {getRootProps, getInputProps} = useDropzone({onDrop});
     return (
@@ -55,18 +77,18 @@ export default function PostModal(props) {
                             <ModalFooter className="block">
                                 <div>
                                     <div className="upload__image-wrapper">
-                                        <div className="flex flex-wrap mb-3">
+                                        <div className="flex flex-wrap mb-3 overflow-scroll max-h-[400px]">
                                             {
                                                 postFiles.map((file, index) => {
                                                     if(file.type.startsWith('image/')) {
                                                         return <img key={index}
                                                                     src={URL.createObjectURL(file)}
                                                                     alt="issue"
-                                                                    className="w-32 h-32 object-cover mx-1.5 my-1"/>
+                                                                    className="max-w-full max-h-[400px] mx-auto object-scale-down my-1"/>
                                                     }
                                                     else if(file.type.startsWith('video/')) {
                                                         return (
-                                                            <video key={index} className="w-32 h-32 object-cover mx-1.5 my-1" autoPlay muted loop>
+                                                            <video key={index} className="max-w-full max-h-[400px] object-scale-down mx-auto my-1" autoPlay muted loop>
                                                                 <source src={URL.createObjectURL(file)}
                                                                         type={file.type}/>
                                                                 Your browser does not support the video tag.
@@ -90,7 +112,7 @@ export default function PostModal(props) {
                                         </Button>
                                     </div>
                                 </div>
-                                <Button className="w-full bg-black text-white dark:bg-white dark:text-black" isDisabled={postFiles.length === 0 && !caption}>
+                                <Button onClick={handleSubmit} className="w-full bg-black text-white dark:bg-white dark:text-black" isDisabled={postFiles.length === 0 && !caption}>
                                     Submit <Enter/>
                                 </Button>
                             </ModalFooter>

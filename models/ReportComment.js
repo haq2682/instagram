@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const chatAdminSchema = new Schema({
+const reportCommentSchema = new Schema({
+    comment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    },
-    chat: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Chat'
     },
     created_at: {
         type: Date,
@@ -20,6 +20,6 @@ const chatAdminSchema = new Schema({
     }
 });
 
-const ChatAdmin = mongoose.model('ChatAdmin', chatAdminSchema);
+const ReportComment = mongoose.model('ReportComment', reportCommentSchema);
 
-module.exports = ChatAdmin;
+module.exports = ReportComment;

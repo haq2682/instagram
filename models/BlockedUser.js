@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const chatAdminSchema = new Schema({
-    user: {
+const blockedUserSchema = new Schema({
+    blocker: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    chat: {
+    blocked: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Chat'
+        ref: 'User'
     },
     created_at: {
         type: Date,
@@ -20,6 +20,6 @@ const chatAdminSchema = new Schema({
     }
 });
 
-const ChatAdmin = mongoose.model('ChatAdmin', chatAdminSchema);
+const BlockedUser = mongoose.model('BlockedUser', blockedUserSchema);
 
-module.exports = ChatAdmin;
+module.exports = BlockedUser;

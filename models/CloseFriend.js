@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const chatAdminSchema = new Schema({
+const closedFriendSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    chat: {
+    friend: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Chat'
+        ref: 'User'
     },
     created_at: {
         type: Date,
@@ -20,6 +20,6 @@ const chatAdminSchema = new Schema({
     }
 });
 
-const ChatAdmin = mongoose.model('ChatAdmin', chatAdminSchema);
+const ClosedFriend = mongoose.model('ClosedFriend', closedFriendSchema);
 
-module.exports = ChatAdmin;
+module.exports = ClosedFriend;

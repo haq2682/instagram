@@ -24,4 +24,4 @@ const savedPostSchema = new Schema({
 
 const SavedPost = mongoose.model('SavedPost', savedPostSchema);
 
-export default SavedPost;
+module.exports = SavedPost;

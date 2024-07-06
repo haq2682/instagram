@@ -30,4 +30,4 @@ const helpSchema = new Schema({
 
 const Help = mongoose.model('Help', helpSchema);
 
-export default Help;
+module.exports = Help;

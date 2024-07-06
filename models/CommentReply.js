@@ -32,4 +32,4 @@ const commentReplySchema = new Schema({
 
 const CommentReply = mongoose.model('CommentReply', commentReplySchema);
 
-export default CommentReply;
+module.exports = CommentReply;
