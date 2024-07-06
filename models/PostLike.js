@@ -22,4 +22,4 @@ const postLikeSchema = new Schema({
 
 const PostLike = mongoose.model('PostLike', postLikeSchema);
 
-export default PostLike;
+module.exports = PostLike;

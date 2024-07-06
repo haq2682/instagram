@@ -60,7 +60,7 @@ export default function ProfileSettings() {
     useEffect(() => {
         if (auth.email !== state.email) setEmailFlag(true);
         else setEmailFlag(false);
-    }, [auth.email]);
+    }, [state.email, auth.email]);
     const handleEmailChange = (event) => {
         setError('');
         setDetails({
@@ -78,16 +78,14 @@ export default function ProfileSettings() {
         setIsDisabled(true);
         try {
             if (details.profile_picture) {
-
                 const formData = new FormData();
                 formData.append('profile_picture', details.profile_picture);
                 try {
-                    const response = await axios.put('/user/changepfp', formData, {
+                    await axios.put('/user/changepfp', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     })
-                    console.log(response);
                 }
                 catch (error) {
                     console.log(error);

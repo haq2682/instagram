@@ -22,4 +22,4 @@ const chatMemberSchema = new Schema({
 
 const ChatMember = mongoose.model('ChatMember', chatMemberSchema);
 
-export default ChatMember;
+module.exports = ChatMember;

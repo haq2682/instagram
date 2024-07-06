@@ -28,4 +28,4 @@ const reportedPostSchema = new Schema({
 
 const ReportedPost = mongoose.model('ReportedPost', reportedPostSchema);
 
-export default ReportedPost;
+module.exports = ReportedPost;

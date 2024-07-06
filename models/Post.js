@@ -5,15 +5,22 @@ const postSchema = new Schema({
     description: {
         type: String,
     },
-    media: {
+    media: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Media',
-    },
-    author: {
+    }],
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
     },
+    hidden_for: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    tagged: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     created_at: {
         type: Date,
         default: new Date()
@@ -26,4 +33,4 @@ const postSchema = new Schema({
 
 const Post = mongoose.model('Post', postSchema);
 
-export default Post;
+module.exports = Post;

@@ -22,4 +22,4 @@ const commentLikeSchema = new Schema({
 
 const CommentLike = mongoose.model('CommentLike', commentLikeSchema);
 
-export default CommentLike;
+module.exports = CommentLike;

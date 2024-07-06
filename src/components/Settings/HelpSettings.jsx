@@ -19,6 +19,10 @@ export default function HelpSettings() {
         console.log(imageList, addUpdateIndex);
         setIssueImages(imageList);
     }
+
+    const handleSubmit = () => {
+        console.log(issueDescription);
+    }
     return (
         <div className="help">
             <h1 className="font-black text-lg sm:text-2xl my-4">Help</h1>
@@ -55,7 +59,7 @@ export default function HelpSettings() {
                             )}
                         </ImageUploading>
                     </div>
-                    <Button className="mt-8 float-right shadow-md bg-green-400 text-white font-bold text-lg">
+                    <Button onClick={handleSubmit} className="mt-8 float-right shadow-md bg-green-400 text-white font-bold text-lg">
                         Submit
                     </Button>
                 </div>

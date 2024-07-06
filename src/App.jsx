@@ -26,8 +26,6 @@ function App() {
     const verify_token = useSelector(state => state.auth.verify_token);
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(logout());
-        localStorage.clear();
         axios.get('/auth/user')
             .then((response) => {
                 if (response.data.email_verified) dispatch(verifyEmail());
@@ -41,7 +39,7 @@ function App() {
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
             })
-    });
+    }, [dispatch]);
 
     function getAuthenticatedPage(pageComponent, verifyRedirect = "/verify", defaultRedirect = "/") {
         if(is_authenticated && is_verified) return pageComponent;
@@ -94,10 +92,8 @@ function App() {
                     <Route path="saved" element={getPage("saved")}/>
                     <Route path="profile" element={getPage("profile")}/>
                     <Route path="verify" element={getPage("verify")}/>
-                    <Route path="post" element={getPage("post")}/>
-                    <Route path="verified">
-                        <Route path=":verify_token" element={getPage("verified")}/>
-                    </Route>
+                    <Route path="post/:id" element={getPage("post")}/>
+                    <Route path="verified/:verify_token" element={getPage("verified")} />
                     <Route path="forgotpassword" element={getPage("forgotPassword")}/>
                     <Route path="resetpassword" element={getPage("resetPassword")}/>
                 </Routes>

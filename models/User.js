@@ -168,6 +168,8 @@ userSchema.pre('remove', function(next) {
 
 userSchema.pre('find', function(next) {
     this.where({deleted: false});
+    this.populate('profile_picture');
+    return next();
 })
 
 userSchema.methods.softDelete = async function(note) {

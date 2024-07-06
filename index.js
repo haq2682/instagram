@@ -13,6 +13,7 @@ const googleAuthRoutes = require('./routes/googleAuthRoutes');
 const facebookAuthRoutes = require('./routes/facebookAuthRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const userRoutes = require('./routes/userRoutes');
+const postRoutes = require('./routes/postRoutes');
 
 const app = express();
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/facebookAuth', facebookAuthRoutes);
 app.use('/auth', authRoutes);
 app.use('/settings', settingsRoutes);
 app.use('/user', userRoutes);
+app.use('/api/post', postRoutes);
 
 passport.serializeUser(function(user, done) {
     done(null, user);

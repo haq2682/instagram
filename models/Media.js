@@ -2,6 +2,21 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const mediaSchema = new Schema({
+    fileName: {
+        type: String,
+        required: true
+    },
+    originalName: {
+        type: String,
+        required: true
+    },
+    encoding: {
+        type: String,
+    },
+    size: {
+        type: Number,
+        required: true
+    },
     path: {
         type: String,
         required: true
@@ -31,4 +46,4 @@ const mediaSchema = new Schema({
 
 const Media = mongoose.model('Media', mediaSchema);
 
-export default Media;
+module.exports = Media;
