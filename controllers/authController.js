@@ -54,11 +54,17 @@ module.exports = {
     attachUser: async (req, res, next) => {
         const token = req.cookies.token;
         if(!token) return res.sendStatus(401);
-        const {user} = jwt.verify(token, jwt_secret);
-        const userFromDB = await User.findOne({_id: user._id}).populate('settings').populate('profile_picture').exec();
-        if(!userFromDB) return res.status(401).json({message: "User not logged in"});
-        req.user = userFromDB;
-        next();
+        try {
+            const { user } = jwt.verify(token, jwt_secret);
+            const userFromDB = await User.findOne({ _id: user._id }).populate('settings').populate('profile_picture').exec();
+            if (!userFromDB) return res.status(401).json({ message: "User not logged in" });
+            req.user = userFromDB;
+            next();
+        }
+        catch(error) {
+            if(error.name === 'TokenExpiredError') return res.status(401).json({message: "Token Expired"});
+            return res.status(401).json({message: "Invalid Token"});
+        }
     },
     verifyEmail: async (req, res) => {
         const token = req.params.verify_token;

@@ -1,3 +1,4 @@
+import '../assets/css/Feed.css';
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
 import Suggestion from "../components/Suggestion";
@@ -8,7 +9,25 @@ import {
 } from "@nextui-org/react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Post from "../components/Post/Post";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 export default function Feed() {
+    const [posts, setPosts] = useState([]);
+    const [error, setError] = useState('');
+
+    const fetchPosts = useCallback(async () => {
+        try {
+            const response = await axios.get('/api/post/all');
+            setPosts(response.data);
+        }
+        catch(error) {
+            setError(error.code);
+        }
+    }, [setPosts, setError]);
+
+    useEffect(() => {
+        fetchPosts();
+    }, [fetchPosts]);
     return (
         <div>
             <div className="flex justify-center h-screen">
@@ -58,7 +77,12 @@ export default function Feed() {
                     </div>
                     <Divider/> */}
                     <div className="feed overflow-y-auto w-full">
-                        <Post/>
+                        {
+                            (!error) ? (posts.map((                            
+                                post) => {
+                                return <Post post={post}/>
+                            })) : ((error.code === 'ERR_BAD_RESPONSE') ? <div className="post-error">Something went wrong unexpectedly</div> : <div className="post-error">No more posts found</div>)
+                        }
                     </div>
                     <div className="loader-skeleton my-5">
                         <Card className="w-full space-y-5 p-4 bg-neutral-100 dark:bg-neutral-900" radius="lg">

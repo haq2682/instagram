@@ -21,5 +21,6 @@ router.post('/generate_token', userController.generateNewToken);
 router.put('/edit', attachUser,  userController.edit);
 router.put('/changepfp', attachUser, uploadPfp.single('profile_picture'), userController.changePfp);
 router.get('/removepfp', attachUser, userController.removePfp);
+router.get('/profile/:username', attachUser, userController.find);
 
 module.exports = router;

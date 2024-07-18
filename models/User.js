@@ -92,6 +92,10 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ProfilePhoto',
     },
+    likedPosts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PostLike'
+    }],
     chats: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chat'
@@ -166,9 +170,9 @@ userSchema.pre('remove', function(next) {
     return next();
 });
 
-userSchema.pre('find', function(next) {
+userSchema.pre(['find', 'findOne', 'findMany'], function(next) {
     this.where({deleted: false});
-    this.populate('profile_picture');
+    this.populate('profile_picture followers settings following likedPosts');
     return next();
 })
 

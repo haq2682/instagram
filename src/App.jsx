@@ -90,7 +90,7 @@ function App() {
                     <Route path="search" element={getPage("search")}/>
                     <Route path="messages" element={getPage("messages")}/>
                     <Route path="saved" element={getPage("saved")}/>
-                    <Route path="profile" element={getPage("profile")}/>
+                    <Route path="profile/:username" element={getPage("profile")}/>
                     <Route path="verify" element={getPage("verify")}/>
                     <Route path="post/:id" element={getPage("post")}/>
                     <Route path="verified/:verify_token" element={getPage("verified")} />
