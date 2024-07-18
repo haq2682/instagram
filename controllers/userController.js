@@ -70,5 +70,16 @@ module.exports = {
         pfp.updated_at = new Date();
         await pfp.save();
         return res.sendStatus(200);
+    },
+    find: async (req, res) => {
+        try {
+            const username = req.params.username;
+            const user = await User.findOne({username: username});
+            if(!user) return res.status(404).json({message: 'User not found'});
+            return res.send(user);
+        }
+        catch(error) {
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
     }
 }

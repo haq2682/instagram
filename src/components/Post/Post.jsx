@@ -1,4 +1,4 @@
-import { Avatar, Divider, Tooltip } from "@nextui-org/react";
+import { Avatar, Divider } from "@nextui-org/react";
 import Report from './Report';
 import Comment from './Comment';
 import { Carousel } from "react-responsive-carousel";
@@ -10,18 +10,49 @@ import { Share as ShareArrow } from "@styled-icons/fluentui-system-filled/Share"
 import { Save as SaveOutline } from "@styled-icons/ionicons-outline/Save";
 import { Save as SaveFill } from "@styled-icons/ionicons-sharp/Save";
 import { More } from "@styled-icons/remix-fill/More";
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
-import React, { useState } from "react";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/react";
+import React, { useState, useEffect, useCallback } from "react";
 import EnlargedView from "./EnlargedView";
 import TextDisplay from "../TextDisplay";
 import { Image } from "@nextui-org/react";
 import moment from 'moment';
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 export default function Post(props) {
     const [commentSectionOpen, setCommentSectionOpen] = useState(false);
     const [reportSectionOpen, setReportSectionOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [enlargeView, setEnlargeView] = useState(false);
+    const [likes, setLikes] = useState([]);
+    const loggedInUser = useSelector(state => state.auth);
+    const [liked, setLiked] = useState(false);
+
+    const fetchPostDetails = useCallback(async () => {
+        try {
+            const response = await axios.get(`/api/post/${props.post._id}`);
+            const postData = response.data;
+            setLikes(postData.liked_by || []);
+            setLiked(postData.liked_by.includes(loggedInUser._id) ? true : false);
+            console.log(loggedInUser._id);
+            console.log(liked);
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
+    }, [loggedInUser, props.post?._id, liked]);
+
+    useEffect(() => {
+        fetchPostDetails();
+    }, [fetchPostDetails]);
+
+    useEffect(() => {
+        if (props.post) {
+            setLikes(props.post.liked_by || []);
+            setLiked(loggedInUser ? props.post.liked_by.includes(loggedInUser._id) : false);
+        }
+    }, [props.post, loggedInUser]);
+
     const openEnlarge = (file) => {
         setFile(file);
         setEnlargeView(true);
@@ -29,6 +60,20 @@ export default function Post(props) {
     const closeEnlarge = () => {
         setFile(null);
         setEnlargeView(false);
+    }
+
+    const likePost = async (id) => {
+        try {
+            await axios.put('/api/post/' + id + '/like');
+            setLiked(!liked);
+            setLikes((prevLikes) => 
+                liked 
+                ? prevLikes.filter(userId => userId !== loggedInUser._id)
+                : [...prevLikes, loggedInUser._id]
+            );
+        } catch(error) {
+            console.log(error.message);
+        }
     }
     return (
         <div>
@@ -41,7 +86,7 @@ export default function Post(props) {
                                 className="w-10 h-10 relative top-1" />
                         </div>
                         <div className="post-user-details inline-block ml-3">
-                            <p className="text-md font-bold">{props.post?.user.username}</p>
+                            <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user.username}>{props.post?.user.username}</Link></span>
                             <h4 className="font-bold text-sm text-neutral-500">{moment(props.post?.created_at).fromNow()}</h4>
                         </div>
                         <div className="float-right rounded-full p-2 hover:bg-neutral-200 transition-color duration-200 dark:hover:bg-neutral-700">
@@ -95,18 +140,17 @@ export default function Post(props) {
                         </Carousel>
                     </div>
                     <div className="flex justify-between w-full my-3">
-                        <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />96
-                            Likes</p>
+                        <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
                         <p className="mr-3">96 Shares <Share size="20"
                             className="text-blue-600 dark:text-blue-400" />
                         </p>
                     </div>
                     <Divider />
                     <div className="post-interactive-buttons m-3 flex justify-between">
-                        <div
+                    <div onClick={() => likePost(props.post._id)}
                             className="w-full text-center cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-700 py-3 rounded-lg transition-all duration-200 mx-1.5">
-                            <span className="hidden lg:inline mr-1.5">Like</span><HeartOutline size="30"
-                                className="mb-1 text-rose-600" />
+                            <span className="hidden lg:inline mr-1.5">{liked ? 'Liked' : 'Like'}</span>
+                            {liked ? <Heart size="30" className="mb-1 text-rose-600" /> : <HeartOutline size="30" className="mb-1 text-rose-600" />}
                         </div>
                         <div
                             onClick={() => setCommentSectionOpen(true)}
