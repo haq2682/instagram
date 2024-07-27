@@ -17,12 +17,17 @@ import axios from 'axios';
 export default function PostModal(props) {
     const [caption, setCaption] = useState('');
     const [postFiles, setPostFiles] = useState([]);
+    const [loading, setLoading] = useState(false);
     const handleUpload = (event) => {
-        if(event.target.files[0].type.startsWith('image/') || event.target.files[0].type.startsWith('video/')) setPostFiles([...postFiles, event.target.files[0]]);
+        event.target.files.forEach((file) => {
+            if(file.type.startsWith('image/') || file.type.startsWith('video/')) setPostFiles(prev => [...prev, file]);
+        })
     }
 
     const onDrop = useCallback(files => {
-        if(files[0].type.startsWith('image/') || files[0].type.startsWith('video/')) setPostFiles(prev => [...prev, files[0]]);
+        files.forEach((file) => {
+            if (file.type.startsWith('image/') || file.type.startsWith('video/')) setPostFiles(prev => [...prev, file]);
+        })
     }, []);
 
     const openChange = () => {
@@ -32,8 +37,8 @@ export default function PostModal(props) {
     }
 
     const handleSubmit = async () => {
-        props.togglePostModal();
         try {
+            setLoading(true);
             const formData = new FormData();
             if (postFiles.length > 0) {
                 postFiles.forEach((file) => {
@@ -45,10 +50,14 @@ export default function PostModal(props) {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
-            })
+            });
         }
         catch(error) {
             console.error(error);
+        }
+        finally {
+            setLoading(false);
+            props.togglePostModal();
         } 
     }
     const {getRootProps, getInputProps} = useDropzone({onDrop});
@@ -84,11 +93,11 @@ export default function PostModal(props) {
                                                         return <img key={index}
                                                                     src={URL.createObjectURL(file)}
                                                                     alt="issue"
-                                                                    className="max-w-full max-h-[400px] mx-auto object-scale-down my-1"/>
+                                                                    className="w-full mx-auto max-h-[400px] object-center my-1"/>
                                                     }
                                                     else if(file.type.startsWith('video/')) {
                                                         return (
-                                                            <video key={index} className="max-w-full max-h-[400px] object-scale-down mx-auto my-1" autoPlay muted loop>
+                                                            <video key={index} className="w-full max-h-[400px] object-center mx-auto my-1" autoPlay muted loop>
                                                                 <source src={URL.createObjectURL(file)}
                                                                         type={file.type}/>
                                                                 Your browser does not support the video tag.
@@ -112,7 +121,7 @@ export default function PostModal(props) {
                                         </Button>
                                     </div>
                                 </div>
-                                <Button onClick={handleSubmit} className="w-full bg-black text-white dark:bg-white dark:text-black" isDisabled={postFiles.length === 0 && !caption}>
+                                <Button onClick={handleSubmit} className="w-full bg-black text-white dark:bg-white dark:text-black" isDisabled={postFiles.length === 0 && !caption} isLoading={loading}>
                                     Submit <Enter/>
                                 </Button>
                             </ModalFooter>

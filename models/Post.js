@@ -25,6 +25,22 @@ const postSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    saved_by: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    shared_post: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
+    },
+    shared_by: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }],
     created_at: {
         type: Date,
         default: new Date()
@@ -36,10 +52,5 @@ const postSchema = new Schema({
 });
 
 const Post = mongoose.model('Post', postSchema);
-
-postSchema.pre(['find', 'findOne', 'findMany'], function(next) {
-    this.populate('liked_by tagged hidden_for user media');
-    return next();
-});
 
 module.exports = Post;

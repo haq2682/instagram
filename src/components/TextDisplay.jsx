@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import reactStringReplace from 'react-string-replace';
+import { Link } from 'react-router-dom';
 
 export default function TextDisplay(props) {
     const [showMore, setShowMore] = useState(false);
@@ -10,15 +11,15 @@ export default function TextDisplay(props) {
         ));
         
         text = reactStringReplace(text, /(@\w+)/g, (match, i) => (
-            <a href={'/user/' + match.substring(1)} key={match + i} className="text-rose-600 dark:text-rose-500 transition-color duration-200 hover:text-rose-900 dark:hover:text-rose-300">{match}</a>
+            <a href={'/search?' + match.substring(1)} key={match + i} className="text-rose-600 dark:text-rose-500 transition-color duration-200 hover:text-rose-900 dark:hover:text-rose-300">{match}</a>
         ));
         
         text = reactStringReplace(text, /(#\w+)/g, (match, i) => (
-            <a href={'search?' + match.substring(1)} key={match + i} className="text-teal-600 dark:text-teal-500 transition-color duration-200 hover:text-teal-900 dark:hover:text-teal-300">{match}</a>
+            <Link to={'/explore?' + match.substring(1)} key={match + i} className="text-teal-600 dark:text-teal-500 transition-color duration-200 hover:text-teal-900 dark:hover:text-teal-300">{match}</Link>
         ));
         
         text = reactStringReplace(text, /(https?:\/\/[^\s]+)/g, (match, i) => (
-            <a key={match + i} href={match} target="_blank" rel="noopener noreferrer" className="text-indigo-700 dark:text-indigo-400 transition-color duration-200 hover:text-indigo-900 dark:hover:text-indigo-300">{match}</a>
+            <Link key={match + i} to={match} target="_blank" rel="noopener noreferrer" className="text-indigo-700 dark:text-indigo-400 transition-color duration-200 hover:text-indigo-900 dark:hover:text-indigo-300">{match}</Link>
         ));
         
         return text;

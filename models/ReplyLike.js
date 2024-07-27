@@ -1,19 +1,14 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const sharedPostSchema = new Schema({
-    description: {
-        type: String
-    },
+const replyLikeSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        ref: 'User'
     },
-    post: {
+    reply: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
-        required: true
+        ref: 'CommentReply'
     },
     created_at: {
         type: Date,
@@ -25,6 +20,6 @@ const sharedPostSchema = new Schema({
     }
 });
 
-const SharedPost = mongoose.model('SharedPost', sharedPostSchema);
+const ReplyLike = mongoose.model('ReplyLike', replyLikeSchema);
 
-module.exports = SharedPost;
+module.exports = ReplyLike;

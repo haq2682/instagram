@@ -2,6 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     username: '',
+    _id: '',
     firstName: '',
     lastName: '',
     website: '',
@@ -21,6 +22,7 @@ export const authSlice = createSlice({
     reducers: {
         authenticate: (state, action) => {
             state.is_authenticated = true;
+            state._id = action.payload.data._id;
             state.username = action.payload.data.username;
             state.firstName = action.payload.data.firstName;
             state.lastName = action.payload.data.lastName;

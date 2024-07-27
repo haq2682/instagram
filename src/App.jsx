@@ -34,7 +34,6 @@ function App() {
             .catch(() => {
                 dispatch(logout());
                 localStorage.clear();
-                console.log('No logged in user found');
             })
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
