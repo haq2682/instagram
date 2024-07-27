@@ -41,6 +41,8 @@ export default function CommentSection(props) {
         }
         finally {
             setLoading(false);
+            setDescription('');
+            setFile(null);
         }
     }
 
@@ -156,7 +158,7 @@ export default function CommentSection(props) {
                                     )
                                 }
                                 {
-                                    (comments.length !== props.post.comments?.length && !fetchLoading) ? (
+                                    (comments.length !== props.post.comments?.length && !fetchLoading && !error) ? (
                                         <div onClick={fetchMoreComments} className="text-purple-500 cursor-pointer hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200">View More Comments</div>
                                     ) : (null)
                                 }

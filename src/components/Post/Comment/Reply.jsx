@@ -2,7 +2,9 @@ import { Avatar, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem 
 import TextDisplay from "../../TextDisplay";
 import { More } from "@styled-icons/remix-fill/More";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
-export default function Reply() {
+import { Link } from "react-router-dom";
+import moment from "moment";
+export default function Reply(props) {
     return (
         <>
             <div className="reply mt-3 ml-10">
@@ -10,17 +12,35 @@ export default function Reply() {
                     <div className="flex">
                         <div className="comment-pfp mb-2.5 mr-2.5">
                             <Avatar
-                                src="https://i.pravatar.cc/150?u=a04258114e29026302d"
+                                src={props.reply.author?.profile_picture.filename}
                                 className="w-10 h-10" />
                         </div>
                         <div className="comment-text mb-1.5">
-                            <p className="font-black text-md cursor-pointer">Username</p>
+                            <Link to={`/profile/${props.reply.author?.username}`}>
+                                <p className="font-black text-md cursor-pointer">{props.reply.author?.username}</p>
+                            </Link>
                             <p className="text-sm">
-                                <TextDisplay text={'A quick brown fox jumps over the lazy dog'} />
-                                <img
-                                    src="https://static.remove.bg/sample-gallery/graphics/bird-thumbnail.jpg"
-                                    alt="comment pic"
-                                    className="object-contain mt-2 rounded-lg w-[300px] h-auto max-h-[300px]" />
+                                {
+                                    props.reply.description ? (
+                                        <TextDisplay text={props.reply?.description} />
+                                    ) : (null)
+                                }
+                                {
+                                    props.reply?.media ? (
+                                            (props.reply.media.media_type === 'image') ? (
+                                                <img
+                                                    src={props.reply.media.path}
+                                                    alt="reply pic"
+                                                    className="object-contain mt-2 w-[300px] h-auto max-h-[300px]"
+                                            />) : (
+                                                <video
+                                                    controls
+                                                    className="card-video mt-2 object-center cursor-pointer active:blur-sm transition-all duration-75"
+                                                >
+                                                    <source src={props.comment.media.path} />
+                                                </video>)
+                                    ) : (null)
+                                } 
                             </p>
                         </div>
                     </div>
@@ -47,7 +67,7 @@ export default function Reply() {
                     className="comment-actions flex justify-between text-sm">
                     <div className="flex">
                         <div className="text-neutral-500 mr-1.5">
-                            1m
+                            {moment(props.reply?.created_at).fromNow()}
                         </div>
                         <div
                             className="comment-like mx-1.5 cursor-pointer transition-color duration-200 text-rose-500 hover:text-rose-700 dark:hover:text-rose-400">
@@ -55,8 +75,7 @@ export default function Reply() {
                         </div>
                     </div>
                     <div className="text-cyan-600 dark:text-cyan-400">
-                        <Heart size="15" className="mr-1 mb-0.5" />96
-                        Likes
+                        <Heart size="15" className="mr-1 mb-0.5" />{props.reply.likes?.length} Likes
                     </div>
                 </div>
             </div>

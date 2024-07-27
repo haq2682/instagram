@@ -37,7 +37,7 @@ module.exports = {
                 try {
                     imageName = `${crypto.randomBytes(32).toString('hex')}.jpg`;
                     const response = await axios.get(profile.photos[0].value, { responseType: 'stream' });
-                    imagePath = path.join(__dirname, '../uploads/pfp', imageName);
+                    imagePath = '/uploads/pfp/' + imageName;
                     const writer = fs.createWriteStream(imagePath);
                     response.data.pipe(writer);
                     await new Promise((resolve, reject) => {

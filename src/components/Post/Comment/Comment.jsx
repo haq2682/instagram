@@ -18,6 +18,7 @@ import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
 import Reply from "./Reply";
 import moment from "moment/moment";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Comment(props) {
     const [replyState, setReplyState] = useState({});
@@ -95,7 +96,7 @@ export default function Comment(props) {
                 const response = await axios.get(
                     "/api/reply/comment/" + props.comment._id + "/page/" + page_number
                 );
-                setReplies((prev) => [...prev, ...response.data]);
+                setReplies(response.data);
             } catch (error) {
                 setError(error.response.data.message);
             } finally {
@@ -110,7 +111,7 @@ export default function Comment(props) {
     };
 
     const fetchPreviousReplies = async () => {
-        setPageNumber((prev) => prev - 1);
+        setPageNumber((prevPageNumber) => prevPageNumber - 1);
     };
 
     useEffect(() => {
@@ -137,9 +138,11 @@ export default function Comment(props) {
                             />
                         </div>
                         <div className="comment-text mb-1.5">
-                            <p className="font-black text-md cursor-pointer">
-                                {props.comment.author.username}
-                            </p>
+                            <Link to={`/profile/${props.comment.author.username}`}>
+                                <p className="font-black text-md cursor-pointer">
+                                    {props.comment.author.username}
+                                </p>
+                            </Link>
                             {props.comment.description ? (
                                 <TextDisplay text={props.comment.description} />
                             ) : null}
@@ -291,7 +294,15 @@ export default function Comment(props) {
                             >
                                 Hide Replies
                             </span>
-                            <Reply />
+                            <div className="mt-1 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200 cursor-pointer">
+                                View Previous Replies
+                            </div>
+                            {
+                                replies.map((reply) => {return (<Reply key={reply._id} reply={reply}/>)})
+                            }
+                            <div className="mt-2 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200 cursor-pointer">
+                                View More Replies
+                            </div> 
                         </>
                     ) : (
                         <span
