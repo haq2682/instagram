@@ -14,6 +14,8 @@ const facebookAuthRoutes = require('./routes/facebookAuthRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const commentRoutes = require('./routes/commentRoutes');
+const replyRoutes = require('./routes/replyRoutes');
 
 const app = express();
 dotenv.config();
@@ -45,6 +47,8 @@ app.use('/auth', authRoutes);
 app.use('/settings', settingsRoutes);
 app.use('/user', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/comment', commentRoutes);
+app.use('/api/reply', replyRoutes);
 
 passport.serializeUser(function(user, done) {
     done(null, user);

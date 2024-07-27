@@ -28,7 +28,7 @@ export default function Profile() {
     return (
         <>
             <Sidebar/>
-            <div className="w-screen sm:ml-[175px] lg:ml-[425px] sm:w-[70vw] lg:w-[65vw]">
+            <div className="w-screen sm:ml-[20vw] lg:ml-[26vw] sm:w-[70vw] lg:w-[65vw]">
                 <div className="pt-6 mb-12 hidden sm:block">
                     <div className="flex justify-around">
                         <div className="w-1/4">
@@ -94,17 +94,17 @@ export default function Profile() {
                             cursor: "absolute bottom-full",
                         }}>
                             <Tab title="POSTS">
-                                <div className="mx-auto">
+                                <div className="mx-auto w-[95vw] sm:w-[65vw] lg:w-[50vw] xl:w-[40vw]">
                                     <Post/>
                                 </div>
                             </Tab>
                             <Tab title="SAVED">
-                                <div className="mx-auto">
+                                <div className="mx-auto w-[95vw] sm:w-[65vw] lg:w-[50vw] xl:w-[40vw]">
                                     <Post/>
                                 </div>
                             </Tab>
                             <Tab title="TAGGED">
-                                <div className="mx-auto">
+                                <div className="mx-auto w-[95vw] sm:w-[65vw] lg:w-[50vw] xl:w-[40vw]">
                                     <Post/>
                                 </div>
                             </Tab>

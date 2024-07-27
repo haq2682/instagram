@@ -5,8 +5,9 @@ const commentReplySchema = new Schema({
     description: {
         type: String
     },
-    media_path: {
-        type: String
+    media: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Media'
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,

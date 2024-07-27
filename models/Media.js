@@ -32,7 +32,14 @@ const mediaSchema = new Schema({
     post: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post',
-        required: true
+    },
+    comment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    },
+    reply: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CommentReply'
     },
     created_at: {
         type: Date,

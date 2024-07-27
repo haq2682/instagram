@@ -122,15 +122,19 @@ const userSchema = new Schema({
     }],
     reported_posts: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ReportPost'
+        ref: 'Post'
     }],
     saved_posts: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SavedPost'
+        ref: 'Post'
     }],
     shared_posts: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SharedPost'
+        ref: 'Post'
+    }],
+    hidde_posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
     }],
     created_at: {
         type: Date,
@@ -172,7 +176,6 @@ userSchema.pre('remove', function(next) {
 
 userSchema.pre(['find', 'findOne', 'findMany'], function(next) {
     this.where({deleted: false});
-    this.populate('profile_picture followers settings following likedPosts');
     return next();
 })
 

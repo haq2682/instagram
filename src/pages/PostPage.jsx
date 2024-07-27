@@ -17,7 +17,7 @@ export default function PostPage() {
             const response = await axios.get('/api/post/' + id);
             setPost(response.data);
         } catch (error) {
-            setError(error.message);
+            setError(error.response.data.message);
         }
     }, [id]);
 
@@ -32,7 +32,7 @@ export default function PostPage() {
                     <h1 className="text-2xl font-black">Individual Post</h1>
                 </div>
                 <Divider />
-                {error ? <p className="text-md text-center font-bold text-red-600">{error}</p> : <Post post={post} />}
+                {error ? <p className="text-md text-center font-bold text-red-600">{error}</p> : <Post post={post}/>}
             </div>
             <Sidebar />
             <Bottombar />

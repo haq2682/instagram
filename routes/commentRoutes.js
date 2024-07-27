@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const {attachUser} = require('../controllers/authController');
-const postController = require('../controllers/postController');
+const commentController = require('../controllers/commentController');
 
 const storage = multer.diskStorage({
     destination: function(req, file, callback) {
-        return callback(null, './uploads/post');
+        return callback(null, './uploads/comment');
     },
     filename: function(req, file, callback) {
         const uniquePrefix = Date.now() + '-' + Math.round(Math.random()*1E9);
@@ -16,12 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
-router.get('/all', postController.all);
-router.get('/saved/all', attachUser, postController.getAllSaved);
-router.post('/add', attachUser, upload.array('files'), postController.add);
-router.post('/share', attachUser, postController.sharePost);
-router.get('/:id', postController.find);
-router.put('/:id/like', attachUser, postController.like);
-router.put('/:id/save', attachUser, postController.save);
+router.post('/add', attachUser, upload.single('file'), commentController.add);
+router.get('/post/:id/page/:page_number', commentController.getCommentsOfPost);
 
 module.exports = router;
