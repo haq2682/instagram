@@ -8,7 +8,7 @@ module.exports = {
         try {
             const comment = await Comment.findOne({_id: req.body.comment_id});
             if(!comment) {
-                const error = new Error("This post does not exist");
+                const error = new Error("This comment does not exist");
                 error.status = 404;
                 throw error;
             }
@@ -84,8 +84,8 @@ module.exports = {
                 path: 'replies',
                 model: 'CommentReply',
                 options: {
-                    limit: 10,
-                    skip: (req.params.page_number - 1)*10
+                    limit: 5,
+                    skip: (req.params.page_number - 1)*5
                 },
                 populate: [
                     {

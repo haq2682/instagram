@@ -71,22 +71,6 @@ module.exports = {
                         }
                     ]
                 },
-                {
-                    path: 'replies',
-                    model: 'CommentReply',
-                    populate: [
-                        {
-                            path: 'user',
-                            model: 'User',
-                            populate: [
-                                {
-                                    path: 'profile_picture',
-                                    model: 'ProfilePhoto'
-                                }
-                            ]
-                        }
-                    ]
-                }
             ]);
             return res.status(200).send(comment);
         }
@@ -97,7 +81,6 @@ module.exports = {
     },
     getCommentsOfPost: async (req, res) => {
         try {
-            console.log('triggered');
             const post = await Post.findOne({_id: req.params.id}).populate([{
                 path: 'comments',
                 model: 'Comment',
@@ -136,22 +119,6 @@ module.exports = {
                             }
                         ]
                     },
-                    {
-                        path: 'replies',
-                        model: 'CommentReply',
-                        populate: [
-                            {
-                                path: 'user',
-                                model: 'User',
-                                populate: [
-                                    {
-                                        path: 'profile_picture',
-                                        model: 'ProfilePhoto'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
                 ]
             }]);
             const comments = post.comments;
