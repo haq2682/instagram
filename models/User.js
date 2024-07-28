@@ -96,6 +96,10 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PostLike'
     }],
+    liked_comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CommentLike'
+    }],
     chats: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chat'

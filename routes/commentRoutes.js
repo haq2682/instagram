@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 router.post('/add', attachUser, upload.single('file'), commentController.add);
+router.put('/:id/like', attachUser, commentController.likeComment);
 router.get('/post/:id/page/:page_number', commentController.getCommentsOfPost);
 
 module.exports = router;
