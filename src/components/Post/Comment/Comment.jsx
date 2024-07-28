@@ -33,7 +33,7 @@ export default function Comment(props) {
     const [loading, setLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [viewReplies, setViewReplies] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState();
     const repliesEndRef = useRef(null);
     const loggedInUser = useSelector(state => state.auth);
 
@@ -333,7 +333,7 @@ export default function Comment(props) {
                     {viewReplies && !viewRepliesLoading ? (
                         <>
                             <div className="text-neutral-500 mb-1.5">
-                                {props.comment.replies?.length} Replies to {props.comment.author.username}'s comment
+                                {props.comment.replies?.length || replies?.length} Replies to {props.comment.author.username}'s comment
                             </div>
                             <span
                                 onClick={() => setViewReplies(false)}
@@ -367,6 +367,9 @@ export default function Comment(props) {
                             View Replies {(viewRepliesLoading) ? (<PuffLoader size="20px" color="gray"/>) : null}
                         </span>) : (null)
                     )}
+                    {
+                        error ? (<div className="text-center font-bold text-red-500 opacity-75">Error</div>) : (null)
+                    }
                 </div>
             </div>
         </>
