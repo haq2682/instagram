@@ -19,15 +19,30 @@ import Reply from "./Reply";
 import moment from "moment/moment";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Comment(props) {
     const [replyState, setReplyState] = useState({});
     const [replies, setReplies] = useState([]);
+    const [liked, setLiked] = useState(false);
+    const [likes, setLikes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [viewReplies, setViewReplies] = useState(false);
     const [error, setError] = useState('');
     const repliesEndRef = useRef(null);
+    const loggedInUser = useSelector(state => state.auth);
+
+    const likeComment = async (id) => {
+        try {
+            await axios.put('/api/comment/' + id + '/like');
+            setLiked(!liked);
+            setLikes((prev) => liked ? prev.filter(userId => userId !== loggedInUser._id) : [...prev, loggedInUser._id]);
+        }
+        catch(error) {
+            setError(error.response.data.message);
+        }
+    }
 
     const handleFileUpload = (commentId, event) => {
         setReplyState((prevState) => ({
@@ -122,6 +137,13 @@ export default function Comment(props) {
         scrollToBottom();
     }, [replies]);
 
+    useEffect(() => {
+        if(props.comment) {
+            setLikes(props.comment.likes || []);
+            setLiked(loggedInUser ? props.comment.likes.some(user => user._id === loggedInUser._id) : false);
+        }
+    }, [props.comment, loggedInUser]);
+
     const scrollToBottom = () => {
         if (repliesEndRef.current) repliesEndRef.current.scrollIntoView();
     };
@@ -192,10 +214,12 @@ export default function Comment(props) {
                         <div className="text-neutral-500 mr-1.5">
                             {moment(props.comment.created_at).fromNow()}
                         </div>
-                        <div
+                        <div onClick={() => likeComment(props.comment._id)}
                             className="comment-like mx-1.5 cursor-pointer transition-color duration-200 text-rose-500 hover:text-rose-700 dark:hover:text-rose-400"
                         >
-                            Like
+                            {
+                                !liked ? (<span>Like</span>) : (<span>Liked <Heart size="15"/></span>)
+                            }
                         </div>
                         <div
                             onClick={() => toggleReplyInput(props.comment._id)}
@@ -206,7 +230,7 @@ export default function Comment(props) {
                     </div>
                     <div className="text-cyan-600 dark:text-cyan-400">
                         <Heart size="15" className="mr-1 mb-0.5" />
-                        {props.comment.likes.length} Likes
+                        {likes.length} Likes
                     </div>
                 </div>
                 <div>
@@ -286,7 +310,7 @@ export default function Comment(props) {
                     {viewReplies ? (
                         <>
                             <div className="text-neutral-500 mb-1.5">
-                                Replies to Username's comment
+                                Replies to {props.comment.author.username}'s comment
                             </div>
                             <span
                                 onClick={() => setViewReplies(false)}
@@ -294,9 +318,13 @@ export default function Comment(props) {
                             >
                                 Hide Replies
                             </span>
-                            <div className="mt-1 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200 cursor-pointer">
-                                View Previous Replies
-                            </div>
+                            {
+                                (pageNumber !== 1) ? (
+                                    <div className="mt-1 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200 cursor-pointer">
+                                        View Previous Replies
+                                    </div>
+                                ) : (null)
+                            }
                             {
                                 replies.map((reply) => {return (<Reply key={reply._id} reply={reply}/>)})
                             }
@@ -305,12 +333,12 @@ export default function Comment(props) {
                             </div> 
                         </>
                     ) : (
-                        <span
+                        (props.comment.replies?.length !== 0) ? (<span
                             onClick={() => setViewReplies(true)}
                             className="cursor-pointer text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 transition-color duration-200"
                         >
                             View Replies
-                        </span>
+                        </span>) : (null)
                     )}
                 </div>
             </div>

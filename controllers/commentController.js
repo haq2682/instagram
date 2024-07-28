@@ -3,6 +3,7 @@ const Comment = require("../models/Comment");
 const Post = require("../models/Post");
 const CommentLike = require("../models/CommentLike");
 const CommentReply = require("../models/CommentReply");
+const User = require("../models/User");
 
 module.exports = {
     add: async (req, res) => {
@@ -105,19 +106,13 @@ module.exports = {
                     },
                     {
                         path: 'likes',
-                        model: 'CommentLike',
+                        model: 'User',
                         populate: [
                             {
-                                path: 'user',
-                                model: 'User',
-                                populate: [
-                                    {
-                                        path: 'profile_picture',
-                                        model: 'ProfilePhoto'
-                                    }
-                                ]
+                                path: 'profile_picture',
+                                model: 'ProfilePhoto'
                             }
-                        ]
+                        ] 
                     },
                 ]
             }]);
@@ -133,5 +128,46 @@ module.exports = {
             if(error.status === 404) return res.status(404).json({message: error.message});
             return res.status(500).json({message: 'An unknown error occurred'});
         }
-    }
+    },
+    likeComment: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const comment = await Comment.findOne({_id: id});
+            if(!comment) {
+                const error = new Error("The comment does not exist");
+                error.status = 404;
+                throw error;
+            }
+            const user = await User.findOne({_id: req.user._id});
+            const commentLike = await CommentLike.findOne({user: req.user._id, comment: comment._id});
+
+            if(!commentLike) {
+                const newLike = new CommentLike({
+                    user: user._id,
+                    comment: comment._id
+                });
+                await newLike.save();
+
+                user.liked_comments.push(comment._id);
+                await user.save();
+
+                comment.likes.push(user._id);
+                await comment.save();
+            }
+            else {
+                await CommentLike.deleteOne({_id: commentLike._id});
+
+                user.liked_comments = user.liked_comments.filter(commentId => commentId.toString() !== comment._id.toString());
+                await user.save();
+
+                comment.likes = comment.likes.filter(userId => userId.toString() !== user._id.toString());
+                await comment.save();
+            }
+            return res.sendStatus(200);
+        }
+        catch(error) {
+            if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    } 
 }
