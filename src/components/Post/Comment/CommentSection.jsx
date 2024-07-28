@@ -8,7 +8,7 @@ import axios from "axios";
 import { PuffLoader } from "react-spinners";
 
 export default function CommentSection(props) {
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState('');
     const [error, setError] = useState('');
     const [description, setDescription] = useState('');
     const [comments, setComments] = useState([]);
@@ -18,7 +18,8 @@ export default function CommentSection(props) {
     const commentsEndRef = useRef(null);
 
     const handleFileUpload = (event) => {
-        setFile(event.target.files[0]);
+        const uploadedFile = event.target.files[0];
+        setFile(uploadedFile);
     }
 
     const handleSubmit = async (event) => {
@@ -99,6 +100,7 @@ export default function CommentSection(props) {
                                     <Input
                                         label="Write your comment..."
                                         variant="bordered"
+                                        value={description}
                                         onChange={(event) => setDescription(event.target.value)}
                                         isDisabled={loading}
                                         endContent={
@@ -114,7 +116,7 @@ export default function CommentSection(props) {
                                                     </Tooltip>
                                                 </label>
                                                 <input id="comment-submit" type="submit"
-                                                    className="hidden" />
+                                                    className="hidden" disabled={!file && !description}/>
                                                 <label htmlFor="comment-submit"
                                                     className="cursor-pointer">
                                                     <Tooltip showArrow={true} content="Submit">
@@ -129,7 +131,7 @@ export default function CommentSection(props) {
                                         file ? (
                                             <div className="max-h-[150px] max-w-[150px] overflow-hidden mt-2 relative">
                                                 {
-                                                    (file.media === 'image') ? (<img key={file._id} src={URL.createObjectURL(file)} alt="preview" className="object-cover" />) : (
+                                                    (file.type.startsWith('image/')) ? (<img key={file._id} src={URL.createObjectURL(file)} alt="preview" className="object-cover" />) : (
                                                         <video
                                                             muted
                                                             autoPlay
@@ -139,7 +141,7 @@ export default function CommentSection(props) {
                                                         </video>
                                                     )
                                                 }
-                                                <div className="text-white absolute top-0 right-1" onClick={() => setFile(null)}><CloseCircle size="30" /></div>
+                                                <div className="text-red-500 absolute top-0 right-1" onClick={() => setFile(null)}><CloseCircle size="30" /></div>
                                             </div>
                                         ) : (null)
                                     }

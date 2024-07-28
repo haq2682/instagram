@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Media = require('./Media');
 const {Schema} = mongoose;
 
 const postSchema = new Schema({
@@ -52,5 +53,11 @@ const postSchema = new Schema({
 });
 
 const Post = mongoose.model('Post', postSchema);
+
+postSchema.pre(['delete', 'deleteOne', 'deleteMany'], function(next) {
+    Media.deleteMany({post: this._id});
+    Comment.deleteMany({post: this._id});
+    return next();
+})
 
 module.exports = Post;
