@@ -20,12 +20,16 @@ import moment from "moment/moment";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { PuffLoader } from "react-spinners";
 
 export default function Comment(props) {
     const [replyState, setReplyState] = useState({});
     const [replies, setReplies] = useState([]);
     const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState([]);
+    const [viewRepliesLoading, setViewRepliesLoading] = useState(false);
+    const [moreRepliesLoading, setMoreRepliesLoading] = useState(false);
+    const [previousRepliesLoading, setPreviousRepliesLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [viewReplies, setViewReplies] = useState(false);
@@ -87,6 +91,7 @@ export default function Comment(props) {
                     "Content-Type": "multipart/form-data",
                 },
             });
+            console.log(response.data);
             setReplies((prev) => [...prev, response.data]);
             setReplyState((prevState) => ({
                 ...prevState,
@@ -101,12 +106,12 @@ export default function Comment(props) {
             setError(error.response.data.message);
         } finally {
             setLoading(false);
+            setViewReplies(true);
         }
     };
 
     const fetchReplies = useCallback(
         async (page_number) => {
-            setLoading(true);
             try {
                 const response = await axios.get(
                     "/api/reply/comment/" + props.comment._id + "/page/" + page_number
@@ -114,23 +119,40 @@ export default function Comment(props) {
                 setReplies(response.data);
             } catch (error) {
                 setError(error.response.data.message);
-            } finally {
-                setLoading(false);
             }
+            finally {
+                setViewRepliesLoading(false);
+                setMoreRepliesLoading(false);
+                setPreviousRepliesLoading(false);
+                setLoading(false);
+            } 
         },
         [props.comment?._id]
     );
 
     const fetchMoreReplies = async () => {
-        setPageNumber((prevPageNumber) => prevPageNumber + 1);
+        if(!moreRepliesLoading) {
+            setMoreRepliesLoading(true);
+            setPageNumber((prevPageNumber) => prevPageNumber + 1);
+        }
     };
 
     const fetchPreviousReplies = async () => {
-        setPageNumber((prevPageNumber) => prevPageNumber - 1);
+        if(!previousRepliesLoading) {
+            setPreviousRepliesLoading(true);
+            setPageNumber((prevPageNumber) => prevPageNumber - 1);
+        }
     };
 
+    const openReplies = () => {
+        setViewRepliesLoading(true);
+        setViewReplies(true);
+    }
+
     useEffect(() => {
-        if (viewReplies) fetchReplies(pageNumber);
+        if (viewReplies) {
+            fetchReplies(pageNumber);
+        }
     }, [fetchReplies, viewReplies, pageNumber]);
 
     useEffect(() => {
@@ -218,7 +240,7 @@ export default function Comment(props) {
                             className="comment-like mx-1.5 cursor-pointer transition-color duration-200 text-rose-500 hover:text-rose-700 dark:hover:text-rose-400"
                         >
                             {
-                                !liked ? (<span>Like</span>) : (<span>Liked <Heart size="15"/></span>)
+                                !liked ? (<span>Like</span>) : (<span>Liked <Heart size="15" className="mb-0.5"/></span>)
                             }
                         </div>
                         <div
@@ -266,6 +288,7 @@ export default function Comment(props) {
                                             <ArrowForward size="30" />
                                         </Tooltip>
                                     </label>
+                                    <div className={`${loading ? 'block' : 'hidden'}`}><PuffLoader size="28px" /></div>
                                 </>
                             }
                             className={`${replyState[props.comment._id]?.inputVisible ? "block" : "hidden"} mt-3`}
@@ -307,10 +330,10 @@ export default function Comment(props) {
                             </div>
                         </div>
                     ) : null}
-                    {viewReplies ? (
+                    {viewReplies && !viewRepliesLoading ? (
                         <>
                             <div className="text-neutral-500 mb-1.5">
-                                Replies to {props.comment.author.username}'s comment
+                                {props.comment.replies?.length} Replies to {props.comment.author.username}'s comment
                             </div>
                             <span
                                 onClick={() => setViewReplies(false)}
@@ -319,25 +342,29 @@ export default function Comment(props) {
                                 Hide Replies
                             </span>
                             {
-                                (pageNumber !== 1) ? (
-                                    <div className="mt-1 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200 cursor-pointer">
-                                        View Previous Replies
+                                (pageNumber !== 1 || previousRepliesLoading) ? (
+                                    <div onClick={fetchPreviousReplies} className={`mt-1 transition-color duration-200 cursor-pointer ${previousRepliesLoading ? 'text-neutral-500' : 'text-purple-500 hover:text-purple-700 dark:hover:text-purple-300'}`}>
+                                        View Previous Replies {previousRepliesLoading ? (<span><PuffLoader size="20px" color="gray"/></span>) : null}
                                     </div>
                                 ) : (null)
                             }
                             {
                                 replies.map((reply) => {return (<Reply key={reply._id} reply={reply}/>)})
                             }
-                            <div className="mt-2 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200 cursor-pointer">
-                                View More Replies
-                            </div> 
+                            {
+                                (pageNumber*5 < props.comment.replies?.length || moreRepliesLoading) ? (
+                                    <div onClick={fetchMoreReplies} className={`mt-2 transition-color duration-200 cursor-pointer ${moreRepliesLoading ? 'text-neutral-500' : 'text-purple-500 hover:text-purple-700 dark:hover:text-purple-300'}`}>
+                                        View More Replies {moreRepliesLoading ? (<span><PuffLoader size="20px" color="gray"/></span>) : null}
+                                    </div>
+                                ) : (null)
+                            }
                         </>
                     ) : (
                         (props.comment.replies?.length !== 0) ? (<span
-                            onClick={() => setViewReplies(true)}
-                            className="cursor-pointer text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 transition-color duration-200"
+                            onClick={openReplies}
+                            className={`cursor-pointer ${viewRepliesLoading ? 'text-neutral-500' : 'text-blue-500 hover:text-blue-700 dark:hover:text-blue-300'} transition-color duration-200`}
                         >
-                            View Replies
+                            View Replies {(viewRepliesLoading) ? (<PuffLoader size="20px" color="gray"/>) : null}
                         </span>) : (null)
                     )}
                 </div>

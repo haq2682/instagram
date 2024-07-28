@@ -39,7 +39,7 @@ module.exports = {
                 await newReply.save();
             }
             const reply_id = comment.replies.filter(reply => reply._id === newReply._id);
-            const reply = await Comment.findOne({_id: reply_id}).populate([
+            const reply = await CommentReply.findOne({_id: reply_id}).populate([
                 {
                     path: 'media',
                     model: 'Media'
