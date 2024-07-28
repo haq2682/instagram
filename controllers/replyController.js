@@ -32,7 +32,7 @@ module.exports = {
                     newMedia.media_type = 'video';
                     newMedia.encoding = req.file.encoding;
                 }
-                newMedia.format = req.file.originalName.substr(-3, 3);
+                newMedia.format = req.file.originalname.substr(-3, 3);
                 newMedia.reply = newReply._id;
                 await newMedia.save();
                 newReply.media = newMedia._id;

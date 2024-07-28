@@ -238,8 +238,8 @@ export default function Comment(props) {
                                     </label>
                                     <input id={`reply-submit-${props.comment._id}`} type="submit" className="hidden" disabled={!replyState[props.comment._id]?.description && !replyState[props.comment._id]?.file}/>
                                     <label htmlFor={`reply-submit-${props.comment._id}`} className="cursor-pointer">
-                                        <Tooltip showArrow={true} content="Submit" isDisabled={!replyState[props.comment._id]?.description && !replyState[props.comment._id]?.file}>
-                                            <ArrowForward size="30" isDisabled={!replyState[props.comment._id]?.description && !replyState[props.comment._id]?.file}/>
+                                        <Tooltip showArrow={true} content="Submit">
+                                            <ArrowForward size="30" />
                                         </Tooltip>
                                     </label>
                                 </>
@@ -250,7 +250,7 @@ export default function Comment(props) {
                     {replyState[props.comment._id]?.file ? (
                         <div className="max-h-[150px] max-w-[150px] overflow-hidden mt-2 relative">
                         {
-                            (replyState[props.comment._id]?.file.media_type === 'image') ? (
+                            (replyState[props.comment._id]?.file.type.startsWith('image/')) ? (
                                     <img
                                         key={replyState[props.comment._id].file._id}
                                         src={URL.createObjectURL(replyState[props.comment._id].file)}
