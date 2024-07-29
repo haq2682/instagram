@@ -58,36 +58,30 @@ module.exports = {
                 },
                 {
                     path: 'likes',
-                    model: 'CommentLike',
+                    model: 'User',
                     populate: [
                         {
-                            path: 'user',
-                            model: 'User',
-                            populate: [
-                                {
-                                    path: 'profile_picture',
-                                    model: 'ProfilePhoto'
-                                }
-                            ]
+                            path: 'profile_picture',
+                            model: 'ProfilePhoto'
                         }
                     ]
                 },
             ]);
             return res.status(200).send(comment);
         }
-        catch(error) {
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getCommentsOfPost: async (req, res) => {
         try {
-            const post = await Post.findOne({_id: req.params.id}).populate([{
+            const post = await Post.findOne({ _id: req.params.id }).populate([{
                 path: 'comments',
                 model: 'Comment',
                 options: {
                     limit: 10,
-                    skip: (req.params.page_number - 1)*10
+                    skip: (req.params.page_number - 1) * 10
                 },
                 populate: [
                     {
@@ -112,27 +106,27 @@ module.exports = {
                                 path: 'profile_picture',
                                 model: 'ProfilePhoto'
                             }
-                        ] 
+                        ]
                     },
                 ]
             }]);
             const comments = post.comments;
-            if(!comments || comments.length === 0) {
+            if (!comments || comments.length === 0) {
                 const error = new Error("This post has no comments yet");
                 error.status = 404;
                 throw error;
             }
             return res.send(comments);
         }
-        catch(error) {
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     likeComment: async (req, res) => {
         try {
             const id = req.params.id;
-            const comment = await Comment.findOne({_id: id});
+            const comment = await Comment.findOne({ _id: id });
             if(!comment) {
                 const error = new Error("The comment does not exist");
                 error.status = 404;

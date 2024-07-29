@@ -17,6 +17,7 @@ const storagePfp = multer.diskStorage({
 
 const uploadPfp = multer({storage: storagePfp});
 
+router.get('/suggestions', attachUser, userController.suggestions);
 router.post('/generate_token', userController.generateNewToken);
 router.put('/edit', attachUser,  userController.edit);
 router.put('/changepfp', attachUser, uploadPfp.single('profile_picture'), userController.changePfp);

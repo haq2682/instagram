@@ -56,37 +56,31 @@ module.exports = {
                     ]
                 },
                 {
-                    path: 'likes',
-                    model: 'ReplyLike',
+                    path: 'liked_by',
+                    model: 'User',
                     populate: [
                         {
-                            path: 'user',
-                            model: 'User',
-                            populate: [
-                                {
-                                    path: 'profile_picture',
-                                    model: 'ProfilePhoto'
-                                }
-                            ]
+                            path: 'profile_picture',
+                            model: 'ProfilePhoto'
                         }
                     ]
                 },
             ]);
             return res.status(200).send(reply);
         }
-        catch(error) {
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getRepliesOfComment: async (req, res) => {
         try {
-            const comment = await Comment.findOne({_id: req.params.id}).populate([{
+            const comment = await Comment.findOne({ _id: req.params.id }).populate([{
                 path: 'replies',
                 model: 'CommentReply',
                 options: {
                     limit: 5,
-                    skip: (req.params.page_number - 1)*5
+                    skip: (req.params.page_number - 1) * 5
                 },
                 populate: [
                     {
@@ -116,16 +110,16 @@ module.exports = {
                 ]
             }]);
             const replies = comment.replies;
-            if(!replies || replies.length === 0) {
+            if (!replies || replies.length === 0) {
                 const error = new Error("This comment has no replies yet");
                 error.status = 404;
                 throw error;
             }
             return res.send(replies);
         }
-        catch(error) {
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     likeReply: async (req, res) => {
