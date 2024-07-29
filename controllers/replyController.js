@@ -2,6 +2,7 @@ const Media = require("../models/Media");
 const Comment = require("../models/Comment");
 const ReplyLike = require("../models/ReplyLike");
 const CommentReply = require("../models/CommentReply");
+const User = require('../models/User');
 
 module.exports = {
     add: async (req, res) => {
@@ -103,18 +104,12 @@ module.exports = {
                         ]
                     },
                     {
-                        path: 'likes',
-                        model: 'ReplyLike',
+                        path: 'liked_by',
+                        model: 'User',
                         populate: [
                             {
-                                path: 'user',
-                                model: 'User',
-                                populate: [
-                                    {
-                                        path: 'profile_picture',
-                                        model: 'ProfilePhoto'
-                                    }
-                                ]
+                                path: 'profile_picture',
+                                model: 'ProfilePhoto'
                             }
                         ]
                     },
@@ -127,6 +122,41 @@ module.exports = {
                 throw error;
             }
             return res.send(replies);
+        }
+        catch(error) {
+            if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    },
+    likeReply: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const reply = await CommentReply.findOne({_id: id});
+            if(!reply) {
+                const error = new Error("The reply does not exist");
+                error.status = 404;
+                throw error;
+            }
+            const user = await User.findOne({_id: req.user._id});
+            const replyLike = await ReplyLike.findOne({user: req.user._id, reply: reply._id});
+
+            if(!replyLike) {
+                const newLike = new ReplyLike({
+                    user: user._id,
+                    comment: reply._id
+                });
+                await newLike.save();
+
+                reply.liked_by.push(user._id);
+                await reply.save();
+            }
+            else {
+                await ReplyLike.deleteOne({_id: replyLike._id});
+
+                reply.liked_by = reply.liked_by.filter(userId => userId.toString() !== user._id.toString());
+                await reply.save();
+            }
+            return res.sendStatus(200);
         }
         catch(error) {
             if(error.status === 404) return res.status(404).json({message: error.message});
