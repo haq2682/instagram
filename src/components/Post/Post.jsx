@@ -96,7 +96,7 @@ export default function Post(props) {
             return (
                 <>
                     <div className="post-user-details inline-block ml-3">
-                        <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user.username}>{props.post?.user.username} </Link></span> {(props.post.shared_post?.user.username === props.post?.user.username) ? (<span>shared their post</span>) : (<span>shared <Link className="text-md font-bold" to={props.post.shared_post?.user.username}>{props.post.shared_post?.user.username}</Link>'s post</span>)}
+                        <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user.username}>{props.post?.user.username} </Link></span> {(props.post.shared_post?.user.username === props.post?.user.username) ? (<span>shared their post</span>) : (<span>shared <Link className="text-md font-bold" to={'/profile/' + props.post.shared_post?.user.username}>{props.post.shared_post?.user.username}</Link>'s post</span>)}
                         <h4 className="font-bold text-sm text-neutral-500">{moment(props.post?.created_at).fromNow()}</h4>
                     </div>
                 </>

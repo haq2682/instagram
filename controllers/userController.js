@@ -81,5 +81,32 @@ module.exports = {
         catch(error) {
             return res.status(500).json({message: 'An unknown error occurred'});
         }
+    },
+    suggestions: async (req, res) => {
+        try {
+            const loggedInUserId = req.user._id;
+            const loggedInUser = await User.findById(loggedInUserId).populate('followers');
+            
+            if (!loggedInUser) {
+                return res.status(404).json({ message: 'Logged-in user not found' });
+            }
+            
+            const followerIds = loggedInUser.followers.map(follower => follower._id);
+            
+            let users = await User.find({ 
+                _id: { $nin: [...followerIds, loggedInUserId] }
+            }).populate('profile_picture');
+
+            users = users.sort(() => 0.5 - Math.random());
+            users = users.slice(0, 5);
+    
+            if (!users || users.length === 0) {
+                return res.status(404).json({ message: 'No users to suggest' });
+            }
+    
+            return res.send(users);
+        } catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
     }
 }
