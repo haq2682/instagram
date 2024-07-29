@@ -368,7 +368,7 @@ export default function Comment(props) {
                         </span>) : (null)
                     )}
                     {
-                        error ? (<div className="text-center font-bold text-red-500 opacity-75">Error</div>) : (null)
+                        error ? (<div className="text-center font-bold text-red-500 opacity-75">{error}</div>) : (null)
                     }
                 </div>
             </div>

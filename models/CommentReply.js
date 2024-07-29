@@ -17,9 +17,9 @@ const commentReplySchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
     },
-    likes: [{
+    liked_by: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'CommentLike'
+        ref: 'User'
     }],
     created_at: {
         type: Date,
