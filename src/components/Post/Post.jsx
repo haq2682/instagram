@@ -1,7 +1,6 @@
 import { Avatar, Divider, Skeleton, Card } from "@nextui-org/react";
 import Report from './Report';
 import CommentSection from './Comment/CommentSection';
-import { Carousel } from "react-responsive-carousel";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Share } from "@styled-icons/entypo/Share";
 import { Heart as HeartOutline } from "@styled-icons/boxicons-regular/Heart";
@@ -19,6 +18,7 @@ import { Link, redirect } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import ShareModal from './ShareModal';
+import SimpleSlider from "./Slider";
 
 export default function Post(props) {
     const [commentSectionOpen, setCommentSectionOpen] = useState(false);
@@ -130,66 +130,16 @@ export default function Post(props) {
                             </div>
                         </div>
                         
-                        <p className={`post-description p-3 ${(props.post.shared_post?.description.length < 100 && !props.post.shared_post?.media) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-lg'}`}>
+                        <p className={`post-description px-3 pt-3 ${(props.post.shared_post?.description.length < 100 && !props.post.shared_post?.media) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-lg'}`}>
                             <TextDisplay text={props.post.shared_post?.description} />
                         </p>
                     </Link>
-                    <Carousel useKeyboardArrows={true} swipeable={true} emulateTouch={true}
-                        showArrows={props.post?.media.length > 1} showThumbs={false} showStatus={false}
-                        dynamicHeight={true}>
-                        {
-                            props.post.shared_post?.media.map((file) => {
-                                if (file.media_type === 'image') {
-                                    return <div key={file.originalName} className="w-full h-auto max-h-full">
-                                        <img
-                                            className="card-image mt-2 object-center cursor-pointer active:blur-sm transition-all duration-75"
-                                            alt="card background"
-                                            src={file.path}
-                                        />
-                                    </div>
-                                }
-                                else {
-                                    return <div key={file.originalName} className="w-full h-auto max-h-full">
-                                        <video controls
-                                            className="card-video mt-2 object-center cursor-pointer active:blur-sm transition-all duration-75">
-                                            <source
-                                                src={file.path} />
-                                        </video>
-                                    </div>
-                                }
-                            })
-                        }
-                    </Carousel>
+                    <SimpleSlider media={props.post.shared_post?.media} openEnlarge={openEnlarge}/>
                 </>
         )
         else return (
             <>
-                <Carousel useKeyboardArrows={true} swipeable={true} emulateTouch={true}
-                    showArrows={props.post?.media.length > 1} showThumbs={false} showStatus={false}
-                    dynamicHeight={true}>
-                    {
-                        props.post?.media.map((file) => {
-                            if (file.media_type === 'image') {
-                                return <div key={file.originalName} onClick={() => openEnlarge(file)} className="w-full h-auto max-h-full">
-                                    <img
-                                        className="card-image mt-2 object-center cursor-pointer active:blur-sm transition-all duration-75"
-                                        alt="card background"
-                                        src={file.path}
-                                    />
-                                </div>
-                            }
-                            else {
-                                return <div key={file.originalName} className="w-full h-auto max-h-full">
-                                    <video controls
-                                        className="card-video mt-2 object-center w-full cursor-pointer active:blur-sm transition-all duration-75">
-                                        <source
-                                            src={file.path} />
-                                    </video>
-                                </div>
-                            }
-                        })
-                    }
-                </Carousel>
+                <SimpleSlider media={props.post?.media} openEnlarge={openEnlarge}/>
             </>
         )
     })
@@ -282,6 +232,13 @@ export default function Post(props) {
                             <div className="flex justify-between w-full my-3">
                                 <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
                                 <p className="mr-3">{props.post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
+                                {
+                                    (!props.post?.shared_post) ? (
+                                        <p className="mr-3">{props.post?.shared_by.length} Shares <Share size="20"
+                                            className="text-blue-600 dark:text-blue-400" />
+                                        </p>
+                                            ) : (null)
+                                }
                             </div>
                         </Link>
                         <Divider />

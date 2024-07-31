@@ -55,7 +55,7 @@ export default function Suggestion() {
                     users ? (
                         users.map((user) => {
                             return (
-                                <div className="suggested-user my-3">
+                                <div key={user._id} className="suggested-user my-3">
                                     <User
                                         name={`${user.firstName} ${user.lastName}`}
                                         description={(
