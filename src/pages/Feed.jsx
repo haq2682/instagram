@@ -14,14 +14,19 @@ import axios from "axios";
 export default function Feed() {
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState('');
+    const [loader, setLoader] = useState(true);
 
     const fetchPosts = useCallback(async () => {
+        setLoader(true);
         try {
             const response = await axios.get('/api/post/all');
             setPosts(response.data);
         }
         catch(error) {
             setError(error.code);
+        }
+        finally {
+            setLoader(false);
         }
     }, [setPosts, setError]);
 
@@ -84,24 +89,28 @@ export default function Feed() {
                             })) : ((error.code === 'ERR_BAD_RESPONSE') ? <div className="post-error">Something went wrong unexpectedly</div> : <div className="post-error">No more posts found</div>)
                         }
                     </div>
-                    <div className="loader-skeleton my-5">
-                        <Card className="w-full space-y-5 p-4 bg-neutral-100 dark:bg-neutral-900" radius="lg">
-                            <Skeleton className="rounded-lg">
-                                <div className="h-24 rounded-lg bg-default-300"></div>
-                            </Skeleton>
-                            <div className="space-y-3">
-                                <Skeleton className="w-3/5 rounded-lg">
-                                    <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
-                                </Skeleton>
-                                <Skeleton className="w-4/5 rounded-lg">
-                                    <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
-                                </Skeleton>
-                                <Skeleton className="w-2/5 rounded-lg">
-                                    <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
-                                </Skeleton>
+                    {
+                        loader ? (
+                            <div className="loader-skeleton my-5">
+                                <Card className="w-full space-y-5 p-4 bg-neutral-100 dark:bg-neutral-900" radius="lg">
+                                    <Skeleton className="rounded-lg">
+                                        <div className="h-24 rounded-lg bg-default-300"></div>
+                                    </Skeleton>
+                                    <div className="space-y-3">
+                                        <Skeleton className="w-3/5 rounded-lg">
+                                            <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-4/5 rounded-lg">
+                                            <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                                        </Skeleton>
+                                        <Skeleton className="w-2/5 rounded-lg">
+                                            <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                                        </Skeleton>
+                                    </div>
+                                </Card>
                             </div>
-                        </Card>
-                    </div>
+                        ) : null
+                    }
                 </div>
                 <Suggestion/>
                 <Bottombar/>

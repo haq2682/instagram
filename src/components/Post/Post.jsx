@@ -31,6 +31,7 @@ export default function Post(props) {
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
     const [loader, setLoader] = useState(true);
+    const [interactionLoading, setInteractionLoading] = useState(false);
 
     const fetchPostDetails = useCallback(async () => {
         try {
@@ -67,6 +68,7 @@ export default function Post(props) {
     }
 
     const likePost = async (id) => {
+        setInteractionLoading(true);
         try {
             await axios.put('/api/post/' + id + '/like');
             setLiked(!liked);
@@ -78,9 +80,13 @@ export default function Post(props) {
         } catch(error) {
             console.log(error.message);
         }
+        finally {
+            setInteractionLoading(false);
+        }
     }
 
     const savePost = async (id) => {
+        setInteractionLoading(true);
         try {
             await axios.put(`/api/post/${id}/save`);
             setSaved(!saved);
@@ -89,6 +95,9 @@ export default function Post(props) {
         catch(error) {
             console.log(error.message);
         }
+        finally {
+            setInteractionLoading(false);
+        }
     }
 
     const RenderHeader = () => {
@@ -96,7 +105,7 @@ export default function Post(props) {
             return (
                 <>
                     <div className="post-user-details inline-block ml-3">
-                        <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user.username}>{props.post?.user.username} </Link></span> {(props.post.shared_post?.user.username === props.post?.user.username) ? (<span>shared their post</span>) : (<span>shared <Link className="text-md font-bold" to={'/profile/' + props.post.shared_post?.user.username}>{props.post.shared_post?.user.username}</Link>'s post</span>)}
+                        <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user?.username}>{props.post?.user?.username} </Link></span> {(props.post.shared_post?.user?.username === props.post?.user?.username) ? (<span>shared their post</span>) : (<span>shared <Link className="text-md font-bold" to={'/profile/' + props.post.shared_post?.user?.username}>{props.post.shared_post?.user?.username}</Link>'s post</span>)}
                         <h4 className="font-bold text-sm text-neutral-500">{moment(props.post?.created_at).fromNow()}</h4>
                     </div>
                 </>
@@ -105,7 +114,7 @@ export default function Post(props) {
         else return (
             <>
                 <div className="post-user-details inline-block ml-3">
-                    <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user.username}>{props.post?.user.username}</Link></span>
+                    <span className="text-md font-bold"><Link to={'/profile/' + props.post?.user?.username}>{props.post?.user?.username}</Link></span>
                     <h4 className="font-bold text-sm text-neutral-500">{moment(props.post?.created_at).fromNow()}</h4>
                 </div>
             </>
@@ -120,12 +129,12 @@ export default function Post(props) {
                     <Link to={`/post/${props.post.shared_post?._id}`}>
                         <div className="pb-0 pt-2 px-4 flex-col items-start inline-block w-full">
                             <div className="inline-block">
-                                <img alt="pfp" src={props.post.shared_post?.user.profile_picture.filename}
+                                <img alt="pfp" src={props.post.shared_post?.user?.profile_picture.filename}
                                     className="w-10 h-10 relative top-1 rounded-full object-cover" />
                             </div>
                             
                             <div className="post-user-details inline-block ml-3">
-                                <span className="text-md font-bold"><Link to={'/profile/' + props.post.shared_post?.user.username}>{props.post.shared_post?.user.username} </Link></span> 
+                                <span className="text-sm md:text-md lg:text-lg font-bold"><Link to={'/profile/' + props.post.shared_post?.user?.username}>{props.post.shared_post?.user?.username} </Link></span> 
                                 <h4 className="font-bold text-sm text-neutral-500">{moment(props.post.shared_post?.created_at).fromNow()}</h4>
                             </div>
                         </div>
@@ -149,7 +158,7 @@ export default function Post(props) {
             return (
                 <>
                     <Link to={`/post/${props.post.shared_post?._id}`}>
-                        <div className="flex justify-between w-full my-3">
+                        <div className="flex justify-between w-full my-3 text-xs md:text-md lg:text-lg">
                             <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{props.post.shared_post?.liked_by.length} Likes</p>
                             <p>{props.post.shared_post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
                             <p className="mr-3">{props.post.shared_post?.shared_by.length} Shares <Share size="20"
@@ -188,11 +197,11 @@ export default function Post(props) {
         return (
             <div>
                 <div
-                    className="post my-5 w-full border border-neutral-300 dark:border-neutral-700 rounded-2xl">
+                    className="post relative my-5 w-full border border-neutral-300 dark:border-neutral-700 rounded-2xl">
                         <div className="py-1 bg-neutral-100 dark:bg-neutral-900 w-full rounded-2xl">
                             <div className="pb-0 pt-2 px-4 flex-col items-start inline-block w-full">
                                 <div className="inline-block">
-                                    <Avatar src={props.post?.user.profile_picture.filename}
+                                    <Avatar src={props.post?.user?.profile_picture.filename}
                                         className="w-10 h-10 relative top-1" />
                                 </div>
                                 <RenderHeader/>
@@ -218,7 +227,7 @@ export default function Post(props) {
                                 <div className="flex flex-col min-w-full max-h-[800px] overflow-hidden">
                                     {
                                         (props.post?.description) ? (
-                                        <p className={`post-description p-3 ${(props.post.description?.length < 100 && !props.post?.media) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-lg'}`}>
+                                        <p className={`post-description text-sm md:text-md lg:text-lg p-3 ${(props.post.description?.length < 100 && !props.post?.media) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-lg'}`}>
                                             <TextDisplay text={props.post?.description} />
                                         </p>
                                         ) : (null)
@@ -229,7 +238,7 @@ export default function Post(props) {
                         <Divider />
                         <RenderInteractions />
                         <Link to={`/post/${props.post?._id}`}>
-                            <div className="flex justify-between w-full my-3">
+                            <div className="flex justify-between w-full my-3 text-xs md:text-md lg:text-lg">
                                 <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
                                 <p className="mr-3">{props.post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
                                 {
@@ -243,7 +252,7 @@ export default function Post(props) {
                         </Link>
                         <Divider />
                         <div className="post-interactive-buttons m-3 flex justify-between">
-                            <div onClick={() => likePost(props.post._id)}
+                            <div onClick={() => likePost(props.post._id)} onTouchStart={() => likePost(props.post._id)}
                                 className="w-full text-center cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-700 py-3 rounded-lg transition-all duration-200 mx-1.5">
                                 <span className="hidden lg:inline mr-1.5">{liked ? 'Liked' : 'Like'}</span>
                                 {liked ? <Heart size="30" className="mb-1 text-rose-600" /> : <HeartOutline size="30" className="mb-1 text-rose-600" />}
@@ -266,6 +275,7 @@ export default function Post(props) {
                             </div>
                         </div>
                     </div>
+                    { interactionLoading ? <div className="bg-neutral-700 opacity-25 w-full h-full absolute top-0 rounded-xl"></div> : null}
                 </div>
                 <Divider />
                 <Report open={reportSectionOpen} setClose={() => setReportSectionOpen(false)} />

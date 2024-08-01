@@ -13,14 +13,14 @@ export default function SimpleSlider({ media, openEnlarge }) {
     function SampleNextArrow(props) {
         const { onClick } = props;
         return (
-            <div className={`absolute z-10 top-1/2 -right-0 -translate-y-1/2 h-5/6 items-center ${total > 1 ? 'flex' : 'hidden'}`} onClick={onClick}><NavigateNext size="30" className="bg-neutral-700 bg-opacity-40 rounded-full"/></div>
+            <div className={`absolute z-10 text-white top-1/2 -right-0 -translate-y-1/2 h-5/6 items-center ${total > 1 ? 'flex' : 'hidden'}`} onClick={onClick}><NavigateNext size="30" className="bg-neutral-700 bg-opacity-40 rounded-full"/></div>
         );
     }
 
     function SamplePrevArrow(props) {
         const { onClick } = props;
         return (
-            <div className={`absolute z-10 top-1/2 -translate-y-1/2 h-5/6 items-center ${total > 1 ? 'flex' : 'hidden'}`} onClick={onClick}><NavigateBefore size="30" className="bg-neutral-700 bg-opacity-40 rounded-full"/></div>
+            <div className={`absolute z-10 top-1/2 text-white -translate-y-1/2 h-5/6 items-center ${total > 1 ? 'flex' : 'hidden'}`} onClick={onClick}><NavigateBefore size="30" className="bg-neutral-700 bg-opacity-40 rounded-full"/></div>
         );
     }
 
@@ -53,10 +53,10 @@ export default function SimpleSlider({ media, openEnlarge }) {
                             <div
                                 key={file.originalName}
                                 onClick={(e) => handleImageClick(e, file)}
-                                className="w-full max-h-[1000px] overflow-hidden relative object-center"
+                                className="w-full h-[800px] overflow-hidden relative object-center"
                             >
                                 <img
-                                    className="card-image w-full object-center cursor-pointer active:blur-sm transition-all duration-75"
+                                    className="card-image w-full object-cover h-full cursor-pointer active:blur-sm transition-all duration-75"
                                     alt="card background"
                                     src={file.path}
                                 />
@@ -77,7 +77,7 @@ export default function SimpleSlider({ media, openEnlarge }) {
                     }
                 })}
             </Slider>
-            <div className={`text-sm absolute right-0 m-1 top-0 bg-neutral-700 px-4 py-2 rounded-full bg-opacity-75 ${total > 1 ? 'block' : 'hidden'}`}>
+            <div className={`text-sm text-white absolute right-0 m-1 top-0 bg-neutral-700 px-4 py-2 rounded-full bg-opacity-75 ${total > 1 ? 'block' : 'hidden'}`}>
                 {index + 1}/{total}
             </div>
         </div>
