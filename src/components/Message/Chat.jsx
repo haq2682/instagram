@@ -21,7 +21,7 @@ import { Close } from "@styled-icons/ionicons-solid/Close";
 import { DeleteForever } from "@styled-icons/material/DeleteForever";
 import { ThreeBars } from "@styled-icons/octicons/ThreeBars";
 import { ArrowForward } from "@styled-icons/typicons/ArrowForward";
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import "../../assets/css/Chat.css";
 import ChatGroups from "./ChatGroups";
 import ChatPeople from "./ChatPeople";
@@ -54,25 +54,43 @@ export default function Chat() {
     const startX = useRef(null);
     const [deviation, setDeviation] = useState(0);
 
-    function handleMouseDown(event) {
-        startX.current = event.changedTouches[0].clientX;
-        setDeviation(0);
+    const [isSwiping, setIsSwiping] = useState(false);
+
+    useEffect(() => {
+        if (!isSwiping && deviation > 0) {
+            const timer = setTimeout(() => {
+                if (deviation >= 40) {
+                    setDeviation(80);
+                } else {
+                    setDeviation(0);
+                }
+            }, 50);
+            return () => clearTimeout(timer);
+        }
+    }, [isSwiping, deviation]);
+
+    function handleTouchStart(event) {
+        startX.current = event.touches[0].clientX;
+        setIsSwiping(true);
     }
     
-    function handleMouseUp() {
+    function handleTouchEnd() {
         if (deviation >= 75 && !replyingToMessage) {
             setReplyingToMessage(messages[0]);
         }
         startX.current = null;
         setDeviation(0);
+        setIsSwiping(false);
     }
 
-    function handleMouseMove(event) {
+    function handleTouchMove(event) {
         if (startX.current !== null) {
-            let diff = event.changedTouches[0].clientX - startX.current;
+            let diff = event.touches[0].clientX - startX.current;
             if (diff < 0) diff = 0;
-            if (diff < 80) {
+            if (diff <= 80) {
                 setDeviation(diff);
+            } else {
+                setDeviation(80);
             }
         }
     }
@@ -121,14 +139,14 @@ export default function Chat() {
                             className="messages h-full w-full overflow-scroll border-b-neutral-300 dark:border-b-neutral-700 border-b">
                             <div className="m-2">
                                 <div 
-                                    className="message w-full flex transition-all duration-200 ease-linear"
-                                    onTouchStart={handleMouseDown} 
-                                    onTouchEnd={handleMouseUp} 
-                                    onTouchMove={handleMouseMove}
+                                    className="message w-full flex transition-all duration-200 ease-linear text-xs"
+                                    onTouchStart={handleTouchStart} 
+                                    onTouchEnd={handleTouchEnd} 
+                                    onTouchMove={handleTouchMove}
                                     style={{ transform: `translateX(${deviation}px)`}}
                                 >
                                     <div
-                                        className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6">
+                                        className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6 text-xs">
                                         <p>{messages[0]}</p>
                                     </div>
                                     <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
@@ -136,7 +154,7 @@ export default function Chat() {
                                         <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Heart size="25"/></div>
                                     </div>
                                 </div>
-                                <div className="message w-full flex justify-end">
+                                <div className="message w-full flex justify-end text-xs">
                                     <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
                                         <div
                                             className="inline-block mx-2 transition-all duration-200 hover:opacity-60 text-red-600">
