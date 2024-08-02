@@ -10,21 +10,21 @@ import {
     Tabs,
     Tooltip,
 } from "@nextui-org/react";
-import {useState} from 'react';
-import {Video} from '@styled-icons/fa-solid/Video';
-import {Telephone} from '@styled-icons/foundation/Telephone';
-import {Close} from "@styled-icons/ionicons-solid/Close";
-import {ThreeBars} from "@styled-icons/octicons/ThreeBars";
-import {Info} from '@styled-icons/evaicons-solid/Info';
-import ChatPeople from "./ChatPeople";
-import ChatGroups from "./ChatGroups";
-import {Paperclip} from "@styled-icons/feather/Paperclip";
-import {ArrowForward} from "@styled-icons/typicons/ArrowForward";
-import {Reply} from "@styled-icons/fa-solid/Reply";
-import {Heart} from "@styled-icons/boxicons-solid/Heart";
-import {DeleteForever} from "@styled-icons/material/DeleteForever";
-import {CommentEdit} from "@styled-icons/fluentui-system-regular/CommentEdit";
+import { Heart } from "@styled-icons/boxicons-solid/Heart";
+import { Info } from '@styled-icons/evaicons-solid/Info';
+import { Reply } from "@styled-icons/fa-solid/Reply";
+import { Video } from '@styled-icons/fa-solid/Video';
+import { Paperclip } from "@styled-icons/feather/Paperclip";
+import { CommentEdit } from "@styled-icons/fluentui-system-regular/CommentEdit";
+import { Telephone } from '@styled-icons/foundation/Telephone';
+import { Close } from "@styled-icons/ionicons-solid/Close";
+import { DeleteForever } from "@styled-icons/material/DeleteForever";
+import { ThreeBars } from "@styled-icons/octicons/ThreeBars";
+import { ArrowForward } from "@styled-icons/typicons/ArrowForward";
+import { useRef, useState } from 'react';
 import "../../assets/css/Chat.css";
+import ChatGroups from "./ChatGroups";
+import ChatPeople from "./ChatPeople";
 
 export default function Chat() {
     const messages = [
@@ -50,6 +50,32 @@ export default function Chat() {
     const [detailsBarOpen, setDetailsBarOpen] = useState(false);
     const [replyingToMessage, setReplyingToMessage] = useState('');
     const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
+
+    const startX = useRef(null);
+    const [deviation, setDeviation] = useState(0);
+
+    function handleMouseDown(event) {
+        startX.current = event.changedTouches[0].clientX;
+        setDeviation(0);
+    }
+    
+    function handleMouseUp() {
+        if (deviation >= 75 && !replyingToMessage) {
+            setReplyingToMessage(messages[0]);
+        }
+        startX.current = null;
+        setDeviation(0);
+    }
+
+    function handleMouseMove(event) {
+        if (startX.current !== null) {
+            let diff = event.changedTouches[0].clientX - startX.current;
+            if (diff < 0) diff = 0;
+            if (diff < 80) {
+                setDeviation(diff);
+            }
+        }
+    }
     return (
         <div className="w-screen">
             <div className="w-full flex h-screen">
@@ -94,7 +120,13 @@ export default function Chat() {
                         <div
                             className="messages h-full w-full overflow-scroll border-b-neutral-300 dark:border-b-neutral-700 border-b">
                             <div className="m-2">
-                                <div className="message w-full flex">
+                                <div 
+                                    className="message w-full flex transition-all duration-200 ease-linear"
+                                    onTouchStart={handleMouseDown} 
+                                    onTouchEnd={handleMouseUp} 
+                                    onTouchMove={handleMouseMove}
+                                    style={{ transform: `translateX(${deviation}px)`}}
+                                >
                                     <div
                                         className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6">
                                         <p>{messages[0]}</p>
@@ -185,25 +217,25 @@ export default function Chat() {
                                 <Input label="Write your message..." variant="underlined" endContent={
                                     <>
                                         <input id="message-file-upload"
-                                               name="message-file-upload" type="file"
-                                               className="hidden"/>
+                                            name="message-file-upload" type="file"
+                                            className="hidden" />
                                         <label htmlFor="message-file-upload"
-                                               className="cursor-pointer">
+                                            className="cursor-pointer">
                                             <Tooltip showArrow={true}
-                                                     content="Upload an image">
-                                                <Paperclip size="25"/>
+                                                content="Upload an image">
+                                                <Paperclip size="25" />
                                             </Tooltip>
                                         </label>
                                         <input id="comment-submit" type="submit"
-                                               className="hidden"/>
+                                            className="hidden" />
                                         <label htmlFor="comment-submit"
-                                               className="cursor-pointer">
+                                            className="cursor-pointer">
                                             <Tooltip showArrow={true} content="Submit">
-                                                <ArrowForward size="30"/>
+                                                <ArrowForward size="30" />
                                             </Tooltip>
                                         </label>
                                     </>
-                                }/>
+                                } />
                             </form>
                         </div>
                     </div>

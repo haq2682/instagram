@@ -3,23 +3,31 @@ import Bottombar from "../components/Navigation/Bottombar";
 import Post from "../components/Post/Post";
 import Notifications from "../components/Notifications";
 import {Divider} from '@nextui-org/react';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import {Card, Skeleton} from "@nextui-org/react";
 import axios from 'axios';
 export default function Saved() {
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
-    useEffect(() => {
-        async function fetchSavedPosts() {
-            try {
-                const response = await axios.get('/api/post/saved/all');
-                setPosts(response.data);
-            }
-            catch(error) {
-                setError(error.response.data.message);
-            } 
+    const [loading, setLoading] = useState(false);
+
+    const fetchSavedPosts = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('/api/post/saved/all');
+            setPosts(response.data);
         }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }, [setPosts]);
+
+    useEffect(() => {
         fetchSavedPosts();
-    })
+    }, [fetchSavedPosts]);
     return (
         <div className="flex justify-center">
             <div
@@ -31,9 +39,31 @@ export default function Saved() {
                 {
                     (posts.length !== 0) ? (
                         posts.map((post) => {
-                            return <Post post={post}/>
+                            return <Post key={post._id} post={post}/>
                         })
                     ) : (<div className="opacity-25 font-bold text-3xl text-center">{error}</div>)
+                }
+                {
+                    loading ? (
+                        <div className="loader-skeleton my-5">
+                            <Card className="w-full space-y-5 p-4 bg-neutral-100 dark:bg-neutral-900" radius="lg">
+                                <Skeleton className="rounded-lg">
+                                    <div className="h-24 rounded-lg bg-default-300"></div>
+                                </Skeleton>
+                                <div className="space-y-3">
+                                    <Skeleton className="w-3/5 rounded-lg">
+                                        <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                                    </Skeleton>
+                                    <Skeleton className="w-4/5 rounded-lg">
+                                        <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                                    </Skeleton>
+                                    <Skeleton className="w-2/5 rounded-lg">
+                                        <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                                    </Skeleton>
+                                </div>
+                            </Card>
+                        </div>
+                    ) : null
                 }
             </div>
             <Sidebar/>

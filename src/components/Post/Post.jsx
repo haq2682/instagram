@@ -275,7 +275,7 @@ export default function Post(props) {
                             </div>
                         </div>
                     </div>
-                    { interactionLoading ? <div className="bg-neutral-700 opacity-25 w-full h-full absolute top-0 rounded-xl"></div> : null}
+                    { interactionLoading ? <div className="bg-neutral-700 opacity-25 w-full h-full absolute top-0 rounded-xl flex justify-center items-center"><div className="loader"/></div> : null}
                 </div>
                 <Divider />
                 <Report open={reportSectionOpen} setClose={() => setReportSectionOpen(false)} />
