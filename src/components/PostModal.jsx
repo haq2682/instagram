@@ -57,6 +57,8 @@ export default function PostModal(props) {
         }
         finally {
             setLoading(false);
+            setPostFiles([]);
+            setCaption('');
             props.togglePostModal();
         } 
     }
