@@ -4,11 +4,15 @@ import axios from 'axios';
 import {logout} from "../redux/authSlice";
 import {Link} from "react-router-dom";
 import { useState, useCallback, useEffect } from "react";
+import SkeletonLoader from "./SkeletonLoader";
 
 export default function Suggestion() {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const dispatch = useDispatch();
+
     const handleLogout = () => {
         axios.get('/auth/logout')
             .then(() => {
@@ -21,12 +25,18 @@ export default function Suggestion() {
     const auth = useSelector(state => state.auth);
 
     const fetchUsers = useCallback(async () => {
+        setLoading(true);
+        setError('');
+        setUsers([]);
         try {
             const response = await axios.get('/user/suggestions');
             setUsers(response.data);
         }
         catch(error) {
             setError(error.response.data.message);
+        }
+        finally{
+            setLoading(false);
         }
     }, []);
 
@@ -51,6 +61,9 @@ export default function Suggestion() {
             </div>
             <div className="suggestion-text ml-5 mt-5 text-neutral-400 dark:text-neutral-600">Suggested for You</div>
             <div className="suggested-users shadow-md mt-5 ml-5 bg-neutral-100 dark:bg-neutral-900 rounded-xl px-4 py-2 inline-block w-[90%]">
+                {
+                    loading && <SkeletonLoader />
+                }
                 {
                     users ? (
                         users.map((user) => {

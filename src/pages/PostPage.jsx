@@ -6,18 +6,26 @@ import Post from "../components/Post/Post";
 import axios from 'axios';
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import SkeletonLoader from "../components/SkeletonLoader";
 
 export default function PostPage() {
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const fetchPost = useCallback(async () => {
+        setLoading(true);
+        setError('');
+        setPost(null);
         try {
             const response = await axios.get('/api/post/' + id);
             setPost(response.data);
         } catch (error) {
             setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
         }
     }, [id]);
 
@@ -32,7 +40,9 @@ export default function PostPage() {
                     <h1 className="text-2xl font-black">Individual Post</h1>
                 </div>
                 <Divider />
-                {error ? <p className="text-md text-center font-bold text-red-600">{error}</p> : <Post post={post}/>}
+                {loading && <SkeletonLoader/>}
+                {error && <p className="text-md text-center font-bold text-red-600">{error}</p>}
+                {!loading && !error && <Post post={post}/>}
             </div>
             <Sidebar />
             <Bottombar />

@@ -16,12 +16,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
-router.get('/all', postController.all);
 router.get('/saved/all', attachUser, postController.getAllSaved);
 router.post('/add', attachUser, upload.array('files'), postController.add);
 router.post('/share', attachUser, postController.sharePost);
 router.get('/:id', postController.find);
 router.put('/:id/like', attachUser, postController.like);
 router.put('/:id/save', attachUser, postController.save);
+router.get('/all/:page_number', postController.all);
+router.get('/getLikes/:id', postController.getLikes);
 
 module.exports = router;

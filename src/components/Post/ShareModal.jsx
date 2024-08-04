@@ -3,15 +3,18 @@ import {useState} from 'react';
 import {FileCopy2} from '@styled-icons/remix-fill/FileCopy2';
 import axios from 'axios';
 import { ShareForward2 } from "styled-icons/remix-fill";
+import { PuffLoader } from "react-spinners";
 
 export default function ShareModal(props) {
     const [caption, setCaption] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const copyLink = () => {
         navigator.clipboard.writeText(`http://localhost:3000/post/${props.post._id}`)
     }
 
     const handleSubmit = async (e) => {
+        setLoading(true);
         e.preventDefault(); 
         try {
             const response = await axios.post('/api/post/share', {caption: caption, id: (props.post?.shared_post ? props.post.shared_post._id : props.post._id)});
@@ -20,6 +23,9 @@ export default function ShareModal(props) {
         }
         catch(error) {
             setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
         }
     }
     return (
@@ -56,11 +62,14 @@ export default function ShareModal(props) {
                                             </li>
                                         </ul>
                                     </div>
+                                    <div className="text-center text-red-500 opacity-75 font-bold text-lg">
+                                        {error}
+                                    </div>
                                 </ModalBody>
                                 <ModalFooter>
                                     <div>
                                         <Button className="bg-purple-600 text-white font-semibold mx-1.5" onClick={copyLink}>Copy Link<FileCopy2 size="23"/></Button>
-                                        <Button type="submit" className="mx-1.5 bg-blue-600 text-white font-semibold">Submit<ShareForward2 size="23"/></Button>
+                                        <Button type="submit" className="mx-1.5 bg-blue-600 text-white font-semibold" isDisabled={loading}>Submit {loading && <span><PuffLoader color="white" size="20px"/></span>}<ShareForward2 size="23"/></Button>
                                     </div>
                                 </ModalFooter>
                             </form>

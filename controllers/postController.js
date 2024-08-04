@@ -131,13 +131,14 @@ module.exports = {
                     ]
                 }
             ])
-            .sort({created_at: 'desc'});
-            if(!posts) return res.status(404).json({message: 'No new Posts'}); 
+            .sort({created_at: 'desc'})
+            .limit(3)
+            .skip((req.params.page_number - 1)*3);
+            if(posts.length === 0) return res.status(404).json({message: 'No more posts found'}); 
             res.send(posts);
         }
         catch(error) {
-            const statusCode = error.statusCode || 500;
-            res.status(statusCode).json({code: statusCode});
+            res.status(500).json({message: 'An unknown error occurred'});
         }
     },
     like: async (req, res) => {
@@ -288,4 +289,35 @@ module.exports = {
             res.status(error.status).json({message: 'An unknown error occurred'});
         }
     },
+
+    getLikes: async (req, res) => {
+        try {
+            const post = await Post.findOne({_id: req.params.id}).populate([
+                {
+                    path: 'liked_by',
+                    model: 'User',
+                    populate: [{
+                        path: 'profile_picture',
+                        model: 'ProfilePhoto'
+                    }]
+                }
+            ]);
+            if(!post) {
+                const error = new Error('The post does not exist');
+                error.status = 404;
+                throw error;
+            }
+            const likes = post.liked_by;
+            if(likes.length === 0) {
+                const error = new Error('The post has no likes');
+                error.status = 404;
+                throw error;
+            }
+            return res.status(200).send(likes);
+        }
+        catch(error) {
+            if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    }
 };

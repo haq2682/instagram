@@ -21,6 +21,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PuffLoader } from "react-spinners";
+import ViewLikes from "../ViewLikes";
 
 export default function Comment(props) {
     const [replyState, setReplyState] = useState({});
@@ -36,6 +37,7 @@ export default function Comment(props) {
     const [error, setError] = useState();
     const repliesEndRef = useRef(null);
     const loggedInUser = useSelector(state => state.auth);
+    const [viewLikesOpen, setViewLikesOpen] = useState(false);
 
     const likeComment = async (id) => {
         try {
@@ -250,7 +252,7 @@ export default function Comment(props) {
                             Reply
                         </div>
                     </div>
-                    <div className="text-cyan-600 dark:text-cyan-400">
+                    <div onClick={() => setViewLikesOpen(true)} className="text-cyan-600 dark:text-cyan-400 cursor-pointer">
                         <Heart size="15" className="mr-1 mb-0.5" />
                         {likes.length} Likes
                     </div>
@@ -372,6 +374,7 @@ export default function Comment(props) {
                     }
                 </div>
             </div>
+            <ViewLikes open={viewLikesOpen} setClose={() => setViewLikesOpen(false)} content={props.comment} type={'comment'}/>
         </>
     );
 }
