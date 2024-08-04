@@ -138,20 +138,23 @@ export default function Chat() {
                         <div
                             className="messages h-full w-full overflow-scroll border-b-neutral-300 dark:border-b-neutral-700 border-b">
                             <div className="m-2">
-                                <div 
-                                    className="message w-full flex transition-all duration-200 ease-linear text-xs"
-                                    onTouchStart={handleTouchStart} 
-                                    onTouchEnd={handleTouchEnd} 
-                                    onTouchMove={handleTouchMove}
-                                    style={{ transform: `translateX(${deviation}px)`}}
-                                >
+                                <div className="message relative">
+                                    <div className="absolute top-1/2 -translate-y-1/2 ml-3">Reply</div>
                                     <div
-                                        className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6 text-xs">
-                                        <p>{messages[0]}</p>
-                                    </div>
-                                    <div className="reaction-buttons my-auto mx-4 transition-all duration-200">
-                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Reply size="25"/></div>
-                                        <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Heart size="25"/></div>
+                                        className="w-full flex transition-all duration-200 ease-linear text-xs"
+                                        onTouchStart={handleTouchStart}
+                                        onTouchEnd={handleTouchEnd}
+                                        onTouchMove={handleTouchMove}
+                                        style={{ transform: `translateX(${deviation}px)` }}
+                                    >
+                                        <div
+                                            className="recepient-message relative my-2 p-3.5 rounded-xl bg-neutral-200 dark:bg-neutral-800 shadow-md inline-block justify-self-start w-4/6 text-xs">
+                                            <p>{messages[0]}</p>
+                                        </div>
+                                        <div className="reaction-buttons my-auto mx-4 transition-all duration-200 hidden">
+                                            <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Reply size="25" /></div>
+                                            <div className="inline-block mx-2 transition-all duration-200 hover:opacity-60"><Heart size="25" /></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="message w-full flex justify-end text-xs">
