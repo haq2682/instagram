@@ -2,32 +2,31 @@ const Media = require("../models/Media");
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
 const CommentLike = require("../models/CommentLike");
-const CommentReply = require("../models/CommentReply");
 const User = require("../models/User");
 
 module.exports = {
     add: async (req, res) => {
         try {
-            const post = await Post.findOne({_id: req.body.post_id});
-            if(!post) {
+            const post = await Post.findOne({ _id: req.body.post_id });
+            if (!post) {
                 const error = new Error("This post does not exist");
                 error.status = 404;
                 throw error;
             }
             const newComment = new Comment();
-            if(req.body.description) newComment.description = req.body.description || null;
+            if (req.body.description) newComment.description = req.body.description || null;
             newComment.post = req.body.post_id;
             newComment.author = req.user._id;
             await newComment.save();
             post.comments.push(newComment._id);
             await post.save();
-            if(req.file) {
+            if (req.file) {
                 const newMedia = new Media();
                 newMedia.fileName = req.file.filename;
                 newMedia.originalName = req.file.originalname;
                 newMedia.path = '/' + req.file.path;
                 newMedia.size = req.file.size;
-                if(req.file.mimetype.startsWith('image/')) {
+                if (req.file.mimetype.startsWith('image/')) {
                     newMedia.media_type = 'image';
                 }
                 else {
@@ -41,7 +40,7 @@ module.exports = {
                 await newComment.save();
             }
             const comment_id = post.comments.filter(comment => comment._id === newComment._id);
-            const comment = await Comment.findOne({_id: comment_id}).populate([
+            const comment = await Comment.findOne({ _id: comment_id }).populate([
                 {
                     path: 'media',
                     model: 'Media'
@@ -127,15 +126,15 @@ module.exports = {
         try {
             const id = req.params.id;
             const comment = await Comment.findOne({ _id: id });
-            if(!comment) {
+            if (!comment) {
                 const error = new Error("The comment does not exist");
                 error.status = 404;
                 throw error;
             }
-            const user = await User.findOne({_id: req.user._id});
-            const commentLike = await CommentLike.findOne({user: req.user._id, comment: comment._id});
+            const user = await User.findOne({ _id: req.user._id });
+            const commentLike = await CommentLike.findOne({ user: req.user._id, comment: comment._id });
 
-            if(!commentLike) {
+            if (!commentLike) {
                 const newLike = new CommentLike({
                     user: user._id,
                     comment: comment._id
@@ -149,7 +148,7 @@ module.exports = {
                 await comment.save();
             }
             else {
-                await CommentLike.deleteOne({_id: commentLike._id});
+                await CommentLike.deleteOne({ _id: commentLike._id });
 
                 user.liked_comments = user.liked_comments.filter(commentId => commentId.toString() !== comment._id.toString());
                 await user.save();
@@ -159,9 +158,39 @@ module.exports = {
             }
             return res.sendStatus(200);
         }
-        catch(error) {
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
-    } 
+    },
+    getLikes: async (req, res) => {
+        try {
+            const comment = await Comment.findOne({ _id: req.params.id }).populate([
+                {
+                    path: 'likes',
+                    model: 'User',
+                    populate: [{
+                        path: 'profile_picture',
+                        model: 'ProfilePhoto'
+                    }]
+                }
+            ]);
+            if (!comment) {
+                const error = new Error('The post does not exist');
+                error.status = 404;
+                throw error;
+            }
+            const likes = comment.likes;
+            if (likes.length === 0) {
+                const error = new Error('The post has no likes');
+                error.status = 404;
+                throw error;
+            }
+            return res.status(200).send(likes);
+        }
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
 }

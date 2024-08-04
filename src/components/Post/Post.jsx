@@ -1,4 +1,4 @@
-import { Avatar, Divider, Skeleton, Card } from "@nextui-org/react";
+import { Avatar, Divider } from "@nextui-org/react";
 import Report from './Report';
 import CommentSection from './Comment/CommentSection';
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
@@ -19,6 +19,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import ShareModal from './ShareModal';
 import SimpleSlider from "./Slider";
+import ViewLikes from "./ViewLikes";
+import SkeletonLoader from "../SkeletonLoader";
 
 export default function Post(props) {
     const [commentSectionOpen, setCommentSectionOpen] = useState(false);
@@ -32,6 +34,7 @@ export default function Post(props) {
     const [saved, setSaved] = useState(false);
     const [loader, setLoader] = useState(true);
     const [interactionLoading, setInteractionLoading] = useState(false);
+    const [viewLikesOpen, setViewLikesOpen] = useState(false);
 
     const fetchPostDetails = useCallback(async () => {
         try {
@@ -139,7 +142,7 @@ export default function Post(props) {
                             </div>
                         </div>
                         
-                        <p className={`post-description px-3 pt-3 ${(props.post.shared_post?.description.length < 100 && !props.post.shared_post?.media) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-lg'}`}>
+                        <p className={`post-description px-3 pt-3 ${(props.post.shared_post?.description.length < 100 && props.post.shared_post?.media.length === 0) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-sm'}`}>
                             <TextDisplay text={props.post.shared_post?.description} />
                         </p>
                     </Link>
@@ -173,24 +176,7 @@ export default function Post(props) {
     }
     if(loader) {
         return (
-            <div className="loader-skeleton my-5">
-                <Card className="w-full space-y-5 p-4 bg-neutral-100 dark:bg-neutral-900" radius="lg">
-                    <Skeleton className="rounded-lg">
-                        <div className="h-24 rounded-lg bg-default-300"></div>
-                    </Skeleton>
-                    <div className="space-y-3">
-                        <Skeleton className="w-3/5 rounded-lg">
-                            <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
-                        </Skeleton>
-                        <Skeleton className="w-4/5 rounded-lg">
-                            <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
-                        </Skeleton>
-                        <Skeleton className="w-2/5 rounded-lg">
-                            <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
-                        </Skeleton>
-                    </div>
-                </Card>
-            </div>
+            <SkeletonLoader/> 
         ) 
     }
     else {
@@ -227,7 +213,7 @@ export default function Post(props) {
                                 <div className="flex flex-col min-w-full max-h-[800px] overflow-hidden">
                                     {
                                         (props.post?.description) ? (
-                                        <p className={`post-description text-sm md:text-md lg:text-lg p-3 ${(props.post.description?.length < 100 && !props.post?.media) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-lg'}`}>
+                                        <p className={`post-description text-sm md:text-md lg:text-lg p-3 ${(props.post.description?.length < 100 && props.post?.media.length === 0) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-sm md:text-md lg:text-lg'}`}>
                                             <TextDisplay text={props.post?.description} />
                                         </p>
                                         ) : (null)
@@ -239,7 +225,7 @@ export default function Post(props) {
                         <RenderInteractions />
                         <Link to={`/post/${props.post?._id}`}>
                             <div className="flex justify-between w-full my-3 text-xs md:text-md lg:text-lg">
-                                <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
+                                <p className="ml-3" onClick={() => setViewLikesOpen(true)}><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
                                 <p className="mr-3">{props.post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
                                 {
                                     (!props.post?.shared_post) ? (
@@ -282,6 +268,7 @@ export default function Post(props) {
                 <CommentSection open={commentSectionOpen} setClose={() => setCommentSectionOpen(false)} post={props.post}/>
                 <EnlargedView open={enlargeView} setClose={closeEnlarge} file={file} />
                 <ShareModal open={shareSectionOpen} setClose={() => setShareSectionOpen(false)} post={props.post?.shared_post ? props.post?.shared_post : props?.post} />
+                <ViewLikes open={viewLikesOpen} setClose={() => setViewLikesOpen(false)} content={props.post} type={'post'}/>
             </div>
         );
     }

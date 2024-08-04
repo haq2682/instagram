@@ -19,5 +19,6 @@ const upload = multer({storage});
 router.post('/add', attachUser, upload.single('file'), replyController.add);
 router.get('/comment/:id/page/:page_number', replyController.getRepliesOfComment);
 router.put('/:id/like', attachUser, replyController.likeReply);
+router.get('/getLikes/:id', replyController.getLikes);
 
 module.exports = router;

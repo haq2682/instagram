@@ -7,11 +7,14 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import { useSelector } from "react-redux";
+import ViewLikes from "../ViewLikes";
+
 export default function Reply(props) {
 
     const [likes, setLikes] = useState([]);
     const [liked, setLiked] = useState(false);
     const [error, setError] = useState('');
+    const [viewLikesOpen, setViewLikesOpen] = useState(false);
     const loggedInUser = useSelector(state => state.auth);
     
     const likeReply = async (id) => {
@@ -102,7 +105,7 @@ export default function Reply(props) {
                             }
                         </div>
                     </div>
-                    <div className="text-cyan-600 dark:text-cyan-400">
+                    <div className="text-cyan-600 dark:text-cyan-400 cursor-pointer" onClick={() => setViewLikesOpen(true)}>
                         <Heart size="15" className="mr-1 mb-0.5" />{likes?.length} Likes
                     </div>
                     {
@@ -110,6 +113,7 @@ export default function Reply(props) {
                     }
                 </div>
             </div>
+            <ViewLikes open={viewLikesOpen} setClose={() => setViewLikesOpen(false)} content={props.reply} type={'reply'}/>
         </>
     );
 }

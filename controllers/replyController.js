@@ -156,5 +156,35 @@ module.exports = {
             if(error.status === 404) return res.status(404).json({message: error.message});
             return res.status(500).json({message: 'An unknown error occurred'});
         }
+    },
+    getLikes: async (req, res) => {
+        try {
+            const reply = await CommentReply.findOne({ _id: req.params.id }).populate([
+                {
+                    path: 'liked_by',
+                    model: 'User',
+                    populate: [{
+                        path: 'profile_picture',
+                        model: 'ProfilePhoto'
+                    }]
+                }
+            ]);
+            if (!reply) {
+                const error = new Error('The post does not exist');
+                error.status = 404;
+                throw error;
+            }
+            const likes = reply.liked_by;
+            if (likes.length === 0) {
+                const error = new Error('The post has no likes');
+                error.status = 404;
+                throw error;
+            }
+            return res.status(200).send(likes);
+        }
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
     }
 }
