@@ -257,7 +257,11 @@ module.exports = {
                         }
                     ]
                 },
-            ]);
+            ])
+            .sort({created_at: 'desc'})
+            .limit(3)
+            .skip((req.params.page_number - 1)*3);
+
             if(!user || user.saved_posts.length === 0) {
                 const error = new Error("You do not have any saved posts");
                 error.status = 404;
