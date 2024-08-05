@@ -161,7 +161,7 @@ export default function Post(props) {
             return (
                 <>
                     <Link to={`/post/${props.post.shared_post?._id}`}>
-                        <div className="flex justify-between w-full my-3 text-xs md:text-md lg:text-lg">
+                        <div className="flex justify-between w-full my-3 text-xs md:text-sm">
                             <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{props.post.shared_post?.liked_by.length} Likes</p>
                             <p>{props.post.shared_post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
                             <p className="mr-3">{props.post.shared_post?.shared_by.length} Shares <Share size="20"
@@ -224,7 +224,7 @@ export default function Post(props) {
                         <Divider />
                         <RenderInteractions />
                         <Link to={`/post/${props.post?._id}`}>
-                            <div className="flex justify-between w-full my-3 text-xs md:text-md lg:text-lg">
+                            <div className="flex justify-between w-full my-3 text-xs md:text-sm">
                                 <p className="ml-3" onClick={() => setViewLikesOpen(true)}><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
                                 <p className="mr-3">{props.post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
                                 {
@@ -237,7 +237,7 @@ export default function Post(props) {
                             </div>
                         </Link>
                         <Divider />
-                        <div className="post-interactive-buttons m-3 flex justify-between">
+                        <div className="post-interactive-buttons m-3 flex justify-between text-sm">
                             <div onClick={() => likePost(props.post._id)} onTouchStart={() => likePost(props.post._id)}
                                 className="w-full text-center cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-700 py-3 rounded-lg transition-all duration-200 mx-1.5">
                                 <span className="hidden lg:inline mr-1.5">{liked ? 'Liked' : 'Like'}</span>

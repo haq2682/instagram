@@ -3,18 +3,20 @@ import Bottombar from "../components/Navigation/Bottombar";
 import Post from "../components/Post/Post";
 import Notifications from "../components/Notifications";
 import {Divider} from '@nextui-org/react';
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {Card, Skeleton} from "@nextui-org/react";
 import axios from 'axios';
 export default function Saved() {
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [pageNumber, setPageNumber] = useState(1);
 
     const fetchSavedPosts = useCallback(async () => {
         setLoading(true);
+        setError(null);
         try {
-            const response = await axios.get('/api/post/saved/all');
+            const response = await axios.get('/api/post/saved/' + pageNumber);
             setPosts(response.data);
         }
         catch (error) {
@@ -23,7 +25,18 @@ export default function Saved() {
         finally {
             setLoading(false);
         }
-    }, [setPosts]);
+    }, [setPosts, setError, setLoading, pageNumber]);
+
+    const observer = useRef();
+    const lastPostElementRef = useCallback(node => {
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                setPageNumber(prevPageNumber => prevPageNumber + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, []);
 
     useEffect(() => {
         fetchSavedPosts();
@@ -39,7 +52,7 @@ export default function Saved() {
                 {
                     (posts.length !== 0) ? (
                         posts.map((post) => {
-                            return <Post key={post._id} post={post}/>
+                            return <Post key={post._id} post={post} ref={lastPostElementRef}/>
                         })
                     ) : (<div className="opacity-25 font-bold text-3xl text-center">{error}</div>)
                 }
