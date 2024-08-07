@@ -4,7 +4,7 @@ import Chat from "../components/Message/Chat";
 import Notifications from "../components/Notifications";
 export default function Message() {
     return (
-        <div>
+        <div className="mb-52 sm:mb-0">
             <Notifications/>
             <Sidebar/>
             <Chat/>

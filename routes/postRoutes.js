@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 router.post('/add', attachUser, upload.array('files'), postController.add);
+router.get('/search', postController.search);
 router.post('/share', attachUser, postController.sharePost);
 router.get('/:id', postController.find);
 router.put('/:id/like', attachUser, postController.like);

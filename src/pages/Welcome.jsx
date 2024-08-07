@@ -29,10 +29,10 @@ export default function Welcome() {
                 </div>
             </div>
             <div className="flex justify-around relative bottom-10">
-                <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-purple-600 text-white">Portfolio Website</a>
-                <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-indigo-600 text-white">Fiverr Website</a>
-                <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-pink-400 text-white">Upwork Website</a>
-                <a href="/" className="text-sm mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-yellow-500 text-white">Github Website</a>
+                <a href="/" className="text-xs mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-purple-600 text-white">Portfolio Website</a>
+                <a href="/" className="text-xs mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-indigo-600 text-white">Fiverr Website</a>
+                <a href="/" className="text-xs mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-pink-400 text-white">Upwork Website</a>
+                <a href="/" className="text-xs mx-3 md:text-md lg:text-lg transition-color duration-200 hover:text-yellow-500 text-white">Github Website</a>
             </div>
             <Signup signUp={showSignUp} toggleSignup={toggleSignup}/>
             <Login login={showLogin} toggleLogin={toggleLogin}/>
