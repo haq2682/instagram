@@ -136,9 +136,17 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
     }],
-    hidde_posts: [{
+    hidden_posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
+    }],
+    blocked_users: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    blocked_by: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }],
     created_at: {
         type: Date,

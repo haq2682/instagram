@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
 import VideoJS from './VideoJS';
-import videojs from 'video.js';
 
 const VPlayer = React.memo(({ src }) => {
     const playerRef = React.useRef(null);
@@ -19,12 +18,6 @@ const VPlayer = React.memo(({ src }) => {
 
     const handlePlayerReady = useCallback((player) => {
         playerRef.current = player;
-        player.on('waiting', () => {
-            videojs.log('player is waiting');
-        });
-        player.on('dispose', () => {
-            videojs.log('player will dispose');
-        });
     }, []);
 
     return <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />;

@@ -36,6 +36,10 @@ export default function SimpleSlider({ media, openEnlarge }) {
         prevArrow: <SamplePrevArrow/>,
         beforeChange: (oldIndex, newIndex) => {
             setIndex(newIndex);
+            const mediaElements = document.querySelectorAll('video, audio');
+            mediaElements.forEach(media => {
+                media.pause();
+            });
         },
     };
 
@@ -65,12 +69,6 @@ export default function SimpleSlider({ media, openEnlarge }) {
                     } else {
                         return (
                             <div key={file.originalName} className="w-full h-auto max-h-full">
-                                {/* <video
-                                    controls
-                                    className="card-video mt-2 object-center w-full cursor-pointer active:blur-sm transition-all duration-75"
-                                >
-                                    <source src={file.path} />
-                                </video> */}
                                 <VPlayer src={file.path}/> 
                             </div>
                         );
