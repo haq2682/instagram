@@ -9,7 +9,7 @@ module.exports = {
         const files = req.files;
         try {
             const newPost = new Post();
-            const user = await User.findOne({_id: req.user._id});
+            const user = await User.findOne({ _id: req.user._id });
 
             for (const file of files) {
                 let newMedia = new Media();
@@ -24,7 +24,7 @@ module.exports = {
                     newMedia.media_type = 'video';
                 }
                 newMedia.format = file.originalname.substr(-3, 3);
-                newMedia.post = newPost._id; 
+                newMedia.post = newPost._id;
 
                 await newMedia.save();
 
@@ -32,7 +32,7 @@ module.exports = {
             }
 
             newPost.description = req.body.caption || null;
-            newPost.user = req.user._id; 
+            newPost.user = req.user._id;
 
             await newPost.save();
             user.posts.push(newPost._id);
@@ -82,15 +82,15 @@ module.exports = {
                     ]
                 }
             ]);
-            if(!post) {
+            if (!post) {
                 const error = new Error('This post does not exist');
                 error.status = 404;
                 throw error;
             }
             res.send(post);
         } catch (error) {
-            if(error.status === 404) return res.status(error.status).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+            if (error.status === 404) return res.status(error.status).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     all: async (req, res) => {
@@ -131,14 +131,14 @@ module.exports = {
                     ]
                 }
             ])
-            .sort({created_at: 'desc'})
-            .limit(3)
-            .skip((req.params.page_number - 1)*3);
-            if(posts.length === 0) return res.status(404).json({message: 'No more posts found'}); 
+                .sort({ created_at: 'desc' })
+                .limit(3)
+                .skip((req.params.page_number - 1) * 3);
+            if (posts.length === 0) return res.status(404).json({ message: 'No more posts found' });
             res.send(posts);
         }
-        catch(error) {
-            res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     like: async (req, res) => {
@@ -174,7 +174,7 @@ module.exports = {
 
             return res.sendStatus(200);
         } catch (error) {
-            console.error(error); 
+            console.error(error);
             return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
@@ -210,13 +210,13 @@ module.exports = {
 
             return res.sendStatus(200);
         } catch (error) {
-            console.error(error); 
+            console.error(error);
             return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getAllSaved: async (req, res) => {
         try {
-            const user = await User.findOne({_id: req.user._id}).populate([
+            const user = await User.findOne({ _id: req.user._id }).populate([
                 {
                     path: 'saved_posts',
                     model: 'Post',
@@ -258,26 +258,26 @@ module.exports = {
                     ]
                 },
             ])
-            .sort({created_at: 'desc'})
-            .limit(3)
-            .skip((req.params.page_number - 1)*3);
+                .sort({ created_at: 'desc' })
+                .limit(3)
+                .skip((req.params.page_number - 1) * 3);
 
-            if(!user || user.saved_posts.length === 0) {
+            if (!user || user.saved_posts.length === 0) {
                 const error = new Error("You do not have any saved posts");
                 error.status = 404;
                 throw error;
             }
             return res.send(user.saved_posts.reverse());
         }
-        catch(error) {
-            if(error.status === 404) return res.status(error.status).json({message: error.message});
-            res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(error.status).json({ message: error.message });
+            res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     sharePost: async (req, res) => {
         try {
-            const user = await User.findOne({_id: req.user._id});
-            const post = await Post.findOne({_id: req.body.id});
+            const user = await User.findOne({ _id: req.user._id });
+            const post = await Post.findOne({ _id: req.body.id });
             const newPost = new Post();
             newPost.description = req.body.caption;
             newPost.user = req.user._id;
@@ -287,16 +287,16 @@ module.exports = {
             user.save();
             post.shared_by.push(req.user._id);
             post.save();
-            res.status(200).json({message: 'Post shared successfully'});
+            res.status(200).json({ message: 'Post shared successfully' });
         }
-        catch(error) {
-            res.status(error.status).json({message: 'An unknown error occurred'});
+        catch (error) {
+            res.status(error.status).json({ message: 'An unknown error occurred' });
         }
     },
 
     getLikes: async (req, res) => {
         try {
-            const post = await Post.findOne({_id: req.params.id}).populate([
+            const post = await Post.findOne({ _id: req.params.id }).populate([
                 {
                     path: 'liked_by',
                     model: 'User',
@@ -306,22 +306,89 @@ module.exports = {
                     }]
                 }
             ]);
-            if(!post) {
+            if (!post) {
                 const error = new Error('The post does not exist');
                 error.status = 404;
                 throw error;
             }
             const likes = post.liked_by;
-            if(likes.length === 0) {
+            if (likes.length === 0) {
                 const error = new Error('The post has no likes');
                 error.status = 404;
                 throw error;
             }
             return res.status(200).send(likes);
         }
-        catch(error) {
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    },
+
+    search: async (req, res) => {
+        try {
+            const { term } = req.query;
+            const posts = await Post.find({
+                $or: [
+                    { description: { $regex: term, $options: 'i' } },
+                    { "comments.description": { $regex: term, $options: 'i' } },
+                    { "comments.replies.description": { $regex: term, $options: 'i' } }
+                ]
+            })
+                .limit(req.query.page_number)
+                .skip((req.query.page_number - 1) * 3)
+                .populate([
+                    {
+                        path: 'media',
+                        model: 'Media'
+                    },
+                    {
+                        path: 'user',
+                        model: 'User',
+                        populate: [
+                            {
+                                path: 'profile_picture',
+                                model: 'ProfilePhoto',
+                            }
+                        ]
+                    },
+                    {
+                        path: 'shared_post',
+                        model: 'Post',
+                        populate: [
+                            {
+                                path: 'user',
+                                model: 'User',
+                                populate: [
+                                    {
+                                        path: 'profile_picture',
+                                        model: 'ProfilePhoto'
+                                    }
+                                ]
+                            },
+                            {
+                                path: 'media',
+                                model: 'Media'
+                            }
+                        ]
+                    }
+                ])
+
+            if (posts.length === 0 && req.query.page_number === 1) {
+                const error = new Error('No posts of the matching query found')
+                error.status = 404;
+                throw error;
+            }
+            if (posts.length === 0) {
+                const error = new Error('No more posts found');
+                error.status = 404;
+                throw error;
+            }
+            return res.status(200).send(posts);
+        }
+        catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     }
 };

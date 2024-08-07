@@ -42,7 +42,7 @@ export default function Saved() {
         fetchSavedPosts();
     }, [fetchSavedPosts]);
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-52 sm:mb-0">
             <div
                 className="saved-post p-5 h-screen md:w-[70%] lg:w-[50%] sm:ml-[15%] md:ml-[12.5%] lg:ml-[25%] xl:ml-[20%]">
                 <div className="search-heading mb-2.5">

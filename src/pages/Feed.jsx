@@ -46,7 +46,7 @@ export default function Feed() {
 
     return (
         <div>
-            <div className="flex justify-center h-screen">
+            <div className="flex justify-center h-screen mb-52 sm:mb-0">
                 <Sidebar/>
                 <div className="home-content relative right-5 ml-10 sm:ml-[20%] lg:ml-10 w-full lg:w-[40%] overflow-auto scrollbar-hide">
                     {/* <div className="stories overflow-x-auto w-full h-32 whitespace-nowrap custom-scrollbar scrollbar">

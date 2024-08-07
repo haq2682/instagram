@@ -13,7 +13,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <Provider store={store}>
         <PersistGate persistor={persistor}>
             <NextUIProvider>
@@ -21,7 +21,7 @@ root.render(
             </NextUIProvider>
         </PersistGate>
     </Provider>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

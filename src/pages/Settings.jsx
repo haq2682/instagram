@@ -1,5 +1,5 @@
 import Sidebar from "../components/Navigation/Sidebar";
-import {useCallback, useState} from "react";
+import {useState} from "react";
 import Notifications from "../components/Notifications";
 import Bottombar from "../components/Navigation/Bottombar";
 import {Close} from '@styled-icons/ionicons-outline/Close';
@@ -22,12 +22,12 @@ export default function Settings() {
     const [settingsSidebarOpen, setSettingsSidebarOpen] = useState(false);
     const [currentSettingsPage, setCurrentSettingsPage] = useState('profile');
 
-    const handleSettingsPageChange = useCallback((page) => {
+    const handleSettingsPageChange = (page) => {
         setCurrentSettingsPage(page);
-    }, []);
+    };
     return (
-        <div>
-            <div className="flex justify-center">
+        <>
+            <div className="flex justify-center mb-52 sm:mb-0">
                 <Sidebar/>
                 <div className="h-screen flex relative right-5 ml-10 sm:ml-[20%] lg:ml-10 w-full lg:w-[40%]">
                     <div className="settings-content w-full">
@@ -80,6 +80,6 @@ export default function Settings() {
                 <Notifications/>
                 <Bottombar/>
             </div>
-        </div>
+        </>
     );
 }

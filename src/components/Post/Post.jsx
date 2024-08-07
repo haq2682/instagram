@@ -142,7 +142,7 @@ export default function Post(props) {
                             </div>
                         </div>
                         
-                        <p className={`post-description px-3 pt-3 ${(props.post.shared_post?.description.length < 100 && props.post.shared_post?.media.length === 0) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-sm'}`}>
+                        <p className={`post-description px-3 pt-3 ${(props.post.shared_post?.description.length < 100 && props.post.shared_post?.media.length === 0) ? 'text-lg md:text-xl lg:text-2xl text-center' : 'text-sm'}`}>
                             <TextDisplay text={props.post.shared_post?.description} />
                         </p>
                     </Link>
@@ -213,7 +213,7 @@ export default function Post(props) {
                                 <div className="flex flex-col min-w-full max-h-[800px] overflow-hidden">
                                     {
                                         (props.post?.description) ? (
-                                        <p className={`post-description text-sm md:text-md lg:text-lg p-3 ${(props.post.description?.length < 100 && props.post?.media.length === 0) ? 'text-xl md:text-3xl lg:text-4xl text-center' : 'text-sm md:text-md lg:text-lg'}`}>
+                                        <p className={`post-description p-3 ${(props.post.description?.length < 100 && props.post?.media.length === 0) ? 'text-lg md:text-xl lg:text-2xl text-center' : 'text-sm'}`}>
                                             <TextDisplay text={props.post?.description} />
                                         </p>
                                         ) : (null)
