@@ -140,13 +140,15 @@ module.exports = {
             const { term } = req.query;
             const users = await User.find({
                 $and: [
-                    { _id: { $ne: req.user._id } }, 
+                    { _id: { $ne: req.user._id } },
+                    { _id: { $nin: req.user.blocked_users } },
+                    { _id: { $nin: req.user.blocked_by } },
                     {
                         $or: [
                             { username: { $regex: term, $options: 'i' } },
                             { firstName: { $regex: term, $options: 'i' } },
                             { lastName: { $regex: term, $options: 'i' } },
-                            { email: { $regex: term, $options: 'i' } },
+                            { email: { $regex: term, $options: 'i' } }
                         ]
                     }
                 ]
