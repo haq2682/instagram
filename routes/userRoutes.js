@@ -24,5 +24,6 @@ router.put('/edit', attachUser,  userController.edit);
 router.put('/changepfp', attachUser, uploadPfp.single('profile_picture'), userController.changePfp);
 router.get('/removepfp', attachUser, userController.removePfp);
 router.get('/profile/:username', attachUser, userController.find);
+router.post('/follow/:id', attachUser, userController.follow);
 
 module.exports = router;

@@ -95,7 +95,12 @@ module.exports = {
     },
     all: async (req, res) => {
         try {
-            const posts = await Post.find({}).populate([
+            const posts = await Post.find({
+                $or: [
+                    { "user" : req.user._id },
+                    { "user.private": false},
+                ]
+            }).populate([
                 {
                     path: 'media',
                     model: 'Media'
@@ -332,7 +337,9 @@ module.exports = {
                 $or: [
                     { description: { $regex: term, $options: 'i' } },
                     { "comments.description": { $regex: term, $options: 'i' } },
-                    { "comments.replies.description": { $regex: term, $options: 'i' } }
+                    { "comments.replies.description": { $regex: term, $options: 'i' } },
+                    { "user" : req.user._id },
+                    { "user.private": false }
                 ]
             })
                 .limit(req.query.page_number)
