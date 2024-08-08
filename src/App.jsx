@@ -1,5 +1,5 @@
 import './App.css';
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Navigate, redirect} from 'react-router-dom';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import ExplorePosts from './pages/ExplorePosts';
@@ -34,6 +34,7 @@ function App() {
             .catch(() => {
                 dispatch(logout());
                 localStorage.clear();
+                return redirect('/');
             })
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);

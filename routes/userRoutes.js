@@ -24,6 +24,10 @@ router.put('/edit', attachUser,  userController.edit);
 router.put('/changepfp', attachUser, uploadPfp.single('profile_picture'), userController.changePfp);
 router.get('/removepfp', attachUser, userController.removePfp);
 router.get('/profile/:username', attachUser, userController.find);
-router.post('/follow/:id', attachUser, userController.follow);
+router.put('/follow/:id', attachUser, userController.follow);
+router.put('/unfollow/:id', attachUser, userController.unfollow);
+router.put('/accept_request/:id', attachUser, userController.acceptFollowRequest);
+router.put('/decline_request/:id', attachUser, userController.declineFollowRequest);
+router.put('/cancel_request/:id', attachUser, userController.cancelFollowRequest);
 
 module.exports = router;

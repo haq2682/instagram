@@ -181,7 +181,7 @@ module.exports = {
     },
     follow: async (req, res) => {
         try {
-            const user = await User.findOne({ _id: req.body.id });
+            const user = await User.findOne({ _id: req.params.id });
             const loggedInUser = await User.findOne({ _id: req.user._id });
 
             if (!user) {
@@ -222,7 +222,7 @@ module.exports = {
     },
     acceptFollowRequest: async (req, res) => {
         try {
-            const user = await User.findOne({ _id: req.body.id });
+            const user = await User.findOne({ _id: req.params.id });
             const loggedInUser = await User.findOne({ _id: req.user._id });
 
             if (!user) {
@@ -253,7 +253,7 @@ module.exports = {
     },
     declineFollowRequest: async (req, res) => {
         try {
-            const user = await User.findOne({ _id: req.body.id });
+            const user = await User.findOne({ _id: req.params.id });
             const loggedInUser = await User.findOne({ _id: req.user._id });
             if(!user) {
                 const error = new Error('This user does not exist');
@@ -281,7 +281,7 @@ module.exports = {
     },
     unfollow: async (req, res) => {
         try {
-            const user = await User.findOne({ _id: req.body.id });
+            const user = await User.findOne({ _id: req.params.id });
             const loggedInUser = await User.findOne({ _id: req.user._id });
             if(!user) {
                 const error = new Error('This user does not exist');
@@ -296,6 +296,36 @@ module.exports = {
             }
 
             loggedInUser.following.pull(user._id);
+            await loggedInUser.save();
+
+            return res.send(user);
+        }
+        catch(error) {
+            if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    },
+    cancelFollowRequest: async (req, res) => {
+        try {
+            const user = await User.findOne({_id: req.params.id});
+            const loggedInUser = await User.findOne({_id: req.user._id});
+
+            if(!user) {
+                const error = new Error('This user does not exist');
+                error.status = 404;
+                throw error;
+            }
+
+            if(!loggedInUser.follow_requests_sent_to.includes(user._id)) {
+                const error = new Error('You did not send any follow request to this user previously');
+                error.status = 404;
+                throw error;
+            }
+
+            user.follow_requests_received_from.pull(loggedInUser._id);
+            loggedInUser.follow_requests_send_to.pull(user._id);
+
+            await user.save();
             await loggedInUser.save();
 
             return res.send(user);
