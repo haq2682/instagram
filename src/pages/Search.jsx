@@ -1,11 +1,11 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
-import {Input, Divider, User} from "@nextui-org/react";
-import {Link as UserLink} from "@nextui-org/link";
+import {Input, Divider} from "@nextui-org/react";
 import Notifications from "../components/Notifications";
 import {useState, useRef, useEffect, useCallback} from "react";
 import axios from 'axios';
 import SkeletonLoader from "../components/SkeletonLoader";
+import UserList from "../components/UserList";
 
 export default function Search() {
     const [users, setUsers] = useState([]);
@@ -55,27 +55,6 @@ export default function Search() {
         if (node) observer.current.observe(node);
     }, []);
 
-    const UserResult = (props) => {
-        return (
-            <div className="person my-3 bg-neutral-200 dark:bg-neutral-800 p-5 rounded-xl">
-                <User
-                    name={`${props.user.firstName} ${props.user.lastName}`}
-                    description={(
-                        <UserLink href={`/profile/${props.user.username}`} size="md">
-                            @{props.user.username}
-                        </UserLink>
-                    )}
-                    avatarProps={{
-                        src: `${props.user.profile_picture.filename}`
-                    }}
-                />
-                <div
-                    className="float-end text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md">
-                    <h1>Follow</h1>
-                </div>
-            </div>
-        )
-    }
     return (
         <div className="flex justify-center mb-52 sm:mb-0">
             <div className="search-profile p-5 h-screen md:w-[70%] lg:w-[50%] sm:ml-[15%] md:ml-[12.5%] lg:ml-[25%] xl:ml-[20%]">
@@ -97,7 +76,7 @@ export default function Search() {
                                 users.map((user) => {
                                     return (
                                         <div ref={lastUserElementRef} key={user._id}>
-                                            <UserResult user={user} />
+                                            <UserList user={user} />
                                         </div>
                                     )
                                 })
