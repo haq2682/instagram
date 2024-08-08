@@ -178,5 +178,131 @@ module.exports = {
             if (error.status === 404) return res.status(404).json({ message: error.message });
             else return res.status(500).json({ message: 'An unknown error occurred' });
         }
+    },
+    follow: async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.body.id });
+            const loggedInUser = await User.findOne({ _id: req.user._id });
+
+            if (!user) {
+                const error = new Error('This user does not exist');
+                error.status = 404;
+                throw error;
+            }
+
+            if (loggedInUser.follow_requests_sent_to.includes(user._id)) {
+                const error = new Error('You have already sent a follow request to this user');
+                error.status = 403;
+                throw error;
+            }
+
+            if (loggedInUser.following.includes(user._id)) {
+                const error = new Error('You already follow this user');
+                error.status = 403;
+                throw error;
+            }
+
+            if (user.private) {
+                user.follow_requests_received_from.push(loggedInUser._id);
+                loggedInUser.follow_requests_sent_to.push(user._id);
+            } else {
+                user.followers.push(loggedInUser._id);
+                loggedInUser.following.push(user._id);
+            }
+
+            await user.save();
+            await loggedInUser.save();
+
+            return res.send(user);
+        } catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            if (error.status === 403) return res.status(403).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    },
+    acceptFollowRequest: async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.body.id });
+            const loggedInUser = await User.findOne({ _id: req.user._id });
+
+            if (!user) {
+                const error = new Error('This user does not exist');
+                error.status = 404;
+                throw error;
+            }
+
+            if (!loggedInUser.follow_requests_received_from.includes(user._id)) {
+                const error = new Error('You did not receive any follow request from this user');
+                error.status = 404;
+                throw error;
+            }
+
+            user.follow_requests_sent_to.pull(loggedInUser._id);
+            loggedInUser.follow_requests_received_from.pull(user._id);
+            loggedInUser.following.push(user._id);
+            user.followers.push(loggedInUser._id);
+
+            await user.save();
+            await loggedInUser.save();
+
+            return res.send(user);
+        } catch (error) {
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    },
+    declineFollowRequest: async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.body.id });
+            const loggedInUser = await User.findOne({ _id: req.user._id });
+            if(!user) {
+                const error = new Error('This user does not exist');
+                error.status = 404;
+                throw error;
+            }
+            if(!loggedInUser.follow_requests_received_from.includes(user._id)) {
+                const error = new Error('You did not receive any follow request from this user');
+                error.status = 404;
+                throw error;
+            }
+
+            user.follow_requests_sent_to.pull(loggedInUser._id);
+            loggedInUser.follow_requests_received_from.pull(user._id);
+
+            await user.save();
+            await loggedInUser.save();
+
+            return res.send(user);
+        }
+        catch(error) {
+            if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    },
+    unfollow: async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.body.id });
+            const loggedInUser = await User.findOne({ _id: req.user._id });
+            if(!user) {
+                const error = new Error('This user does not exist');
+                error.status = 404;
+                throw error;
+            }
+
+            if(!loggedInUser.following.includes(user._id)) {
+                const error = new Error('You do not follow this user');
+                error.status = 404;
+                throw error;
+            }
+
+            loggedInUser.following.pull(user._id);
+            await loggedInUser.save();
+
+            return res.send(user);
+        }
+        catch(error) {
+            if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
     }
 }

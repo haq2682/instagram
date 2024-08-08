@@ -184,7 +184,12 @@ export default function Chat() {
                                         </div>
                                     </div>
                                     <div
-                                        className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6">
+                                        className="sender-message relative my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block w-4/6"
+                                        onTouchStart={handleTouchStart}
+                                        onTouchEnd={handleTouchEnd}
+                                        onTouchMove={handleTouchMove}
+                                        style={{ transform: `translateX(-${deviation}px)` }}
+                                    >
                                         <div
                                             className="recepient-reply text-sm bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2 text-ellipsis h-[70px] line-clamp-3 overflow-hidden">{messages[0]}</div>
                                         <p className="text-white">{messages[1]}</p>
