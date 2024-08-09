@@ -111,16 +111,20 @@ module.exports = {
     suggestions: async (req, res) => {
         try {
             const loggedInUserId = req.user._id;
-            const loggedInUser = await User.findById(loggedInUserId).populate('followers');
+            const loggedInUser = await User.findById(loggedInUserId).populate('followers').populate('following');
 
             if (!loggedInUser) {
                 return res.status(404).json({ message: 'Logged-in user not found' });
             }
 
             const followerIds = loggedInUser.followers.map(follower => follower._id);
+            const followingIds = loggedInUser.following.map(following => following._id);
 
             let users = await User.find({
-                _id: { $nin: [...followerIds, loggedInUserId] }
+                $and: [
+                    { _id: { $nin: [...followerIds, loggedInUserId] } },
+                    { _id: { $nin: [...followingIds, loggedInUserId] } }
+                ]
             }).populate('profile_picture');
 
             users = users.sort(() => 0.5 - Math.random());
@@ -132,6 +136,7 @@ module.exports = {
 
             return res.send(users);
         } catch (error) {
+            console.log(error.message);
             return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
@@ -323,7 +328,7 @@ module.exports = {
             }
 
             user.follow_requests_received_from.pull(loggedInUser._id);
-            loggedInUser.follow_requests_send_to.pull(user._id);
+            loggedInUser.follow_requests_sent_to.pull(user._id);
 
             await user.save();
             await loggedInUser.save();
@@ -331,6 +336,7 @@ module.exports = {
             return res.send(user);
         }
         catch(error) {
+            console.log(error.message)
             if(error.status === 404) return res.status(404).json({message: error.message});
             return res.status(500).json({message: 'An unknown error occurred'});
         }
