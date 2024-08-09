@@ -34,7 +34,7 @@ function App() {
             .catch(() => {
                 dispatch(logout());
                 localStorage.clear();
-                return redirect('/');
+                redirect('/');
             })
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
@@ -46,7 +46,6 @@ function App() {
         else if(is_authenticated && !is_verified) return <Navigate to={verifyRedirect}/>;
         else return <Navigate to={defaultRedirect}/>;
     }
-
     function getPage(page) {
         switch(page) {
             case "settings":

@@ -95,12 +95,7 @@ module.exports = {
     },
     all: async (req, res) => {
         try {
-            const posts = await Post.find({
-                $or: [
-                    { "user" : req.user._id },
-                    { "user.private": false},
-                ]
-            }).populate([
+            let posts = await Post.find({}).populate([
                 {
                     path: 'media',
                     model: 'Media'
@@ -108,6 +103,10 @@ module.exports = {
                 {
                     path: 'user',
                     model: 'User',
+                    match: {$or: [
+                        { _id: req.user._id },
+                        { private: false},
+                    ]},
                     populate: [
                         {
                             path: 'profile_picture',
@@ -122,6 +121,10 @@ module.exports = {
                         {
                             path: 'user',
                             model: 'User',
+                            match: {$or: [
+                                {_id: req.user._id},
+                                {private: false}
+                            ]},
                             populate: [
                                 {
                                     path: 'profile_picture',
@@ -139,10 +142,14 @@ module.exports = {
                 .sort({ created_at: 'desc' })
                 .limit(3)
                 .skip((req.params.page_number - 1) * 3);
-            if (posts.length === 0) return res.status(404).json({ message: 'No more posts found' });
+            posts = posts.filter(post => post?.user !== null);
+            posts = posts.filter(post => post.shared_post?.user !== null);
+            if (posts.length === 0 && req.params.page_number === 1) return res.status(404).json({ message: 'No posts found' });
+            if (posts.length === 0) return res.status(404).json({message: 'No more posts found'});
             res.send(posts);
         }
         catch (error) {
+            console.log(error.message);
             res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
