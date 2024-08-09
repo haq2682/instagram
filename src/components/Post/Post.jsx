@@ -162,9 +162,9 @@ export default function Post(props) {
                 <>
                     <Link to={`/post/${props.post.shared_post?._id}`}>
                         <div className="flex justify-between w-full my-3 text-xs md:text-sm">
-                            <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{props.post.shared_post?.liked_by.length} Likes</p>
-                            <p>{props.post.shared_post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
-                            <p className="mr-3">{props.post.shared_post?.shared_by.length} Shares <Share size="20"
+                            <p className="ml-3"><Heart size="20" className="mr-1 mb-1 text-rose-600" />{props.post.shared_post?.liked_by.length} <span className="hidden lg:inline">Likes</span></p>
+                            <p>{props.post.shared_post?.comments.length} <span className="hidden lg:inline">Comments</span> <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
+                            <p className="mr-3">{props.post.shared_post?.shared_by.length} <span className="hidden lg:inline">Shares</span> <Share size="20"
                                 className="text-blue-600 dark:text-blue-400" />
                             </p>
                         </div>
@@ -225,11 +225,11 @@ export default function Post(props) {
                         <RenderInteractions />
                         <Link to={`/post/${props.post?._id}`}>
                             <div className="flex justify-between w-full my-3 text-xs md:text-sm">
-                                <p className="ml-3" onClick={() => setViewLikesOpen(true)}><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} Likes</p>
-                                <p className="mr-3">{props.post?.comments.length} Comments <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
+                                <p className="ml-3" onClick={() => setViewLikesOpen(true)}><Heart size="20" className="mr-1 mb-1 text-rose-600" />{likes?.length} <span className="hidden lg:inline">Likes</span></p>
+                                <p className="mr-3">{props.post?.comments.length} <span className="hidden lg:inline">Comments</span> <Comments size="20" className="text-indigo-600 dark:text-indigo-400" /></p>
                                 {
                                     (!props.post?.shared_post) ? (
-                                        <p className="mr-3">{props.post?.shared_by.length} Shares <Share size="20"
+                                        <p className="mr-3">{props.post?.shared_by.length} <span className="hidden lg:inline">Shares</span> <Share size="20"
                                             className="text-blue-600 dark:text-blue-400" />
                                         </p>
                                             ) : (null)

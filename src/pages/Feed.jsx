@@ -18,6 +18,7 @@ export default function Feed() {
 
     const fetchPosts = useCallback(async () => {
         setLoader(true);
+        setError('');
         try {
             const response = await axios.get(`/api/post/all/${pageNumber}`);
             setPosts((prevData) => [...prevData, ...response.data]);
