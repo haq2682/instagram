@@ -1,4 +1,4 @@
-import {Link as UserLink} from "@nextui-org/link";
+import {Link as UserLink} from "react-router-dom";
 import {User} from "@nextui-org/react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -8,11 +8,18 @@ export default function UserList(props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const loggedInUser = useSelector(state => state.auth);
+    const [followers, setFollowers] = useState(loggedInUser.followers);
+    const [following, setFollowing] = useState(loggedInUser.following);
+    const [requestsSent, setRequestsSent] = useState(loggedInUser.follow_requests_sent_to);
+    const [requestsReceived, setRequestsReceived] = useState(loggedInUser.follow_requests_received_from);
 
     const follow = async () => {
         setLoading(true);
+        setError('');
         try {
-            await axios.put(`/user/follow/${props.user._id}`);
+            const response = await axios.put(`/user/follow/${props.user._id}`);
+            setRequestsSent(response.data[0]);
+            setFollowing(response.data[1]);
         }
         catch(error) {
             setError(error.response.data.message);
@@ -24,8 +31,10 @@ export default function UserList(props) {
 
     const unfollow = async () => {
         setLoading(true);
+        setError('')
         try {
-            await axios.put(`/user/unfollow/${props.user._id}`);
+            const response = await axios.put(`/user/unfollow/${props.user._id}`);
+            setFollowing(response.data);
         }
         catch(error) {
             setError(error.response.data.message);
@@ -37,8 +46,11 @@ export default function UserList(props) {
 
     const acceptRequest = async () => {
         setLoading(true);
+        setError('');
         try {
-            await axios.put(`/user/accept_request/${props.user._id}`);
+            const response = await axios.put(`/user/accept_request/${props.user._id}`);
+            setRequestsReceived(response.data[0]);
+            setFollowing(response.data[1]);
         }
         catch(error) {
             setError(error.response.data.message);
@@ -50,8 +62,10 @@ export default function UserList(props) {
 
     const declineRequest = async () => {
         setLoading(true);
+        setError('');
         try {
-            await axios.put(`/user/decline_request/${props.user._id}`);
+            const response = await axios.put(`/user/decline_request/${props.user._id}`);
+            setRequestsReceived(response.data);
         }
         catch(error) {
             setError(error.response.data.message);
@@ -63,8 +77,10 @@ export default function UserList(props) {
 
     const cancelRequest = async () => {
         setLoading(true);
+        setError('');
         try {
-            await axios.put(`/user/cancel_request/${props.user._id}`);
+            const response = await axios.put(`/user/cancel_request/${props.user._id}`);
+            setRequestsSent(response.data);
         }
         catch(error) {
             setError(error.response.data.message);
@@ -73,32 +89,50 @@ export default function UserList(props) {
             setLoading(false);
         }
     }
+
+    const removeFollower = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.put(`/user/remove_follower/${props.user._id}`);
+            setFollowers(response.data);
+        }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
     const followText = () => {
         if (!loggedInUser || !props.user) return null;
 
-        if (loggedInUser.following.includes(props.user._id)) {
+        if (following.includes(props.user._id)) {
             return <div onClick={unfollow}>Unfollow</div>;
         }
 
-        if (loggedInUser.followers.includes(props.user._id)) {
+        if (followers.includes(props.user._id)) {
             return (
                 <>
-                    <div>Remove Follower</div>
-                    {!loggedInUser.following.includes(props.user._id) && <div onClick={follow}>Follow</div>}
+                    <div className="flex gap-2">
+                        <div onClick={removeFollower}>Remove Follower</div>
+                        {!following.includes(props.user._id) && <div onClick={follow}>Follow</div>}
+                    </div>
                 </>
             );
         }
 
-        if (loggedInUser.follow_requests_received_from.includes(props.user._id)) {
+        if (requestsReceived.includes(props.user._id)) {
             return (
-                <div className="flex">
+                <div className="flex gap-2">
                     <div onClick={acceptRequest}>Accept</div>
                     <div onClick={declineRequest}>Decline</div>
                 </div>
             );
         }
 
-        if (loggedInUser.follow_requests_sent_to.includes(props.user._id)) {
+        if (requestsSent.includes(props.user._id)) {
             return <div onClick={cancelRequest}>Cancel Request</div>;
         }
 
@@ -107,11 +141,11 @@ export default function UserList(props) {
 
     return (
         <>
-            <div className="person my-3 bg-neutral-100 dark:bg-neutral-900 p-5 rounded-xl shadow-md relative">
+            <div className="person my-3 bg-neutral-100 dark:bg-neutral-900 p-5 rounded-xl shadow-md relative flex justify-between items-center">
                 <User
                     name={`${props.user.firstName} ${props.user.lastName}`}
                     description={(
-                        <UserLink href={`/profile/${props.user.username}`} size="sm">
+                        <UserLink to={`/profile/${props.user.username}`} size="sm" className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 duration-200 transition-color">
                             @{props.user.username}
                         </UserLink>
                     )}
@@ -120,7 +154,7 @@ export default function UserList(props) {
                     }}
                 />
                 <div
-                    className="float-end text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md">
+                    className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2">
                     {followText()}
                 </div>
                 {

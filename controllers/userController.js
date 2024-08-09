@@ -218,7 +218,7 @@ module.exports = {
             await user.save();
             await loggedInUser.save();
 
-            return res.send(user);
+            return res.send([loggedInUser.follow_requests_sent_to, loggedInUser.following]);
         } catch (error) {
             if (error.status === 404) return res.status(404).json({ message: error.message });
             if (error.status === 403) return res.status(403).json({ message: error.message });
@@ -250,7 +250,7 @@ module.exports = {
             await user.save();
             await loggedInUser.save();
 
-            return res.send(user);
+            return res.send([loggedInUser.follow_requests_received_from, loggedInUser.following]);
         } catch (error) {
             if (error.status === 404) return res.status(404).json({ message: error.message });
             return res.status(500).json({ message: 'An unknown error occurred' });
@@ -277,7 +277,7 @@ module.exports = {
             await user.save();
             await loggedInUser.save();
 
-            return res.send(user);
+            return res.send(loggedInUser.follow_requests_received_from);
         }
         catch(error) {
             if(error.status === 404) return res.status(404).json({message: error.message});
@@ -301,9 +301,12 @@ module.exports = {
             }
 
             loggedInUser.following.pull(user._id);
-            await loggedInUser.save();
+            user.followers.pull(loggedInUser._id);
 
-            return res.send(user);
+            await loggedInUser.save();
+            await user.save();
+
+            return res.send(loggedInUser.following);
         }
         catch(error) {
             if(error.status === 404) return res.status(404).json({message: error.message});
@@ -333,11 +336,32 @@ module.exports = {
             await user.save();
             await loggedInUser.save();
 
-            return res.send(user);
+            return res.send(loggedInUser.follow_requests_sent_to);
         }
         catch(error) {
             console.log(error.message)
             if(error.status === 404) return res.status(404).json({message: error.message});
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    },
+    removeFollower: async (req, res) => {
+        try {
+            const user = await User.findOne({_id: req.params.id});
+            const loggedInUser = await User.findOne({_od: req.user._id});
+
+            if(!user) return res.status(404).json({message: 'This user does not exist'});
+
+            if(!loggedInUser.followers.includes(user._id) || !user.following.includes(loggedInUser._id)) return res.status(404).json({message: 'You do not follow this user'});
+
+            loggedInUser.followers.pull(user._id);
+            user.following.pull(loggedInUser._id);
+
+            await user.save();
+            await loggedInUser.save();
+
+            return res.send(loggedInUser.followers);
+        }
+        catch(error) {
             return res.status(500).json({message: 'An unknown error occurred'});
         }
     }
