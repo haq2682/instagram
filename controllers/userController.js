@@ -244,8 +244,8 @@ module.exports = {
 
             user.follow_requests_sent_to.pull(loggedInUser._id);
             loggedInUser.follow_requests_received_from.pull(user._id);
-            loggedInUser.following.push(user._id);
-            user.followers.push(loggedInUser._id);
+            user.following.push(loggedInUser._id);
+            loggedInUser.followers.push(user._id);
 
             await user.save();
             await loggedInUser.save();

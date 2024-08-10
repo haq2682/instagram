@@ -87,7 +87,7 @@ function App() {
                     <Route path="settings" element={getPage("settings")}/>
                     <Route path="explore" element={getPage("explore")}/>
                     <Route path="search" element={getPage("search")}/>
-                    <Route path="messages" element={getPage("messages")}/>
+                    <Route path="messages/:id?" element={getPage("messages")}/>
                     <Route path="saved" element={getPage("saved")}/>
                     <Route path="profile/:username" element={getPage("profile")}/>
                     <Route path="verify" element={getPage("verify")}/>
