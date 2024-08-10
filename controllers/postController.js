@@ -95,64 +95,71 @@ module.exports = {
     },
     all: async (req, res) => {
         try {
-            let posts = await Post.find({}).populate([
-                {
-                    path: 'media',
-                    model: 'Media'
-                },
-                {
-                    path: 'user',
-                    model: 'User',
-                    match: {$or: [
-                        { _id: req.user._id },
-                        { private: false},
-                    ]},
-                    populate: [
-                        {
-                            path: 'profile_picture',
-                            model: 'ProfilePhoto',
-                        }
-                    ]
-                },
-                {
-                    path: 'shared_post',
-                    model: 'Post',
-                    populate: [
-                        {
-                            path: 'user',
-                            model: 'User',
-                            match: {$or: [
-                                {_id: req.user._id},
-                                {private: false}
-                            ]},
-                            populate: [
-                                {
-                                    path: 'profile_picture',
-                                    model: 'ProfilePhoto'
-                                }
-                            ]
-                        },
-                        {
-                            path: 'media',
-                            model: 'Media'
-                        }
-                    ]
-                }
-            ])
+            let posts = await Post.find({})
+                .populate([
+                    {
+                        path: 'media',
+                        model: 'Media',
+                    },
+                    {
+                        path: 'user',
+                        model: 'User',
+                        populate: [
+                            {
+                                path: 'profile_picture',
+                                model: 'ProfilePhoto',
+                            }
+                        ]
+                    },
+                    {
+                        path: 'shared_post',
+                        model: 'Post',
+                        populate: [
+                            {
+                                path: 'user',
+                                model: 'User',
+                                populate: [
+                                    {
+                                        path: 'profile_picture',
+                                        model: 'ProfilePhoto',
+                                    }
+                                ]
+                            },
+                            {
+                                path: 'media',
+                                model: 'Media',
+                            }
+                        ]
+                    }
+                ])
                 .sort({ created_at: 'desc' })
                 .limit(3)
                 .skip((req.params.page_number - 1) * 3);
-            posts = posts.filter(post => post?.user !== null);
-            posts = posts.filter(post => post.shared_post?.user !== null);
-            if (posts.length === 0 && req.params.page_number === 1) return res.status(404).json({ message: 'No posts found' });
-            if (posts.length === 0) return res.status(404).json({message: 'No more posts found'});
+
+            posts = posts.filter(post => {
+                const userIsOwner = post.user && post.user._id.equals(req.user._id);
+                const userIsFollower = post.user && post.user.followers.includes(req.user._id);
+                const postIsPublic = post.user && !post.user.private;
+
+                return post.user && (userIsOwner || postIsPublic || userIsFollower);
+            });
+
+            posts = posts.filter(post => post?.user !== null && (!post.shared_post || post.shared_post?.user !== null));
+
+            if (posts.length === 0 && req.params.page_number === 1) {
+                return res.status(404).json({ message: 'No posts found' });
+            }
+            if (posts.length === 0) {
+                return res.status(404).json({ message: 'No more posts found' });
+            }
+
             res.send(posts);
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error.message);
             res.status(500).json({ message: 'An unknown error occurred' });
         }
-    },
+    }
+,
     like: async (req, res) => {
         try {
             const id = req.params.id;

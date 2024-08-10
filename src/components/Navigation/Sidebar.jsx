@@ -61,7 +61,7 @@ export default function Sidebar() {
                                 </li>
                             </Link>
                             <Link to="/messages">
-                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname === '/messages' && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname === '/messages' ? 'active' : '')}`}>
+                                <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname.startsWith('/messages') && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname.startsWith('/messages') ? 'active' : '')}`}>
                                     <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
                                         <Badge color="danger" content="99+">
                                             <MessageAltDetail size="33"/>

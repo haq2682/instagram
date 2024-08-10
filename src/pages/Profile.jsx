@@ -3,14 +3,16 @@ import Bottombar from "../components/Navigation/Bottombar";
 import { Button, Divider, Tab, Tabs } from "@nextui-org/react";
 import Notifications from "../components/Notifications";
 import Post from "../components/Post/Post";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useState, useEffect } from "react";
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import SkeletonLoader from "../components/SkeletonLoader";
 export default function Profile() {
+    const navigate = useNavigate()
     const { username } = useParams();
     const [user, setUser] = useState(null);
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const loggedInUsername = useSelector(state => state.auth.username);
 
@@ -21,12 +23,22 @@ export default function Profile() {
             setUser(response.data);
         }
         catch (error) {
-            console.log(error.message);
+            setError(error.response.data.message);
         }
         finally {
             setLoading(false);
         }
     }, [username]);
+
+    const joinRoom = async () => {
+        try {
+            const response = await axios.get('/api/chat/join/' + user._id);
+            navigate('/messages/' + response.data._id);
+        }
+        catch(error) {
+            setError(error.response.data.message);
+        }
+    }
 
     useEffect(() => {
         fetchUser();
@@ -50,7 +62,11 @@ export default function Profile() {
                                     <div className="flex">
                                         <h1 className="username mx-4 text-2xl font-bold">{user.username} <span className={`${(!user.gender) ? 'hidden' : null} font-thin text-lg`}>({user.gender})</span></h1>
                                         {
-                                            (loggedInUsername === user.username) ? (<Button className="mx-1 font-bold" size="sm">Edit profile</Button>) : (null)
+                                            (loggedInUsername === user.username) ? (<Button className="mx-1 font-bold" size="sm">Edit profile</Button>) : (<>
+                                                <div>
+                                                    <Button className="mx-1 font-bold" size="sm" onClick={joinRoom}>Message</Button>
+                                                </div>
+                                            </>)
                                         }
                                     </div>
                                     <div className="flex mt-5 mx-5">

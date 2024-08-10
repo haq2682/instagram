@@ -16,6 +16,7 @@ const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const replyRoutes = require('./routes/replyRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
 dotenv.config();
@@ -49,6 +50,7 @@ app.use('/user', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 app.use('/api/reply', replyRoutes);
+app.use('/api/chat', chatRoutes);
 
 passport.serializeUser(function(user, done) {
     done(null, user);
