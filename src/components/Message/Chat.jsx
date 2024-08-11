@@ -27,47 +27,114 @@ import Messages from './Messages';
 import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { useSelector } from "react-redux";
+import SkeletonLoader from '../SkeletonLoader';
 
 export default function Chat() {
     const [jumpToBottomVisible, setJumpToBottomVisible] = useState(true);
     const [chatBarOpen, setChatBarOpen] = useState(false);
     const [detailsBarOpen, setDetailsBarOpen] = useState(false);
     const [currentRoom, setCurrentRoom] = useState(null);
+    const [messages, setMessages] = useState([]);
     const [error, setError] = useState('');
     const bottomRef = useRef();
     const loggedInUser = useSelector(state => state.auth);
+    const [description, setDescription] = useState('');
+    const [file, setFile] = useState(null);
+    const [messageFetchLoading, setMessageFetchLoading] = useState(false);
+    const [roomFetchLoading, setRoomFetchLoading] = useState(true);
+    const otherUser = currentRoom?.members.find(member => member.username !== loggedInUser.username);
 
     function handleJumpToBottom() {
-        if (bottomRef.current) bottomRef.current.scrollIntoView({ behaviour: "smooth" });
+        if (bottomRef.current) bottomRef.current.scrollIntoView();
     }
 
     useEffect(() => {
         handleJumpToBottom();
     }, [])
 
-    const [replyingToMessage, setReplyingToMessage] = useState('');
+    const [replyingToMessage, setReplyingToMessage] = useState(null);
     const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
     const { id } = useParams();
 
     const fetchRoom = useCallback(async () => {
         if (id) {
+            setRoomFetchLoading(true);
             setError('');
             try {
-                const response = await axios.get('/api/chat/get/' + id);
+                const response = await axios.get(`/api/chat/room/${id}/get`);
                 setCurrentRoom(response.data);
             }
             catch (error) {
                 setError(error.response.data.message);
             }
+            finally {
+                setRoomFetchLoading(false);
+            }
         }
     }, [id]);
 
+    const fetchMessages = useCallback(async () => {
+        if(currentRoom) {
+            setMessageFetchLoading(true);
+            setError('');
+            try {
+                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get`);
+                setMessages(response.data);
+            }
+            catch(error) {
+                console.log(error);
+                setError(error.response.data.message);
+            }
+            finally {
+                setMessageFetchLoading(false);
+            }
+        }
+    }, [currentRoom, setError, setMessages]);
+
     useEffect(() => {
         fetchRoom();
-    }, [fetchRoom])
+    }, [fetchRoom]);
+
+    useEffect(() => {
+        fetchMessages();
+    }, [fetchMessages]);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if(!file || !description) {
+            try {
+                const formData = new FormData();
+                if (file) formData.append('files', file);
+                if (description.length > 0) formData.append('description', description);
+                if (replyingToMessage) formData.append('reply_to', replyingToMessage._id);
+                formData.append('chatId', currentRoom._id);
+                const response = await axios.post('/api/chat/new/message', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log(response.data);
+                setMessages((previous) => [...previous, response.data]);
+            }
+            catch (error) {
+                setError(error.response.data.message);
+            }
+            finally {
+                setDescription('');
+                handleJumpToBottom();
+            }
+        }
+    }
+
+    const handleDescriptionChange = useCallback((event) => {
+        setDescription(event.target.value)
+    }, [setDescription]);
+
+    const handleSetReply = (message) => {
+        setReplyingToMessage(message);
+    }
 
     const ChatHeader = () => {
-        const otherUser = currentRoom?.members.find(member => member.username !== loggedInUser.username);
         return (
             <>
                 <div
@@ -78,8 +145,8 @@ export default function Chat() {
                                 <div className="flex w-full">
                                     <div className="relative flex items-center">
                                         <Badge content="" color="success" shape="circle" placement="bottom-right">
-                                            <Avatar src={`${currentRoom.chat_type === 'individual' ? otherUser.profile_picture.filename : null}`}
-                                                className="w-10 h-10 sm:w-12 sm:h-12" />
+                                            <img src={`${currentRoom.chat_type === 'individual' ? otherUser.profile_picture.filename : null}`}
+                                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp"/>
                                         </Badge>
                                     </div>
                                     <div className="m-3">
@@ -140,6 +207,9 @@ export default function Chat() {
                         <div
                             className="messages h-full w-full overflow-scroll border-b-neutral-300 dark:border-b-neutral-700 border-b relative">
                             {
+                                (messageFetchLoading || roomFetchLoading) && <div className={`flex justify-center ${messages.length === 0 ? 'h-full' : null} items-center`}><div className="loader"/></div>
+                            }
+                            {
                                 !id && (
                                     <>
                                         <div className="flex justify-center items-center h-full flex-col">
@@ -159,7 +229,7 @@ export default function Chat() {
                                 )
                             }
                             {
-                                currentRoom?.messages.length === 0 && (
+                                !messageFetchLoading && !roomFetchLoading && id && messages.length === 0 && (
                                     <>
                                         <div className="flex justify-center items-center h-full">
                                             <div className="text-center font-bold text-md opacity-50">This chat seems empty. Be the first one to initiate the chat :)</div>
@@ -167,27 +237,31 @@ export default function Chat() {
                                     </>
                                 )
                             }
-                            <Messages/>
+                            <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply}/>
                             <div className={`${jumpToBottomVisible ? 'block' : 'hidden'} fixed bottom-36 sm:bottom-24 ml-3`}>
                                 <Button onClick={handleJumpToBottom}><ArrowheadDownOutline size="24" /></Button>
                             </div>
                             <div ref={bottomRef} />
                         </div>
                         <div className="w-full sm:mb-2 p-2 shadow-lg">
-                            <form action="/" method="post">
+                            <form method="post" onSubmit={handleSubmit}>
                                 {replyingToMessage &&
                                     <div>
                                         <div className="message opacity-40">
                                             <div className="float-right" onClick={() => setReplyingToMessage('')}><Close
                                                 size="20" /></div>
-                                            <div
-                                                className="sender-message my-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block text-white">
-                                                <p>{replyingToMessage}</p>
-                                            </div>
+                                            {
+                                                replyingToMessage.user.username === loggedInUser.username ? (
+                                                    <div
+                                                        className="sender-reply text-xs inline-block bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white bg-opacity-60 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">{replyingToMessage.description}</div>
+                                                ) : (
+                                                    <div
+                                                        className="recepient-reply text-xs inline-block bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">{replyingToMessage.description}</div>)
+                                            }
                                         </div>
                                     </div>
                                 }
-                                <Input label="Write your message..." variant="underlined" isDisabled={!currentRoom} endContent={
+                                <Input label="Write your message..." variant="underlined" isDisabled={!currentRoom} value={description} onChange={handleDescriptionChange} endContent={
                                     <>
                                         <input id="message-file-upload"
                                             name="message-file-upload" type="file"

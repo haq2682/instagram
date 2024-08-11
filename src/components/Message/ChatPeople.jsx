@@ -43,7 +43,7 @@ export default function ChatPeople() {
                     className={`user my-3 flex justify-between transition-color duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 active:bg-neutral-300 dark:active:bg-neutral-900 p-3 rounded-xl cursor-pointer ${id === props.chat._id && 'bg-neutral-200 dark:bg-neutral-800'}`}>
                     <div className="flex my-auto w-full h-full">
                         <Badge content="" color="success" shape="circle" placement="bottom-right">
-                            <Avatar src={`${otherUser.profile_picture.filename}`} />
+                            <img src={`${otherUser.profile_picture.filename}`} alt="people-pfp" className="rounded-full object-cover w-10 h-10"/>
                         </Badge>
                         <p className="my-auto mx-2 font-bold">{otherUser?.username}</p>
                     </div>

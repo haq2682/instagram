@@ -18,6 +18,8 @@ const upload = multer({storage});
 
 router.get('/join/:id', attachUser, chatController.joinRoom);
 router.get('/individual/getAll', attachUser, chatController.getAllIndividualRooms);
-router.get('/get/:id', attachUser, chatController.getRoom);
+router.get('/room/:id/get', attachUser, chatController.getRoom);
+router.post('/new/message', attachUser, upload.single('file'), chatController.newMessage);
+router.get('/room/:id/messages/get', attachUser, chatController.getRoomMessages);
 
 module.exports = router;

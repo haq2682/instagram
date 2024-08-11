@@ -24,6 +24,14 @@ const messageSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MessageLike'
     }],
+    seen_by: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    media: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Media'
+    },
     created_at: {
         type: Date,
         default: new Date()
