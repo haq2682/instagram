@@ -8,6 +8,9 @@ import {Provider} from 'react-redux';
 import {store, persistor} from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 import axios from 'axios';
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+TimeAgo.addDefaultLocale(en)
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
