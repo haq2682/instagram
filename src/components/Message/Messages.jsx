@@ -9,32 +9,12 @@ import {
     DropdownItem
 } from "@nextui-org/react";
 import { useSelector } from 'react-redux';
-import VPlayer from '../Post/VideoPlayer/VPlayer';
+import { Send } from '@styled-icons/bootstrap/Send';
+import { SendFill } from 'styled-icons/bootstrap';
+import ReactTimeAgo from 'react-time-ago'
 
 export default function Messages(props) {
     const loggedInUser = useSelector(state => state.auth);
-    const otherUser = props.otherUser;
-    const messages = [
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n' +
-        '                                            Lorem Ipsum has been the industry\'s standard dummy text ever since the\n' +
-        '                                            1500s, when an unknown printer took a galley of type and scrambled it to\n' +
-        '                                            make a type specimen book. It has survived not only five centuries, but also\n' +
-        '                                            the leap into electronic typesetting, remaining essentially unchanged. It\n' +
-        '                                            was popularised in the 1960s with the release of Letraset sheets containing\n' +
-        '                                            Lorem Ipsum passages, and more recently with desktop publishing software\n' +
-        '                                            like Aldus PageMaker including versions of Lorem Ipsum.',
-        'It is a long established fact that a reader will be distracted by the\n' +
-        '                                            readable content of a page when looking at its layout. The point of using\n' +
-        '                                            Lorem Ipsum is that it has a more-or-less normal distribution of letters, as\n' +
-        '                                            opposed to using \'Content here, content here\', making it look like readable\n' +
-        '                                            English. Many desktop publishing packages and web page editors now use Lorem\n' +
-        '                                            Ipsum as their default model text, and a search for \'lorem ipsum\' will\n' +
-        '                                            uncover many web sites still in their infancy. Various versions have evolved\n' +
-        '                                            over the years, sometimes by accident, sometimes on purpose (injected humour\n' +
-        '                                            and the like).'
-    ]
-
-
     const RenderAuthUserMessage = (props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
@@ -80,7 +60,7 @@ export default function Messages(props) {
         return (
             <>
                 <div className="message w-full flex justify-end text-sm relative">
-                    <div className="absolute top-1/2 -translate-y-1/2 mr-3"><Reply size="25" /></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 mr-6"><Reply size="25" /></div>
                     <div className="more-options my-3 mx-1">
                         <Dropdown>
                             <DropdownTrigger>
@@ -100,7 +80,7 @@ export default function Messages(props) {
                     </div>
                     <div className="flex flex-col">
                         <div
-                            className="sender-message relative mt-2 p-3.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block max-w-4/6"
+                            className="sender-message relative mt-2 px-2.5 py-2 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-md inline-block max-w-4/6"
                             onTouchStart={handleTouchStart}
                             onTouchEnd={handleTouchEnd}
                             onTouchMove={handleTouchMove}
@@ -112,19 +92,51 @@ export default function Messages(props) {
                                         {
                                             props.message.reply_to.user.username === loggedInUser.username ? (
                                                 <div
-                                                    className="sender-reply text-xs bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 text-black bg-opacity-60 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
-                                                    <div className="font-bold">
-                                                        <img src={loggedInUser.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp"/>You
-                                                    </div> 
-                                                    {props.message.reply_to.description}
+                                                    className="sender-reply text-xs bg-gradient-to-br from-indigo-300 via-purple-300 to-pink-300 text-black bg-opacity-60 px-2.5 py-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
+                                                    <div className="font-bold mb-1">
+                                                        <img src={loggedInUser.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />You
+                                                    </div>
+                                                    {
+                                                        props.message.reply_to.media ? (
+                                                            <>
+                                                                {
+                                                                    props.message.reply_to.media.media_type === 'image' ? (
+                                                                        <>
+                                                                            <div className="font-bold italic underline">Image</div>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <div className="font-bodl italic underline">Video</div>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                            </>
+                                                        ) : (props.message.reply_to.description)
+                                                    }
                                                 </div>
                                             ) : (
                                                 <div
-                                                    className="recepient-reply text-xs bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
-                                                    <div className="font-bold">
-                                                        <img src={props.message.reply_to.user.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp"/>{props.message.reply_to.user.username}
+                                                    className="recepient-reply text-xs bg-neutral-200 dark:bg-neutral-800 px-2.5 py-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
+                                                    <div className="font-bold mb-1">
+                                                        <img src={props.message.reply_to.user.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />{props.message.reply_to.user.username}
                                                     </div>
-                                                    {props.message.reply_to.description}
+                                                    {
+                                                        props.message.reply_to.media ? (
+                                                            <>
+                                                                {
+                                                                    props.message.reply_to.media.media_type === 'image' ? (
+                                                                        <>
+                                                                            <div className="font-bold italic underline">Image</div>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <div className="font-bodl italic underline">Video</div>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                            </>
+                                                        ) : (props.message.reply_to.description)
+                                                    }
                                                 </div>
                                             )
                                         }
@@ -139,11 +151,13 @@ export default function Messages(props) {
                                                 <>
                                                     <img
                                                         src={`${props.message.media.path}`}
-                                                        alt="message" className="object-contain max-h-[800px] rounded-lg mb-3 w-full" />
+                                                        alt="message" className="object-contain max-h-[300px] max-w-full rounded-lg mb-3 w-full" />
                                                 </>
                                             ) : (
                                                 <>
-                                                    <VPlayer src={props.message.media.path} />
+                                                    <video className="object-cover max-h-[300px] rounded-lg mb-3 max-w-full" controls>
+                                                        <source src={props.message.media.path} />
+                                                    </video>
                                                 </>
                                             )
                                         }
@@ -151,6 +165,11 @@ export default function Messages(props) {
                                 )
                             }
                             <p className="text-white">{props.message?.description}</p>
+                            <div className="mt-1">
+                                <div className="float-end text-xs text-white opacity-60">
+                                    <ReactTimeAgo date={props.message.created_at} locale="en-GB" timeStyle="twitter" /> <Send size="15" /> <SendFill size="15" />
+                                </div>
+                            </div>
                             {
                                 props.message.likes.length !== 0 && (
                                     <>
@@ -161,13 +180,10 @@ export default function Messages(props) {
                                 )
                             }
                         </div>
-                        <div className="mt-1">
-                            <div className="float-end text-xs">
-                                Sent
-                            </div>
-                        </div>
                     </div>
-                    
+                    <div>
+                        <img src={props.message.user.profile_picture.filename} alt="pfp" className="w-4 h-4 object-contain rounded-full" />
+                    </div>
                 </div>
             </>
         )
@@ -176,7 +192,6 @@ export default function Messages(props) {
     const RenderOtherUserMessage = (props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
-
         const [isSwiping, setIsSwiping] = useState(false);
         useEffect(() => {
             if (!isSwiping && deviation > 0) {
@@ -218,8 +233,11 @@ export default function Messages(props) {
         }
         return (
             <>
-                <div className="message relative">
-                    <div className="absolute top-1/2 -translate-y-1/2 ml-3"><Reply size="25" /></div>
+                <div className="message relative flex">
+                    <div className="absolute top-1/2 -translate-y-1/2 ml-6"><Reply size="25" /></div>
+                    <div>
+                        <img src={props.message.user.profile_picture.filename} alt="pfp" className="w-4 h-4 object-contain rounded-full" />
+                    </div>
                     <div
                         className="w-full flex transition-all duration-200 ease-linear text-xs"
                         onTouchStart={handleTouchStart}
@@ -236,10 +254,52 @@ export default function Messages(props) {
                                             {
                                                 props.message.reply_to.user.username === loggedInUser.username ? (
                                                     <div
-                                                        className="sender-reply text-xs bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white bg-opacity-60 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">{props.message.reply_to.description}</div>
+                                                        className="sender-reply text-xs bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white bg-opacity-60 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
+                                                        <div className="font-bold mb-1">
+                                                            <img src={loggedInUser.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />You
+                                                        </div>
+                                                        {
+                                                            props.message.reply_to.media ? (
+                                                                <>
+                                                                    {
+                                                                        props.message.reply_to.media.media_type === 'image' ? (
+                                                                            <>
+                                                                                <div className="font-bold italic underline">Image</div>
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <div className="font-bodl italic underline">Video</div>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                </>
+                                                            ) : (props.message.reply_to.description)
+                                                        }
+                                                    </div>
                                                 ) : (
                                                     <div
-                                                        className="recepient-reply text-xs bg-white dark:bg-neutral-600 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">{props.message.reply_to.description}</div>
+                                                        className="recepient-reply text-xs bg-white dark:bg-neutral-600 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
+                                                        <div className="font-bold mb-1">
+                                                            <img src={props.message.reply_to.user.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />{props.message.reply_to.user.username}
+                                                        </div>
+                                                        {
+                                                            props.message.reply_to.media ? (
+                                                                <>
+                                                                    {
+                                                                        props.message.reply_to.media.media_type === 'image' ? (
+                                                                            <>
+                                                                                <div className="font-bold italic underline">Image</div>
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <div className="font-bodl italic underline">Video</div>
+                                                                            </>
+                                                                        )
+                                                                    }
+                                                                </>
+                                                            ) : (props.message.reply_to.description)
+                                                        }
+                                                    </div>
                                                 )
                                             }
                                         </>
@@ -253,11 +313,13 @@ export default function Messages(props) {
                                                     <>
                                                         <img
                                                             src={`${props.message.media.path}`}
-                                                            alt="message" className="object-contain max-h-[800px] rounded-lg mb-3 w-full" />
+                                                            alt="message" className="object-contain max-h-[300px] rounded-lg mb-3 max-w-full" />
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <VPlayer src={props.message.media.path} />
+                                                        <video className="object-cover max-h-[300px] rounded-lg mb-3 max-w-full" controls>
+                                                            <source src={props.message.media.path} />
+                                                        </video>
                                                     </>
                                                 )
                                             }
@@ -265,24 +327,24 @@ export default function Messages(props) {
                                     )
                                 }
                                 <p>{props.message?.description}</p>
-                            </div>
-                            <div className="mt-1">
-                                <div className="float-start text-xs">
-                                    Sent
+                                <div className="mt-1 opacity-50">
+                                    <div className="float-start text-xs">
+                                        <Send size="15" /> <SendFill size="15" /> <ReactTimeAgo date={props.message.created_at} locale="en-GB" timeStyle="twitter" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="more-options my-3 mx-1">
                             <Dropdown>
-                            <DropdownTrigger>
-                                <div className="inline-block rounded-full duration-200 transition-color hover:bg-neutral-300 dark:hover:bg-neutral-700 py-1 px-0.5"><ThreeDotsVertical size="18" /></div>
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label="Dynamic Actions">
-                                <DropdownItem key="copy">Copy Message Description</DropdownItem>
-                                <DropdownItem key="like">Like Message</DropdownItem>
-                                <DropdownItem key="reply" onClick={() => props.setReply(props.message)}>Reply</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                                <DropdownTrigger>
+                                    <div className="inline-block rounded-full duration-200 transition-color hover:bg-neutral-300 dark:hover:bg-neutral-700 py-1 px-0.5"><ThreeDotsVertical size="18" /></div>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Dynamic Actions">
+                                    <DropdownItem key="copy">Copy Message Description</DropdownItem>
+                                    <DropdownItem key="like">Like Message</DropdownItem>
+                                    <DropdownItem key="reply" onClick={() => props.setReply(props.message)}>Reply</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </div>
                     </div>
                 </div>
@@ -296,12 +358,11 @@ export default function Messages(props) {
                 <div className="h-full">
                     {
                         props.messages && props.messages.map((message) => {
-                            if (message.user.username === loggedInUser.username) return <RenderAuthUserMessage key={message._id} message={message} setReply={props.setReply}/>
-                            else return <RenderOtherUserMessage key={message._id} message={message} setReply={props.setReply}/>
+                            if (message.user.username === loggedInUser.username) return <RenderAuthUserMessage key={message._id} message={message} setReply={props.setReply} />
+                            else return <RenderOtherUserMessage key={message._id} message={message} setReply={props.setReply} />
                         })
                     }
                 </div>
-                
             </div>
         </>
     )

@@ -6,7 +6,7 @@ const chatController = require('../controllers/chatController');
 
 const storage = multer.diskStorage({
     destination: function(req, file, callback) {
-        return callback(null, './uploads/comment');
+        return callback(null, './uploads/chat');
     },
     filename: function(req, file, callback) {
         const uniquePrefix = Date.now() + '-' + Math.round(Math.random()*1E9);
