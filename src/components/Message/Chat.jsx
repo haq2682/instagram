@@ -7,7 +7,7 @@ import {
     ModalContent,
     ModalHeader,
     Tooltip,
-    Button, 
+    Button,
 } from "@nextui-org/react";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Info } from '@styled-icons/evaicons-solid/Info';
@@ -28,12 +28,17 @@ import { Link, useParams } from "react-router-dom";
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
+import { io } from "socket.io-client";
+import { PuffLoader } from "react-spinners";
+
+const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
 
 export default function Chat() {
     const [jumpToBottomVisible, setJumpToBottomVisible] = useState(false);
     const [chatBarOpen, setChatBarOpen] = useState(false);
     const [detailsBarOpen, setDetailsBarOpen] = useState(false);
     const [currentRoom, setCurrentRoom] = useState(null);
+    const [submitLoading, setSubmitLoading] = useState(false);
     const [messages, setMessages] = useState([]);
     const [error, setError] = useState('');
     const bottomRef = useRef(null);
@@ -42,6 +47,7 @@ export default function Chat() {
     const [file, setFile] = useState(null);
     const [messageFetchLoading, setMessageFetchLoading] = useState(false);
     const [roomFetchLoading, setRoomFetchLoading] = useState(false);
+    const [pageNumber, setPageNumber] = useState(1);
     const otherUser = currentRoom?.members.find(member => member.username !== loggedInUser.username);
     const observerRef = useRef(null);
     const debounceTimeoutRef = useRef(null);
@@ -80,7 +86,13 @@ export default function Chat() {
 
     useEffect(() => {
         handleJumpToBottom();
-    }, [messages]); // Scroll to bottom when messages change
+    }, [messages]);
+
+    useEffect(() => {
+        socket.on('new message', (data) => {
+            setMessages((previous) => [...previous, data]);
+        })
+    }, [])
 
     const [replyingToMessage, setReplyingToMessage] = useState(null);
     const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
@@ -108,7 +120,7 @@ export default function Chat() {
             setMessageFetchLoading(true);
             setError('');
             try {
-                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get`);
+                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/1`);
                 setMessages(response.data);
             }
             catch(error) {
@@ -126,24 +138,49 @@ export default function Chat() {
     }, [fetchRoom]);
 
     useEffect(() => {
-        fetchMessages();
-    }, [fetchMessages]);
+        fetchMessages(pageNumber);
+    }, [fetchMessages, pageNumber]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if(file || description) {
+        if (file || description) {
             try {
-                const formData = new FormData();
-                if (file) formData.append('file', file);
-                if (description.length > 0) formData.append('description', description);
-                if (replyingToMessage) formData.append('reply_to', replyingToMessage._id);
-                formData.append('chatId', currentRoom._id);
-                const response = await axios.post('/api/chat/new/message', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
+                setSubmitLoading(true);
+                let response;
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    response = await axios.post('/api/chat/new/message', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                }
+                // // const formData = new FormData();
+                // // if (file) formData.append('file', file);
+                // // if (description.length > 0) formData.append('description', description);
+                // // if (replyingToMessage) formData.append('reply_to', replyingToMessage._id);
+                // // formData.append('chatId', currentRoom._id);
+                // // const response = await axios.post('/api/chat/new/message', formData, {
+                // //     headers: {
+                // //         'Content-Type': 'multipart/form-data'
+                // //     }
+                // // });
+                // // setMessages((previous) => [...previous, response.data]);
+                const data = {}
+                if (file) data.file = response.data;
+                if (description.length > 0) data.description = description;
+                if (replyingToMessage) data.reply_to = replyingToMessage._id;
+                data.chatId = currentRoom._id;
+                data.authId = loggedInUser._id;
+
+                socket.emit('chat message', data);
+
+                socket.on('message sent', (data) => setSubmitLoading(data));
+
+                socket.on('chat error', (data) => {
+                    setError(data);
                 });
-                setMessages((previous) => [...previous, response.data]);
             }
             catch (error) {
                 setError(error.response.data.message);
@@ -152,7 +189,8 @@ export default function Chat() {
                 setDescription('');
                 setFile(null);
                 setReplyingToMessage(null);
-                handleJumpToBottom();
+                const messagesDiv = document.querySelector('.messages');
+                window.scrollTo(0, messagesDiv.scrollHeight);
             }
         }
     }
@@ -178,7 +216,7 @@ export default function Chat() {
                         <div className="relative flex items-center">
                             <Badge content="" color="success" shape="circle" placement="bottom-right">
                                 <img src={`${currentRoom.chat_type === 'individual' ? otherUser.profile_picture.filename : null}`}
-                                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp"/>
+                                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp" />
                             </Badge>
                         </div>
                         <div className="m-3">
@@ -220,7 +258,7 @@ export default function Chat() {
     return (
         <div className="w-screen">
             <div className="w-full flex h-screen">
-                <div className="flex mb-14 sm:mb-0 w-full ">
+                <div className="flex mb-14 sm:mb-0 w-full">
                     <div className="chat-screen xl:mr-96 sm:ml-[98px] lg:ml-[25vw] xl:ml-[20vw] w-full flex flex-col items-center">
                         <div className="w-full">
                             <ChatHeader />
@@ -329,6 +367,7 @@ export default function Chat() {
                                                     <ArrowForward size="30" />
                                                 </Tooltip>
                                             </label>
+                                            {submitLoading && <PuffLoader size="28px" color="gray"/>}
                                         </>
                                     }
                                 />

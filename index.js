@@ -7,6 +7,7 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
+const chatSocket = require('./sockets/chatSocket');
 
 const authRoutes = require('./routes/authRoutes');
 const googleAuthRoutes = require('./routes/googleAuthRoutes');
@@ -28,6 +29,8 @@ app.use('/uploads', express.static('uploads'));
 app.use(cors());
 app.use(cookieParser());
 connectToDb();
+
+chatSocket.initChatSocket();
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
