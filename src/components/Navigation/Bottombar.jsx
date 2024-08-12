@@ -67,7 +67,7 @@ export default function Bottombar() {
         </PopoverContent>
     );
     return (
-        <div className="bottombar bg-white dark:bg-black shadow-lg h-[50px] w-screen fixed bottom-0 sm:hidden">
+        <div className="bottombar bg-white dark:bg-neutral-900 shadow-lg h-[50px] w-screen fixed bottom-0 sm:hidden">
             <ul className="bottombar-contents h-full w-full flex justify-around items-center">
                 <li className="hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
                     <Popover key={"top-start"} placement={"top-start"}>

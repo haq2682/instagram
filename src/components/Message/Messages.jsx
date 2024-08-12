@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Reply } from "@styled-icons/fa-solid/Reply";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { ThreeDotsVertical } from 'styled-icons/bootstrap';
@@ -11,10 +11,63 @@ import {
 import { useSelector } from 'react-redux';
 import { Send } from '@styled-icons/bootstrap/Send';
 import { SendFill } from 'styled-icons/bootstrap';
-import ReactTimeAgo from 'react-time-ago'
+import moment from 'moment';
 
 export default function Messages(props) {
     const loggedInUser = useSelector(state => state.auth);
+    const messageObserver = useRef();
+
+    const lastMessageElementRef = useCallback(node => {
+        if (messageObserver.current) messageObserver.current.disconnect();
+        messageObserver.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                props.setPageNumber(prevPageNumber => prevPageNumber + 1);
+            }
+        });
+        if (node) messageObserver.current.observe(node);
+    }, [props]);
+
+    const groupMessagesByDateAndCluster = (messages) => {
+        const dateGroups = {};
+
+        messages.forEach((message) => {
+            const messageDate = new Date(message?.created_at).toLocaleDateString();
+            if (!dateGroups[messageDate]) {
+                dateGroups[messageDate] = [];
+            }
+            dateGroups[messageDate].push(message);
+        });
+
+        const groupedMessages = Object.keys(dateGroups).map(date => {
+            const clusters = [];
+            let currentCluster = [];
+            let prevMessage = null;
+
+            dateGroups[date].forEach((message) => {
+                if (!prevMessage ||
+                    message.user._id !== prevMessage.user._id ||
+                    new Date(message.created_at) - new Date(prevMessage.created_at) > 2 * 60 * 1000) {
+                    if (currentCluster.length > 0) {
+                        clusters.push(currentCluster);
+                    }
+                    currentCluster = [message];
+                } else {
+                    currentCluster.push(message);
+                }
+                prevMessage = message;
+            });
+
+            if (currentCluster.length > 0) {
+                clusters.push(currentCluster);
+            }
+
+            return { date, clusters };
+        });
+
+        return groupedMessages;
+    };
+
+    const groupedMessages = groupMessagesByDateAndCluster(props.messages);
     const RenderAuthUserMessage = (props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
@@ -57,10 +110,12 @@ export default function Messages(props) {
                 }
             }
         }
+
+        
         return (
             <>
                 <div className="message w-full flex justify-end text-sm relative">
-                    <div className="absolute top-1/2 -translate-y-1/2 mr-6"><Reply size="25" /></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 mr-10"><Reply size="25" /></div>
                     <div className="more-options my-3 mx-1">
                         <Dropdown>
                             <DropdownTrigger>
@@ -84,7 +139,7 @@ export default function Messages(props) {
                             onTouchStart={handleTouchStart}
                             onTouchEnd={handleTouchEnd}
                             onTouchMove={handleTouchMove}
-                            style={{ transform: `translateX(-${deviation}px)` }}
+                            style={{ transform: `translateX(-${deviation}px)`}}
                         >
                             {
                                 props.message.reply_to && (
@@ -167,7 +222,7 @@ export default function Messages(props) {
                             <p className="text-white">{props.message?.description}</p>
                             <div className="mt-1">
                                 <div className="float-end text-xs text-white opacity-60">
-                                    <ReactTimeAgo date={props.message.created_at} locale="en-GB" timeStyle="twitter" /> <Send size="15" /> <SendFill size="15" />
+                                    {moment(props.message.created_at).format('LT')} <Send size="15" /> <SendFill size="15" />
                                 </div>
                             </div>
                             {
@@ -181,8 +236,8 @@ export default function Messages(props) {
                             }
                         </div>
                     </div>
-                    <div>
-                        <img src={props.message.user.profile_picture.filename} alt="pfp" className="w-4 h-4 object-contain rounded-full" />
+                    <div className="w-6 h-6 mt-3 ml-2">
+                        {props.showProfilePicture && <img src={props.message.user.profile_picture.filename} alt="pfp" className="object-cover h-full w-full rounded-full" />}
                     </div>
                 </div>
             </>
@@ -234,9 +289,9 @@ export default function Messages(props) {
         return (
             <>
                 <div className="message relative flex">
-                    <div className="absolute top-1/2 -translate-y-1/2 ml-6"><Reply size="25" /></div>
-                    <div>
-                        <img src={props.message.user.profile_picture.filename} alt="pfp" className="w-4 h-4 object-contain rounded-full" />
+                    <div className="absolute top-1/2 -translate-y-1/2 ml-10"><Reply size="25" /></div>
+                    <div className="w-6 h-6 mt-3 mr-3">
+                        {props.showProfilePicture && <img src={props.message.user.profile_picture.filename} alt="pfp" className="w-full h-full object-cover rounded-full" />}
                     </div>
                     <div
                         className="w-full flex transition-all duration-200 ease-linear text-xs"
@@ -329,7 +384,7 @@ export default function Messages(props) {
                                 <p>{props.message?.description}</p>
                                 <div className="mt-1 opacity-50">
                                     <div className="float-start text-xs">
-                                        <Send size="15" /> <SendFill size="15" /> <ReactTimeAgo date={props.message.created_at} locale="en-GB" timeStyle="twitter" />
+                                        <Send size="15" /> <SendFill size="15" /> {moment(props.message.created_at).format('LT')}
                                     </div>
                                 </div>
                             </div>
@@ -354,13 +409,34 @@ export default function Messages(props) {
 
     return (
         <>
-            <div className="m-2 flex flex-col justify-end">
-                <div className="h-full">
+            <div className="m-2 flex flex-col justify-end h-full">
+                <div className="h-full flex flex-col justify-end">
+                    <div className="w-full border border-white"/>
                     {
-                        props.messages && props.messages.map((message) => {
-                            if (message.user.username === loggedInUser.username) return <RenderAuthUserMessage key={message._id} message={message} setReply={props.setReply} />
-                            else return <RenderOtherUserMessage key={message._id} message={message} setReply={props.setReply} />
-                        })
+                        groupedMessages.map((group, groupIndex) => (
+                            <div key={groupIndex}>
+                                <div className="date-divider text-center flex justify-between items-center">
+                                    <hr className="text-black dark:text-white opacity-60 w-full"/>
+                                    <span className="font-bold opacity-60 px-2 text-md">
+                                        {group.date}
+                                    </span>
+                                    <hr className="text-black dark:text-white opacity-60 w-full"/>
+                                </div>
+                                {
+                                    group.clusters.map((cluster, clusterIndex) => (
+                                        cluster.map((message, messageIndex) => {
+                                            const showProfilePicture = messageIndex === 0;
+
+                                            if (message?.user.username === loggedInUser.username) {
+                                                return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                            } else {
+                                                return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                            }
+                                        })
+                                    ))
+                                }
+                            </div>
+                        ))
                     }
                 </div>
             </div>

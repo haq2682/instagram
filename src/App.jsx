@@ -79,7 +79,7 @@ function App() {
         }
     }
     return (
-        <main className="dark:bg-black bg-white">
+        <main className="dark:bg-neutral-900 bg-white">
             {loader ? <WelcomeLoader/> : null}
             <BrowserRouter>
                 <Routes>

@@ -52,8 +52,8 @@ module.exports = {
                     populate: 'profile_picture'
                 }
             ]);
-            if(!room) {
-                const error = new Error('This room does not exist');
+            if(!room || !room.members.some(member => member._id.equals(req.user._id))) {
+                const error = new Error('This chat does not exist');
                 error.status = 404;
                 throw error;
             }
@@ -65,75 +65,81 @@ module.exports = {
         }
     },
     newMessage: async (req, res) => {
+        // try {
+        //     const file = req.file;
+        //     const chatRoom = await Chat.findOne({_id: req.body.chatId});
+        //     const newMessage = new Message();
+        //     if(!chatRoom) return res.status(404).json({message: 'This chat does not exist'});
+        //     if(file) {
+        //         let newMedia = new Media();
+        //         newMedia.path = `/${file.path}`;
+        //         newMedia.fileName = file.filename;
+        //         newMedia.originalName = file.originalname;
+        //         newMedia.size = file.size;
+        //         if(file.mimetype.startsWith('image/')) {
+        //             newMedia.media_type = 'image';
+        //         }
+        //         else {
+        //             newMedia.encoding = file.encoding;
+        //             newMedia.media_type = 'video';
+        //         }
+        //         newMedia.format = file.originalname.substr(-3, 3);
+        //         newMedia.message = newMessage._id
+        //         await newMedia.save();
+        //         newMessage.media = newMedia._id;
+        //     }
+        //     if(newMessage.description?.length > 300) return res.status(403).json({message: 'This message is too long, try sending a shorter message'});
+
+        //     newMessage.description = req.body.description || null;
+        //     newMessage.user = req.user._id;
+        //     newMessage.chat = chatRoom._id;
+        //     chatRoom.messages.push(newMessage._id);
+        //     if(req.body.reply_to) newMessage.reply_to = req.body.reply_to;
+        //     await chatRoom.save();
+        //     await newMessage.save();
+
+        //     const message = await Message.findOne({_id: newMessage._id}).populate([
+        //         {
+        //             path: 'media',
+        //         },
+        //         {
+        //             path: 'user',
+        //             populate: [
+        //                 {
+        //                     path: 'profile_picture'
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             path: 'reply_to',
+        //             populate: [
+        //                 {
+        //                     path: 'media'
+        //                 },
+        //                 {
+        //                     path: 'user',
+        //                     populate: [
+        //                         {
+        //                             path: 'profile_picture'
+        //                         }
+        //                     ]
+        //                 },
+        //                 {
+        //                     path: 'likes'
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             path: 'likes'
+        //         }
+        //     ]);
+        //     res.send(message);
+        // }
+        // catch(error) {
+        //     return res.status(500).json({message: 'An unknown error occurred'});
+        // }
         try {
-            const file = req.file;
-            const chatRoom = await Chat.findOne({_id: req.body.chatId});
-            const newMessage = new Message();
-            if(!chatRoom) return res.status(404).json({message: 'This chat does not exist'});
-            if(file) {
-                let newMedia = new Media();
-                newMedia.path = `/${file.path}`;
-                newMedia.fileName = file.filename;
-                newMedia.originalName = file.originalname;
-                newMedia.size = file.size;
-                if(file.mimetype.startsWith('image/')) {
-                    newMedia.media_type = 'image';
-                }
-                else {
-                    newMedia.encoding = file.encoding;
-                    newMedia.media_type = 'video';
-                }
-                newMedia.format = file.originalname.substr(-3, 3);
-                newMedia.message = newMessage._id
-                await newMedia.save();
-                newMessage.media = newMedia._id;
-            }
-            if(newMessage.description?.length > 300) return res.status(403).json({message: 'This message is too long, try sending a shorter message'});
-
-            newMessage.description = req.body.description || null;
-            newMessage.user = req.user._id;
-            newMessage.chat = chatRoom._id;
-            chatRoom.messages.push(newMessage._id);
-            if(req.body.reply_to) newMessage.reply_to = req.body.reply_to;
-            await chatRoom.save();
-            await newMessage.save();
-
-            const message = await Message.findOne({_id: newMessage._id}).populate([
-                {
-                    path: 'media',
-                },
-                {
-                    path: 'user',
-                    populate: [
-                        {
-                            path: 'profile_picture'
-                        }
-                    ]
-                },
-                {
-                    path: 'reply_to',
-                    populate: [
-                        {
-                            path: 'media'
-                        },
-                        {
-                            path: 'user',
-                            populate: [
-                                {
-                                    path: 'profile_picture'
-                                }
-                            ]
-                        },
-                        {
-                            path: 'likes'
-                        }
-                    ]
-                },
-                {
-                    path: 'likes'
-                }
-            ]);
-            res.send(message);
+            if(req.file) return res.send(req.file);
         }
         catch(error) {
             return res.status(500).json({message: 'An unknown error occurred'});
@@ -142,8 +148,8 @@ module.exports = {
     getRoomMessages: async (req, res) => {
         try {
             const chatRoom = await Chat.findOne({_id: req.params.id});
-            if(!chatRoom) return res.status(404).json({message: 'This chat does not exist'});
-            const messages = await Message.find({chat: chatRoom._id}).populate([
+            if(!chatRoom || !chatRoom.members.includes(req.user._id)) return res.status(404).json({message: 'This chat does not exist'});
+            let messages = await Message.find({chat: chatRoom._id}).populate([
                 {
                     path: 'media',
                 },
@@ -177,7 +183,12 @@ module.exports = {
                 {
                     path: 'likes'
                 }
-            ]);
+            ])
+            .sort({created_at: 'desc'})
+            .limit(5)
+            .skip((req.params.page_number - 1) * 5);
+
+            messages = messages.reverse();
             if(messages.length === 0) return res.status(404).json({messages: 'This chat seems empty'});
             return res.send(messages);
         }
