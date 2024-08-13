@@ -8,6 +8,10 @@ import Post from "../components/Post/Post";
 import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import SkeletonLoader from '../components/SkeletonLoader';
+import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
+
+const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
 
 export default function Feed() {
     const [posts, setPosts] = useState([]);
@@ -15,6 +19,11 @@ export default function Feed() {
     const [loader, setLoader] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const observer = useRef();
+    const loggedInUser = useSelector(state => state.auth);
+
+    useEffect(() => {
+        socket.emit('init connection', loggedInUser);
+    }, [loggedInUser]);
 
     const fetchPosts = useCallback(async () => {
         setLoader(true);

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Reply } from "@styled-icons/fa-solid/Reply";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { ThreeDotsVertical } from 'styled-icons/bootstrap';
@@ -15,17 +15,6 @@ import moment from 'moment';
 
 export default function Messages(props) {
     const loggedInUser = useSelector(state => state.auth);
-    const messageObserver = useRef();
-
-    const lastMessageElementRef = useCallback(node => {
-        if (messageObserver.current) messageObserver.current.disconnect();
-        messageObserver.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting) {
-                props.setPageNumber(prevPageNumber => prevPageNumber + 1);
-            }
-        });
-        if (node) messageObserver.current.observe(node);
-    }, [props]);
 
     const groupMessagesByDateAndCluster = (messages) => {
         const dateGroups = {};
@@ -410,7 +399,7 @@ export default function Messages(props) {
     return (
         <>
             {
-                groupedMessages.map((group, groupIndex) => (
+                groupedMessages.reverse().map((group, groupIndex) => (
                     <div key={groupIndex}>
                         <div className="date-divider text-center flex justify-between items-center">
                             <hr className="text-black dark:text-white opacity-60 w-full" />
@@ -419,19 +408,22 @@ export default function Messages(props) {
                             </span>
                             <hr className="text-black dark:text-white opacity-60 w-full" />
                         </div>
-                        {
-                            group.clusters.map((cluster, clusterIndex) => (
-                                cluster.map((message, messageIndex) => {
-                                    const showProfilePicture = messageIndex === 0;
+                        <div className="flex flex-col-reverse">
+                            {
+                                group.clusters.map((cluster, clusterIndex) => (
+                                    cluster.map((message, messageIndex) => {
+                                        const showProfilePicture = messageIndex === 0;
 
-                                    if (message?.user.username === loggedInUser.username) {
-                                        return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
-                                    } else {
-                                        return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
-                                    }
-                                })
-                            ))
-                        }
+                                        if (message?.user.username === loggedInUser.username) {
+                                            return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                        } else {
+                                            return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                        }
+                                    })
+                                ))
+                            }
+                        </div>
+
                     </div>
                 ))
             }
