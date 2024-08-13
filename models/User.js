@@ -156,6 +156,13 @@ const userSchema = new Schema({
         type: Date,
         default: new Date(),
     },
+    isOnline: {
+        type: Boolean,
+        default: true
+    },
+    lastActive: {
+        type: Date
+    },
     deleted: {
         type: Boolean,
         default: false

@@ -51,9 +51,24 @@ export default function Chat() {
     const [messageFetchLoading, setMessageFetchLoading] = useState(false);
     const [roomFetchLoading, setRoomFetchLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
-    const otherUser = currentRoom?.members.find(member => member.username !== loggedInUser.username);
+    const otherUsers = currentRoom?.members.filter(member => member.username !== loggedInUser.username);
+    const otherUser = otherUsers?.find(member => member.username !== loggedInUser.username)
+    const [typingUsers, setTypingUsers] = useState([]);
+    const [fetchingDisabled, setFetchingDisabled] = useState(false);
     const observerRef = useRef(null);
     const debounceTimeoutRef = useRef(null);
+    const typingTimeoutRef = useRef(null);
+    const messageObserver = useRef();
+
+    const lastMessageElementRef = useCallback(node => {
+        if (messageObserver.current) messageObserver.current.disconnect();
+        messageObserver.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && !messageFetchLoading) {
+                setPageNumber(prevPageNumber => prevPageNumber + 1);
+            }
+        });
+        if (node) messageObserver.current.observe(node);
+    }, [messageFetchLoading]);
 
     useEffect(() => {
         observerRef.current = new IntersectionObserver(
@@ -88,17 +103,31 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        handleJumpToBottom();
-    }, [messages]);
-
-    useEffect(() => {
         socket.on('new message', (data) => {
             setMessages((previous) => [...previous, data]);
         })
+
+        return () => {
+            socket.off('new message');
+        }
     }, []);
 
     useEffect(() => {
         socket.on('chat error', (data) => setError(data));
+
+        return () => {
+            socket.off('chat error');
+        }
+    }, []);
+
+    useEffect(() => {
+        socket.on('isTyping', (users) => {
+            setTypingUsers(users);
+        });
+
+        return () => {
+            socket.off('isTyping');
+        }
     }, []);
 
     const [replyingToMessage, setReplyingToMessage] = useState(null);
@@ -107,6 +136,7 @@ export default function Chat() {
 
     const fetchRoom = useCallback(async () => {
         if (id) {
+            socket.emit('join room', id);
             setRoomFetchLoading(true);
             setError('');
             try {
@@ -123,21 +153,37 @@ export default function Chat() {
     }, [id]);
 
     const fetchMessages = useCallback(async () => {
-        if(currentRoom) {
+        if (currentRoom || !fetchingDisabled) {
             setMessageFetchLoading(true);
             setError('');
+            const messagesDiv = document.querySelector('.messages-sub-div');
+            const prevScrollHeight = messagesDiv.scrollHeight;
+            const prevScrollTop = messagesDiv.scrollTop;
+
             try {
-                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/1`);
-                setMessages(response.data);
-            }
-            catch(error) {
-                setError(error.response.data.message);
-            }
-            finally {
+                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/${pageNumber}`);
+
+                if (pageNumber === 1) {
+                    setMessages(response.data);
+                    handleJumpToBottom();
+                } else {
+                    setMessages((prev) => [...prev, ...response.data]);
+                }
+                setTimeout(() => {
+                    const newScrollHeight = messagesDiv.scrollHeight;
+                    const scrollOffset = newScrollHeight - prevScrollHeight;
+                    messagesDiv.scrollTop = prevScrollTop + scrollOffset - 5;
+                }, 0);
+            } catch (error) {
+                setError(error.response?.data.message);
+                setFetchingDisabled(true);
+
+            } finally {
                 setMessageFetchLoading(false);
             }
         }
-    }, [currentRoom]);
+    }, [currentRoom, pageNumber, fetchingDisabled]);
+
 
     useEffect(() => {
         fetchRoom();
@@ -202,8 +248,18 @@ export default function Chat() {
     }
 
     const handleDescriptionChange = useCallback((event) => {
+        const data = {};
+        data.roomId = id;
+        data.username = loggedInUser.username;
+        socket.emit('typing', data);
+
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => {
+            socket.emit('stopTyping', data);
+        }, 2000);
+
         setDescription(event.target.value)
-    }, []);
+    }, [id, loggedInUser]);
 
     const handleSetReply = (message) => {
         setReplyingToMessage(message);
@@ -218,7 +274,7 @@ export default function Chat() {
         return (
             <div className="flex shadow-lg w-full justify-between items-center border-b-neutral-300 dark:border-b-neutral-700 border-b">
                 {currentRoom && (
-                    <div className="flex w-full">
+                    <div className="flex w-full ml-3">
                         <div className="relative flex items-center">
                             <Badge content="" color="success" shape="circle" placement="bottom-right">
                                 <img src={`${currentRoom.chat_type === 'individual' ? otherUser.profile_picture.filename : null}`}
@@ -276,7 +332,7 @@ export default function Chat() {
                                 </div>
                             )}
                             {!id && (
-                                <div className="flex justify-center items-center h-full flex-col">
+                                <div className="flex flex-col justify-center items-center h-full w-full">
                                     <ChatSquareText size="100" className="opacity-50 mb-4" />
                                     <div className="text-center font-bold text-md opacity-50">Please select a chat from the Chat Bar</div>
                                 </div>
@@ -291,14 +347,22 @@ export default function Chat() {
                                     <div className="text-center font-bold text-md opacity-50">This chat seems empty. Be the first one to initiate the chat :)</div>
                                 </div>
                             )}
-                            <div className="overflow-y-auto h-full w-full">
-                                <div className="flex flex-col justify-end min-h-full m-2">
-                                    <div className="mb-4 border border-white w-full"></div>
+                            <div className={`messages-sub-div overflow-y-auto ${messages.length !== 0 ? 'h-full' : null}`}>
+                                <div className="flex flex-col justify-end min-h-[96%] m-2">
+                                    <div className="mb-4 border border-white w-full" ref={lastMessageElementRef}/>
                                     <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} />
-                                    <div className="flex items-center">
-                                        <img src={otherUser?.profile_picture.filename} alt="pfp" className="w-6 h-6 rounded-full object-cover"/>
-                                        <div className="bg-neutral-200 dark:bg-neutral-800 p-2 ml-3 rounded-lg"><l-dot-stream color="gray"/></div>
-                                    </div>
+                                    {
+                                        otherUsers?.map((user) => {
+                                            return typingUsers.includes(user.username) && (
+                                                <>
+                                                    <div className="flex items-center mt-4" key={user._id}>
+                                                        <img src={user.profile_picture.filename} alt="pfp" className="w-6 h-6 rounded-full object-cover" />
+                                                        <div className="bg-neutral-200 dark:bg-neutral-800 p-2 ml-3 rounded-lg"><l-dot-stream color="gray" /></div>
+                                                    </div>
+                                                </>
+                                            ) 
+                                        })
+                                    }
                                 </div>
                                 <div ref={bottomRef} className="mb-4" />
                             </div>

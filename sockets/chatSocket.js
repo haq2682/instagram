@@ -3,6 +3,7 @@ const { Server } = require('socket.io');
 const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 const Media = require('../models/Media');
+const User = require('../models/User');
 
 const io = new Server(9000, {
     cors: {
@@ -16,19 +17,19 @@ async function createNewMessage(data, socket) {
     try {
         const file = data.file;
         console.log(file);
-        const chatRoom = await Chat.findOne({_id: data.chatId});
+        const chatRoom = await Chat.findOne({ _id: data.chatId });
         const newMessage = new Message();
-        if(!chatRoom) {
+        if (!chatRoom) {
             socket.emit('chat error', 'This chat does not exist');
             return;
         }
-        if(file) {
+        if (file) {
             let newMedia = new Media();
             newMedia.path = `/${file.path}`;
             newMedia.fileName = file.filename;
             newMedia.originalName = file.originalname;
             newMedia.size = file.size;
-            if(file.mimetype.startsWith('image/')) {
+            if (file.mimetype.startsWith('image/')) {
                 newMedia.media_type = 'image';
             }
             else {
@@ -40,7 +41,7 @@ async function createNewMessage(data, socket) {
             await newMedia.save();
             newMessage.media = newMedia._id;
         }
-        if(newMessage.description?.length > 300) {
+        if (newMessage.description?.length > 300) {
             socket.emit('chat error', 'This message is too long, try sending a shorter message');
             return;
         }
@@ -48,61 +49,88 @@ async function createNewMessage(data, socket) {
         newMessage.user = data.authId;
         newMessage.chat = chatRoom._id;
         chatRoom.messages.push(newMessage._id);
-        if(data.reply_to) newMessage.reply_to = data.reply_to;
+        if (data.reply_to) newMessage.reply_to = data.reply_to;
         await chatRoom.save();
         await newMessage.save();
 
         const message = await Message.findOne({ _id: newMessage._id }).populate([
-                {
-                    path: 'media',
-                },
-                {
-                    path: 'user',
-                    populate: [
-                        {
-                            path: 'profile_picture'
-                        }
-                    ]
-                },
-                {
-                    path: 'reply_to',
-                    populate: [
-                        {
-                            path: 'media'
-                        },
-                        {
-                            path: 'user',
-                            populate: [
-                                {
-                                    path: 'profile_picture'
-                                }
-                            ]
-                        },
-                        {
-                            path: 'likes'
-                        }
-                    ]
-                },
-                {
-                    path: 'likes'
-                }
-            ]);
+            {
+                path: 'media',
+            },
+            {
+                path: 'user',
+                populate: [
+                    {
+                        path: 'profile_picture'
+                    }
+                ]
+            },
+            {
+                path: 'reply_to',
+                populate: [
+                    {
+                        path: 'media'
+                    },
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    },
+                    {
+                        path: 'likes'
+                    }
+                ]
+            },
+            {
+                path: 'likes'
+            }
+        ]);
         return message;
     }
-    catch(error) {
-        console.log(error.message);
+    catch (error) {
         socket.emit('chat error', 'An unknown error occurred');
     }
-} 
+}
 
 module.exports = {
     initChatSocket: () => {
-        io.on("connection", (socket) => {
+        io.on("connection", async (socket) => {
+            let typingUsers = new Set();
+            let authUser;
+
+            socket.on('init connect', (data) => {
+                authUser = data;
+                console.log(authUser.username);
+            })
+
             socket.on('chat message', async (data) => {
                 const newMessage = await createNewMessage(data, socket);
                 socket.emit('message sent', false);
-                if(newMessage) io.emit('new message', newMessage);
-            })
+                if (newMessage) io.emit('new message', newMessage);
+            });
+
+            socket.on('join room', (data) => {
+                socket.join(data);
+            });
+
+            socket.on('typing', (data) => {
+                typingUsers.add(data.username);
+                socket.broadcast.to(data.roomId).emit('isTyping', Array.from(typingUsers));
+            });
+
+            socket.on('stopTyping', (data) => {
+                typingUsers.delete(data.username);
+                socket.broadcast.to(data.roomId).emit('isTyping', Array.from(typingUsers));
+            });
+
+            socket.on('disconnect', async () => {
+                console.log(socket.username);
+                typingUsers.delete(socket.username);
+                socket.broadcast.emit('isTyping', Array.from(typingUsers));
+            });
         });
     }
 }
