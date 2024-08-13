@@ -111,7 +111,7 @@ export default function Messages(props) {
             }
         }
 
-        
+
         return (
             <>
                 <div className="message w-full flex justify-end text-sm relative">
@@ -139,7 +139,7 @@ export default function Messages(props) {
                             onTouchStart={handleTouchStart}
                             onTouchEnd={handleTouchEnd}
                             onTouchMove={handleTouchMove}
-                            style={{ transform: `translateX(-${deviation}px)`}}
+                            style={{ transform: `translateX(-${deviation}px)` }}
                         >
                             {
                                 props.message.reply_to && (
@@ -409,37 +409,32 @@ export default function Messages(props) {
 
     return (
         <>
-            <div className="m-2 flex flex-col justify-end h-full">
-                <div className="h-full flex flex-col justify-end">
-                    <div className="w-full border border-white"/>
-                    {
-                        groupedMessages.map((group, groupIndex) => (
-                            <div key={groupIndex}>
-                                <div className="date-divider text-center flex justify-between items-center">
-                                    <hr className="text-black dark:text-white opacity-60 w-full"/>
-                                    <span className="font-bold opacity-60 px-2 text-md">
-                                        {group.date}
-                                    </span>
-                                    <hr className="text-black dark:text-white opacity-60 w-full"/>
-                                </div>
-                                {
-                                    group.clusters.map((cluster, clusterIndex) => (
-                                        cluster.map((message, messageIndex) => {
-                                            const showProfilePicture = messageIndex === 0;
+            {
+                groupedMessages.map((group, groupIndex) => (
+                    <div key={groupIndex}>
+                        <div className="date-divider text-center flex justify-between items-center">
+                            <hr className="text-black dark:text-white opacity-60 w-full" />
+                            <span className="font-bold opacity-60 px-2 text-md">
+                                {group.date}
+                            </span>
+                            <hr className="text-black dark:text-white opacity-60 w-full" />
+                        </div>
+                        {
+                            group.clusters.map((cluster, clusterIndex) => (
+                                cluster.map((message, messageIndex) => {
+                                    const showProfilePicture = messageIndex === 0;
 
-                                            if (message?.user.username === loggedInUser.username) {
-                                                return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
-                                            } else {
-                                                return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
-                                            }
-                                        })
-                                    ))
-                                }
-                            </div>
-                        ))
-                    }
-                </div>
-            </div>
+                                    if (message?.user.username === loggedInUser.username) {
+                                        return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                    } else {
+                                        return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                    }
+                                })
+                            ))
+                        }
+                    </div>
+                ))
+            }
         </>
     )
 }

@@ -30,8 +30,11 @@ import { useSelector } from "react-redux";
 import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
 import { io } from "socket.io-client";
 import { PuffLoader } from "react-spinners";
+import { dotStream } from 'ldrs';
 
 const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
+
+dotStream.register();
 
 export default function Chat() {
     const [jumpToBottomVisible, setJumpToBottomVisible] = useState(false);
@@ -92,7 +95,11 @@ export default function Chat() {
         socket.on('new message', (data) => {
             setMessages((previous) => [...previous, data]);
         })
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        socket.on('chat error', (data) => setError(data));
+    }, []);
 
     const [replyingToMessage, setReplyingToMessage] = useState(null);
     const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
@@ -124,7 +131,6 @@ export default function Chat() {
                 setMessages(response.data);
             }
             catch(error) {
-                console.log(error);
                 setError(error.response.data.message);
             }
             finally {
@@ -263,7 +269,7 @@ export default function Chat() {
                         <div className="w-full">
                             <ChatHeader />
                         </div>
-                        <div className="messages h-full w-full overflow-scroll border-b-neutral-300 dark:border-b-neutral-700 border-b relative">
+                        <div className="messages h-full w-full overflow-hidden border-b-neutral-300 dark:border-b-neutral-700 border-b relative">
                             {(messageFetchLoading || roomFetchLoading) && (
                                 <div className={`flex justify-center ${messages.length === 0 ? 'h-full' : null} items-center`}>
                                     <div className="loader"/>
@@ -285,11 +291,20 @@ export default function Chat() {
                                     <div className="text-center font-bold text-md opacity-50">This chat seems empty. Be the first one to initiate the chat :)</div>
                                 </div>
                             )}
-                            <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply}/>
+                            <div className="overflow-y-auto h-full w-full">
+                                <div className="flex flex-col justify-end min-h-full m-2">
+                                    <div className="mb-4 border border-white w-full"></div>
+                                    <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} />
+                                    <div className="flex items-center">
+                                        <img src={otherUser?.profile_picture.filename} alt="pfp" className="w-6 h-6 rounded-full object-cover"/>
+                                        <div className="bg-neutral-200 dark:bg-neutral-800 p-2 ml-3 rounded-lg"><l-dot-stream color="gray"/></div>
+                                    </div>
+                                </div>
+                                <div ref={bottomRef} className="mb-4" />
+                            </div>
                             <div className={`${jumpToBottomVisible ? 'block' : 'hidden'} fixed bottom-36 sm:bottom-24 ml-3`}>
                                 <Button onClick={handleJumpToBottom}><ArrowheadDownOutline size="24" /></Button>
                             </div>
-                            <div ref={bottomRef} className="mb-4"/>
                         </div>
                         <div className="w-full sm:mb-2 p-2 shadow-lg">
                             <form method="post" onSubmit={handleSubmit}>
@@ -344,7 +359,7 @@ export default function Chat() {
                                 <Input
                                     label="Write your message..."
                                     variant="underlined"
-                                    isDisabled={!currentRoom}
+                                    isDisabled={!currentRoom || submitLoading}
                                     value={description}
                                     onChange={handleDescriptionChange}
                                     endContent={

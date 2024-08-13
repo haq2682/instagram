@@ -1,6 +1,5 @@
 const Chat = require('../models/Chat');
 const Message = require('../models/Message');
-const Media = require('../models/Media');
 const MessageLike = require('../models/MessageLike');
 
 module.exports = {
