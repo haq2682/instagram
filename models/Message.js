@@ -32,14 +32,6 @@ const messageSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Media'
     },
-    created_at: {
-        type: Date,
-        default: new Date()
-    },
-    updated_at: {
-        type: Date,
-        default: new Date()
-    },
     deleted: {
         type: Boolean,
         default: false
@@ -47,6 +39,8 @@ const messageSchema = new Schema({
     deleted_at: {
         type: Date,
     }
+}, {
+    timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'}
 });
 
 const Message = mongoose.model('Message', messageSchema);

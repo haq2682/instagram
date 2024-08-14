@@ -55,7 +55,7 @@ export default function Suggestion() {
                         </Link>
                     )}
                     avatarProps={{
-                        src: `${auth.profile_picture.filename}`
+                        src: `${auth.profile_picture?.filename}`
                     }}
                 />
                 <div onClick={handleLogout} className="float-end mt-3 text-blue-500 hover:text-blue-600 cursor-pointer transition-all duration-100 text-sm">Log Out</div>

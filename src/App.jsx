@@ -16,15 +16,26 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from "react";
 import {authenticate, verifyEmail, logout} from './redux/authSlice';
 import axios from "axios";
+import {io} from "socket.io-client";
 import WelcomeLoader from "./components/WelcomeLoader";
+
+const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
 
 function App() {
     const [loader, setLoader] = useState(true);
     const is_authenticated = useSelector(state => state.auth.is_authenticated);
     const is_verified = useSelector(state => state.auth.is_verified);
     const is_password_reset = useSelector(state => state.auth.is_password_reset);
+    const loggedInUser = useSelector(state => state.auth);
     const verify_token = useSelector(state => state.auth.verify_token);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (is_authenticated && is_verified) {
+            socket.emit('init connection', loggedInUser);
+        }
+    }, [loggedInUser, is_authenticated, is_verified]);
+
     useEffect(() => {
         axios.get('/auth/user')
             .then((response) => {
