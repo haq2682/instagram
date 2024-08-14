@@ -34,7 +34,7 @@ function App() {
             .catch(() => {
                 dispatch(logout());
                 localStorage.clear();
-                window.location.href = "/"
+                // window.location.href = "/"
             })
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
