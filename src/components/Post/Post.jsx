@@ -184,7 +184,7 @@ export default function Post(props) {
             <div>
                 <div
                     className="post relative my-5 w-full border border-neutral-300 dark:border-neutral-700 rounded-2xl">
-                        <div className="py-1 bg-neutral-100 dark:bg-neutral-900 w-full rounded-2xl">
+                        <div className="py-1 bg-neutral-100 dark:bg-neutral-800 w-full rounded-2xl">
                             <div className="pb-0 pt-2 px-4 flex-col items-start inline-block w-full">
                                 <div className="inline-block">
                                     <Avatar src={props.post?.user?.profile_picture.filename}

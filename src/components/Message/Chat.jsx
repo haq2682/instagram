@@ -31,6 +31,7 @@ import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
 import { io } from "socket.io-client";
 import { PuffLoader } from "react-spinners";
 import { dotStream } from 'ldrs';
+import ReactTimeAgo from 'react-time-ago'
 
 const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
 
@@ -51,8 +52,8 @@ export default function Chat() {
     const [messageFetchLoading, setMessageFetchLoading] = useState(false);
     const [roomFetchLoading, setRoomFetchLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
-    const otherUsers = currentRoom?.members.filter(member => member.username !== loggedInUser.username);
-    const otherUser = otherUsers?.find(member => member.username !== loggedInUser.username)
+    const [otherUsers, setOtherUsers] = useState([])
+    const [otherUser, setOtherUser] = useState(null);
     const [typingUsers, setTypingUsers] = useState([]);
     const [fetchingDisabled, setFetchingDisabled] = useState(false);
     const observerRef = useRef(null);
@@ -101,6 +102,43 @@ export default function Chat() {
     function handleJumpToBottom() {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
+
+    useEffect(() => {
+        if (currentRoom) {
+            const users = currentRoom.members.filter(member => member.username !== loggedInUser.username);
+            setOtherUsers(users);
+            const singleOtherUser = users.find(member => member._id !== loggedInUser._id);
+            setOtherUser(singleOtherUser);
+        } else {
+            setOtherUsers([]);
+            setOtherUser(null);
+        }
+    }, [currentRoom, loggedInUser.username, loggedInUser._id]);
+
+    const handleUserStatusChange = useCallback((data) => {
+        setOtherUsers((prevUsers) => {
+            // Update user status if the user is in the list
+            const updatedUsers = prevUsers.map(user =>
+                user?._id === data?._id ? { ...user, ...data } : user
+            );
+
+            // Update otherUser if necessary
+            if (currentRoom && currentRoom.chat_type === 'individual') {
+                const updatedOtherUser = updatedUsers.find(member => member?._id !== loggedInUser?._id);
+                setOtherUser(updatedOtherUser);
+            }
+
+            return updatedUsers;
+        });
+    }, [currentRoom, loggedInUser]);
+
+    useEffect(() => {
+        socket.on('user status change', handleUserStatusChange);
+
+        return () => {
+            socket.off('user status change', handleUserStatusChange);
+        };
+    }, [handleUserStatusChange]);
 
     useEffect(() => {
         socket.on('new message', (data) => {
@@ -276,16 +314,18 @@ export default function Chat() {
                 {currentRoom && (
                     <div className="flex w-full ml-3">
                         <div className="relative flex items-center">
-                            <Badge content="" color="success" shape="circle" placement="bottom-right">
-                                <img src={`${currentRoom.chat_type === 'individual' ? otherUser.profile_picture.filename : null}`}
+                            <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={(currentRoom.chat_type === 'individual' && !otherUser?.isOnline)}>
+                                <img src={`${currentRoom.chat_type === 'individual' ? otherUser?.profile_picture.filename : null}`}
                                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp" />
                             </Badge>
                         </div>
                         <div className="m-3">
-                            <Link to={`/profile/${otherUser.username}`}>
-                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate overflow-hidden">{otherUser.username}</h1>
+                            <Link to={`/profile/${otherUser?.username}`}>
+                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate overflow-hidden">{currentRoom.chat_type === 'individual' ? otherUser?.username : null}</h1>
                             </Link>
-                            <p className="opacity-40 text-xs">Online</p>
+                            <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
+                                Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter"/>} ago
+                            </>))) : null}</p>
                         </div>
                     </div>
                 )}

@@ -100,10 +100,13 @@ module.exports = {
         io.on("connection", async (socket) => {
             let typingUsers = new Set();
             let authUser;
+            let authId;
 
-            socket.on('init connect', (data) => {
+            socket.on('init connection', async (data) => {
                 authUser = data;
-                console.log(authUser.username);
+                const response = await User.findOneAndUpdate({username: authUser?.username}, {$set: {isOnline: true}}).populate('profile_picture');
+                authId = response._id;
+                io.emit('user status change', response);
             })
 
             socket.on('chat message', async (data) => {
@@ -127,9 +130,11 @@ module.exports = {
             });
 
             socket.on('disconnect', async () => {
-                console.log(socket.username);
-                typingUsers.delete(socket.username);
+                typingUsers.delete(authUser?.username);
                 socket.broadcast.emit('isTyping', Array.from(typingUsers));
+                await User.findOneAndUpdate({_id: authId}, {$set: {isOnline: false, lastActive: Date.now()}});
+                const response = await User.findOne({_id: authId}).populate('profile_picture');
+                io.emit('user status change', response);
             });
         });
     }

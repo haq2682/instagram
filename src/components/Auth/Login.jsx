@@ -2,8 +2,6 @@ import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader} from "@nextu
 import {EyeSlashFilledIcon} from "../../assets/js/EyeSlashFilledIcon";
 import {EyeFilledIcon} from "../../assets/js/EyeFilledIcon";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
-import {Google} from "@styled-icons/bootstrap/Google";
-import {Facebook} from "@styled-icons/fa-brands/Facebook";
 import axios from "axios";
 import {authenticate, verifyEmail} from "../../redux/authSlice";
 import {useState} from "react";
@@ -60,7 +58,6 @@ export default function Login(props) {
                             <ModalBody>
                                 <div className="divide-x divide-neutral-800 flex justify-around">
                                     <div className="w-full flex flex-col items-center">
-                                        <span className="text-lg">Log In with Email</span>
                                         <form method="post" className="w-[90%]" onSubmit={formik.handleSubmit}>
                                             <div>
                                                 <Input onBlur={formik.handleBlur} errorMessage={formik.touched.email && formik.errors?.email} color={formik.touched.email && formik.errors.email ? "danger" : "default"} value={formik.values.email} onChange={formik.handleChange} type="email" name="email" variant='underlined' label="Email Address"/>
@@ -83,13 +80,6 @@ export default function Login(props) {
                                         </form>
                                         <p className="cursor-pointer mt-3 mr-5 text-sm self-end text-blue-600 hover:text-blue-800 transition-color duration-200">Forgot Password?</p>
                                         <p className="login-errors mt-5 text-red-500">{serverError}</p>
-                                    </div>
-                                    <div className="w-full flex flex-col items-center">
-                                        <span className="mb-4 text-lg">Or Log In with</span>
-                                        <div className="w-[90%] flex flex-col justify-around h-full">
-                                            <a href='http://localhost:8000/googleAuth/google'><Button className="my-1 text-xl py-10 w-full"><Google size="25"/>Google</Button></a>
-                                            <a href='http://localhost:8000/facebookAuth/facebook'><Button className="my-1 text-xl py-10 w-full"><Facebook size="25"/>Facebook</Button></a>
-                                        </div>
                                     </div>
                                 </div>
                             </ModalBody>

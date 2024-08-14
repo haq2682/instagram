@@ -3,6 +3,8 @@ import {useState} from 'react';
 import {Button, useDisclosure} from "@nextui-org/react";
 import Signup from "../components/Auth/Signup";
 import Login from "../components/Auth/Login";
+import {Google} from "@styled-icons/bootstrap/Google";
+import {Facebook} from "@styled-icons/fa-brands/Facebook";
 
 export default function Welcome() {
 
@@ -24,8 +26,21 @@ export default function Welcome() {
                 <div className="welcome bg-white rounded-lg shadow-lg flex items-center flex-col w-[80%] md:w-[70%] xl:w-1/3 relative bottom-40 pb-10">
                     <img src={Logo} alt="Instagram_Logo" className="w-[300px]"/>
                     <h1 className="logo-by-khalid text-xl xl:text-3xl mb-16">A Clone by Abdul Haq Khalid</h1>
-                    <Button onPress={onOpen} onClick={()=>toggleSignup()} className="w-1/3 my-2.5 bg-gradient-to-br from-yellow-400 to-pink-600 text-white md:text-lg shadow-neutral-400 shadow-md">Sign Up</Button>
-                    <Button onPress={onOpen} onClick={()=>toggleLogin()} className="w-1/3 my-2.5 bg-gradient-to-br from-pink-400 to-purple-600 text-white md:text-lg shadow-neutral-400 shadow-md">Log In</Button>
+                    <div className="flex items-center justify-center">
+                        <div className="flex flex-col">
+                            <Button onPress={onOpen} onClick={() => toggleSignup()} className="w-28 sm:w-44 py-6 my-2.5 bg-gradient-to-br from-yellow-400 to-pink-600 text-white md:text-lg shadow-neutral-400 shadow-md">Sign Up</Button>
+                            <Button onPress={onOpen} onClick={() => toggleLogin()} className="w-28 sm:w-44 py-6 my-2.5 bg-gradient-to-br from-pink-400 to-purple-600 text-white md:text-lg shadow-neutral-400 shadow-md">Log In</Button>
+                        </div>
+                        <div className="flex flex-col justify-center items-center mx-3 sm:mx-5">
+                            <div className="w-0 h-16 border-l-1 border-black"></div>
+                            <div>OR</div>
+                            <div className="w-0 h-16 border-l-1 border-black"></div>
+                        </div>
+                        <div className="flex flex-col">
+                            <a href={process.env.REACT_APP_GOOGLE_AUTH_URI}><Button className="w-28 sm:w-44 py-6 my-2.5 bg-rose-600 text-white md:text-lg shadow-neutral-400 shadow-md"><Google size="25" />Google</Button></a>
+                            <a href={process.env.REACT_APP_FACEBOOK_AUTH_URI}><Button className="w-28 sm:w-44 py-6 my-2.5 bg-blue-700 text-white md:text-lg shadow-neutral-400 shadow-md"><Facebook size="25" />Facebook</Button></a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="flex justify-around relative bottom-10">
