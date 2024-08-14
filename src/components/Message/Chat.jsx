@@ -31,7 +31,7 @@ import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
 import { io } from "socket.io-client";
 import { PuffLoader } from "react-spinners";
 import { dotStream } from 'ldrs';
-import ReactTimeAgo from 'react-time-ago'
+import ReactTimeAgo from 'react-time-ago';
 
 const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
 
@@ -117,12 +117,10 @@ export default function Chat() {
 
     const handleUserStatusChange = useCallback((data) => {
         setOtherUsers((prevUsers) => {
-            // Update user status if the user is in the list
             const updatedUsers = prevUsers.map(user =>
                 user?._id === data?._id ? { ...user, ...data } : user
             );
 
-            // Update otherUser if necessary
             if (currentRoom && currentRoom.chat_type === 'individual') {
                 const updatedOtherUser = updatedUsers.find(member => member?._id !== loggedInUser?._id);
                 setOtherUser(updatedOtherUser);
@@ -191,7 +189,7 @@ export default function Chat() {
     }, [id]);
 
     const fetchMessages = useCallback(async () => {
-        if (currentRoom || !fetchingDisabled) {
+        if (currentRoom && !fetchingDisabled) {
             setMessageFetchLoading(true);
             setError('');
             const messagesDiv = document.querySelector('.messages-sub-div');
@@ -205,7 +203,7 @@ export default function Chat() {
                     setMessages(response.data);
                     handleJumpToBottom();
                 } else {
-                    setMessages((prev) => [...prev, ...response.data]);
+                    setMessages((prev) => [...response.data, ...prev]);
                 }
                 setTimeout(() => {
                     const newScrollHeight = messagesDiv.scrollHeight;
@@ -266,6 +264,11 @@ export default function Chat() {
 
                 socket.emit('chat message', data);
 
+                let typingData = {};
+                typingData.roomId = id;
+                typingData.username = loggedInUser.username;
+                socket.emit('stopTyping', typingData);
+
                 socket.on('message sent', (data) => setSubmitLoading(data));
 
                 socket.on('chat error', (data) => {
@@ -313,15 +316,15 @@ export default function Chat() {
             <div className="flex shadow-lg w-full justify-between items-center border-b-neutral-300 dark:border-b-neutral-700 border-b">
                 {currentRoom && (
                     <div className="flex w-full ml-3">
-                        <div className="relative flex items-center">
+                        <div className="flex items-center">
                             <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={(currentRoom.chat_type === 'individual' && !otherUser?.isOnline)}>
                                 <img src={`${currentRoom.chat_type === 'individual' ? otherUser?.profile_picture.filename : null}`}
                                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp" />
                             </Badge>
                         </div>
-                        <div className="m-3">
+                        <div className="m-3 w-full">
                             <Link to={`/profile/${otherUser?.username}`}>
-                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate overflow-hidden">{currentRoom.chat_type === 'individual' ? otherUser?.username : null}</h1>
+                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : null}</h1>
                             </Link>
                             <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
                                 Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter"/>} ago
@@ -389,7 +392,7 @@ export default function Chat() {
                             )}
                             <div className={`messages-sub-div overflow-y-auto ${messages.length !== 0 ? 'h-full' : null}`}>
                                 <div className="flex flex-col justify-end min-h-[96%] m-2">
-                                    <div className="mb-4 border border-white w-full" ref={lastMessageElementRef}/>
+                                    <div className="mb-4 w-full" ref={lastMessageElementRef}/>
                                     <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} />
                                     {
                                         otherUsers?.map((user) => {

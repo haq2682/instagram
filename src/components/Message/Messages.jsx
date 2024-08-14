@@ -12,8 +12,10 @@ import { useSelector } from 'react-redux';
 import { Send } from '@styled-icons/bootstrap/Send';
 import { SendFill } from 'styled-icons/bootstrap';
 import moment from 'moment';
+import MessageDetails from './MessageDetails';
 
 export default function Messages(props) {
+    const [isMessageDetailsOpen, setIsMessageDetailsOpen] = useState(false);
     const loggedInUser = useSelector(state => state.auth);
 
     const groupMessagesByDateAndCluster = (messages) => {
@@ -100,7 +102,6 @@ export default function Messages(props) {
             }
         }
 
-
         return (
             <>
                 <div className="message w-full flex justify-end text-sm relative">
@@ -115,7 +116,7 @@ export default function Messages(props) {
                                 <DropdownItem key="copy">Copy Message Description</DropdownItem>
                                 <DropdownItem key="like">Like Message</DropdownItem>
                                 <DropdownItem key="reply" onClick={() => props.setReply(props.message)}>Reply</DropdownItem>
-                                <DropdownItem key="details">Message Details</DropdownItem>
+                                <DropdownItem key="details" onClick={() => setIsMessageDetailsOpen(true)}>Message Details</DropdownItem>
                                 <DropdownItem key="delete" className="text-danger" color="danger">
                                     Delete Message
                                 </DropdownItem>
@@ -399,7 +400,7 @@ export default function Messages(props) {
     return (
         <>
             {
-                groupedMessages.reverse().map((group, groupIndex) => (
+                groupedMessages.map((group, groupIndex) => (
                     <div key={groupIndex}>
                         <div className="date-divider text-center flex justify-between items-center">
                             <hr className="text-black dark:text-white opacity-60 w-full" />
@@ -408,7 +409,7 @@ export default function Messages(props) {
                             </span>
                             <hr className="text-black dark:text-white opacity-60 w-full" />
                         </div>
-                        <div className="flex flex-col-reverse">
+                        <div className="flex flex-col">
                             {
                                 group.clusters.map((cluster, clusterIndex) => (
                                     cluster.map((message, messageIndex) => {
@@ -423,10 +424,10 @@ export default function Messages(props) {
                                 ))
                             }
                         </div>
-
                     </div>
                 ))
             }
+            <MessageDetails isMessageDetailsOpen={isMessageDetailsOpen} setIsMessageDetailsOpen={setIsMessageDetailsOpen}/>
         </>
     )
 }

@@ -34,6 +34,16 @@ module.exports = {
                             model: 'ProfilePhoto'
                         }
                     ]
+                },
+                {
+                    path: 'messages',
+                    model: 'Message',
+                    populate: [
+                        {
+                            path: 'user',
+                            model: 'User'
+                        }
+                    ]
                 }
             ]);
             if(rooms.length === 0) return res.status(404).json({message: 'No chats found'});
@@ -186,6 +196,8 @@ module.exports = {
             .sort({created_at: 'desc'})
             .limit(15)
             .skip((req.params.page_number - 1) * 15);
+
+            messages = messages.reverse();
 
             if(messages.length === 0) return res.status(404).json({messages: 'This chat seems empty'});
             return res.send(messages);
