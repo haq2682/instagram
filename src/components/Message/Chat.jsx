@@ -54,6 +54,7 @@ export default function Chat() {
     const [pageNumber, setPageNumber] = useState(1);
     const [otherUsers, setOtherUsers] = useState([])
     const [otherUser, setOtherUser] = useState(null);
+    const [latestMessage, setLatestMessage] = useState(null);
     const [typingUsers, setTypingUsers] = useState([]);
     const [fetchingDisabled, setFetchingDisabled] = useState(false);
     const observerRef = useRef(null);
@@ -141,6 +142,7 @@ export default function Chat() {
     useEffect(() => {
         socket.on('new message', (data) => {
             setMessages((previous) => [...previous, data]);
+            setLatestMessage(data);
         })
 
         return () => {
@@ -205,6 +207,8 @@ export default function Chat() {
                 } else {
                     setMessages((prev) => [...response.data, ...prev]);
                 }
+
+                setLatestMessage(messages[messages.length - 1]);
                 setTimeout(() => {
                     const newScrollHeight = messagesDiv.scrollHeight;
                     const scrollOffset = newScrollHeight - prevScrollHeight;
@@ -498,7 +502,7 @@ export default function Chat() {
                     </div>
                 </div>
             </div>
-            <ChatRooms chatBarOpen={chatBarOpen} setOpen={setChatBarOpen} />
+            <ChatRooms chatBarOpen={chatBarOpen} setOpen={setChatBarOpen} otherUser={otherUser} latestMessage={latestMessage}/>
             <ChatDetails detailsBarOpen={detailsBarOpen} setOpen={setDetailsBarOpen} />
             <Modal isOpen={reactionsModalOpen} onClose={() => setReactionsModalOpen(false)} placement="center">
                 <ModalContent>
