@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, memo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Reply } from "@styled-icons/fa-solid/Reply";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { ThreeDotsVertical } from 'styled-icons/bootstrap';
@@ -54,7 +54,7 @@ const groupMessagesByDateAndCluster = (messages) => {
     return groupedMessages;
 };
 
-function Messages(props) {
+export default function Messages(props) {
     const [isMessageDetailsOpen, setIsMessageDetailsOpen] = useState(false);
     const loggedInUser = useSelector(state => state.auth);
     const [groupedMessages, setGroupedMessages] = useState([]);
@@ -73,7 +73,7 @@ function Messages(props) {
 
     // let groupedMessages = groupMessagesByDateAndCluster(props.messages);
 
-    const RenderAuthUserMessage = memo((props) => {
+    const RenderAuthUserMessage = (props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
@@ -246,9 +246,9 @@ function Messages(props) {
                 </div>
             </>
         )
-    });
+    };
 
-    const RenderOtherUserMessage = memo((props) => {
+    const RenderOtherUserMessage = (props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
@@ -409,7 +409,7 @@ function Messages(props) {
                 </div>
             </>
         )
-    })
+    };
 
     return (
         <>
@@ -445,7 +445,3 @@ function Messages(props) {
         </>
     )
 }
-
-const memoizedMessages = memo(Messages);
-
-export default memoizedMessages;

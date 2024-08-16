@@ -1,35 +1,29 @@
 import {
     Avatar,
     Badge,
-    Input,
     Modal,
     ModalBody,
     ModalContent,
     ModalHeader,
-    Tooltip,
     Button,
 } from "@nextui-org/react";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Info } from '@styled-icons/evaicons-solid/Info';
 import { Video } from '@styled-icons/fa-solid/Video';
-import { Paperclip } from "@styled-icons/feather/Paperclip";
 import { Telephone } from '@styled-icons/foundation/Telephone';
-import { Close } from "@styled-icons/ionicons-solid/Close";
 import { ThreeBars } from "@styled-icons/octicons/ThreeBars";
-import { ArrowForward } from "@styled-icons/typicons/ArrowForward";
 import { ArrowheadDownOutline } from "styled-icons/evaicons-outline";
 import { ChatSquareText } from "styled-icons/bootstrap";
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import "../../assets/css/Chat.css";
 import ChatDetails from "./ChatDetails";
 import ChatRooms from "./ChatRooms";
 import Messages from './Messages';
+import MessageInput from "./MessageInput";
 import { Link, useParams } from "react-router-dom";
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
 import { io } from "socket.io-client";
-import { PuffLoader } from "react-spinners";
 import { dotStream } from 'ldrs';
 import ReactTimeAgo from 'react-time-ago';
 
@@ -42,13 +36,10 @@ export default function Chat() {
     const [chatBarOpen, setChatBarOpen] = useState(false);
     const [detailsBarOpen, setDetailsBarOpen] = useState(false);
     const [currentRoom, setCurrentRoom] = useState(null);
-    const [submitLoading, setSubmitLoading] = useState(false);
     const [messages, setMessages] = useState([]);
     const [error, setError] = useState('');
     const bottomRef = useRef(null);
     const loggedInUser = useSelector(state => state.auth);
-    const [description, setDescription] = useState('');
-    const [file, setFile] = useState(null);
     const [messageFetchLoading, setMessageFetchLoading] = useState(false);
     const [roomFetchLoading, setRoomFetchLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
@@ -59,7 +50,6 @@ export default function Chat() {
     const [fetchingDisabled, setFetchingDisabled] = useState(false);
     const observerRef = useRef(null);
     const debounceTimeoutRef = useRef(null);
-    const typingTimeoutRef = useRef(null);
     const messageObserver = useRef();
 
     const lastMessageElementRef = useCallback(node => {
@@ -141,6 +131,7 @@ export default function Chat() {
 
     useEffect(() => {
         socket.on('new message', (data) => {
+            console.log('new message');
             setMessages((previous) => [...previous, data]);
             setLatestMessage(data);
         })
@@ -167,6 +158,10 @@ export default function Chat() {
             socket.off('isTyping');
         }
     }, []);
+
+    useEffect(() => {
+        if(currentRoom) socket.emit('join room', currentRoom._id);
+    }, [currentRoom]);
 
     const [replyingToMessage, setReplyingToMessage] = useState(null);
     const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
@@ -291,114 +286,10 @@ export default function Chat() {
     //     fetchMessages();
     // }, [fetchMessages]);
 
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (file || description) {
-            try {
-                setSubmitLoading(true);
-                let response;
-                if (file) {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    response = await axios.post('/api/chat/new/message', formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-                }
-                // // const formData = new FormData();
-                // // if (file) formData.append('file', file);
-                // // if (description.length > 0) formData.append('description', description);
-                // // if (replyingToMessage) formData.append('reply_to', replyingToMessage._id);
-                // // formData.append('chatId', currentRoom._id);
-                // // const response = await axios.post('/api/chat/new/message', formData, {
-                // //     headers: {
-                // //         'Content-Type': 'multipart/form-data'
-                // //     }
-                // // });
-                // // setMessages((previous) => [...previous, response.data]);
-                const data = {}
-                if (file) data.file = response.data;
-                if (description.length > 0) data.description = description;
-                if (replyingToMessage) data.reply_to = replyingToMessage._id;
-                data.chatId = currentRoom._id;
-                data.authId = loggedInUser._id;
-
-                socket.emit('chat message', data);
-
-                let typingData = {};
-                typingData.roomId = id;
-                typingData.username = loggedInUser.username;
-                socket.emit('stopTyping', typingData);
-
-                socket.on('message sent', (data) => setSubmitLoading(data));
-
-                socket.on('chat error', (data) => {
-                    setError(data);
-                });
-            }
-            catch (error) {
-                setError(error.response.data.message);
-            }
-            finally {
-                setDescription('');
-                setFile(null);
-                setReplyingToMessage(null);
-                const messagesDiv = document.querySelector('.messages');
-                window.scrollTo(0, messagesDiv.scrollHeight);
-            }
-        }
-    }
-
-    const handleDescriptionChange = useCallback((event) => {
-        const value = event.target.value;
-        setDescription(value);
-
-        const data = { roomId: id, username: loggedInUser.username };
-        socket.emit('typing', data);
-
-        clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = setTimeout(() => {
-            socket.emit('stopTyping', data);
-        }, 2000);
-    }, [id, loggedInUser]);
-
     const handleSetReply = (message) => {
         setReplyingToMessage(message);
     }
-
-    const handleFileChange = useCallback((event) => {
-        const uploadedFile = event.target.files[0];
-        setFile(uploadedFile);
-    }, []);
-
-    const endContent = useMemo(() => {
-        return (
-            <>
-                <input
-                    id="message-file-upload"
-                    name="message-file-upload"
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileChange}
-                />
-                <label htmlFor="message-file-upload" className="cursor-pointer">
-                    <Tooltip showArrow={true} content="Upload an image">
-                        <Paperclip size="25" />
-                    </Tooltip>
-                </label>
-                <input id="comment-submit" type="submit" className="hidden" />
-                <label htmlFor="comment-submit" className="cursor-pointer">
-                    <Tooltip showArrow={true} content="Submit">
-                        <ArrowForward size="30" />
-                    </Tooltip>
-                </label>
-                {submitLoading && <PuffLoader size="28px" color="gray" />}
-            </>
-        )
-    }, [handleFileChange, submitLoading]);
-
+    
     const ChatHeader = () => {
         return (
             <div className="flex shadow-lg w-full justify-between items-center border-b-neutral-300 dark:border-b-neutral-700 border-b">
@@ -503,64 +394,7 @@ export default function Chat() {
                             </div>
                         </div>
                         <div className="w-full sm:mb-2 p-2 shadow-lg">
-                            <form method="post" onSubmit={handleSubmit}>
-                                {replyingToMessage && (
-                                    <div>
-                                        <div className="message opacity-40">
-                                            <div className="float-right" onClick={() => setReplyingToMessage(null)}><Close size="20" /></div>
-                                            {replyingToMessage.user.username === loggedInUser.username ? (
-                                                <div className="sender-reply text-xs inline-block bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white bg-opacity-60 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
-                                                    <div className="font-bold mb-1">
-                                                        <img src={loggedInUser.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />You
-                                                    </div>
-                                                    {replyingToMessage.media ? (
-                                                        replyingToMessage.media.media_type === 'image' ? (
-                                                            <div className="font-bold italic underline">Image</div>
-                                                        ) : (
-                                                            <div className="font-bold italic underline">Video</div>
-                                                        )
-                                                    ) : (replyingToMessage.description)}
-                                                </div>
-                                            ) : (
-                                                <div className="recepient-reply text-xs inline-block bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
-                                                    <div className="font-bold mb-1">
-                                                        <img src={replyingToMessage.user.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />{replyingToMessage.user.username}
-                                                    </div>
-                                                    {replyingToMessage.media ? (
-                                                        replyingToMessage.media.media_type === 'image' ? (
-                                                            <div className="font-bold italic underline">Image</div>
-                                                        ) : (
-                                                            <div className="font-bold italic underline">Video</div>
-                                                        )
-                                                    ) : (replyingToMessage.description)}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                                {file && (
-                                    <div className="max-h-[150px] max-w-[150px] overflow-hidden mt-2 relative">
-                                        {file.type.startsWith('image/') ? (
-                                            <img src={URL.createObjectURL(file)} alt="preview" className="object-cover" />
-                                        ) : (
-                                            <video muted autoPlay className="object-cover">
-                                                <source src={URL.createObjectURL(file)} />
-                                            </video>
-                                        )}
-                                        <div className="text-red-500 absolute top-0 right-1" onClick={() => setFile(null)}>
-                                            <CloseCircle size="30" />
-                                        </div>
-                                    </div>
-                                )}
-                                <Input
-                                    label="Write your message..."
-                                    variant="underlined"
-                                    isDisabled={!currentRoom || submitLoading}
-                                    value={description}
-                                    onChange={handleDescriptionChange}
-                                    endContent={endContent}
-                                />
-                            </form>
+                            <MessageInput replyingToMessage={replyingToMessage} currentRoom={currentRoom} setReplyingToMessage={setReplyingToMessage} socket={socket}/>
                         </div>
                     </div>
                 </div>
