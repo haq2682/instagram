@@ -1,11 +1,12 @@
 import {Badge} from "@nextui-org/react";
 import axios from "axios";
-import {useCallback, useEffect, useState, useMemo, memo} from 'react';
+import {useCallback, useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactTimeAgo from 'react-time-ago';
+import socket from '../../socketConfig.js';
 
-const Room = memo((props) => {
+const Room = (props) => {
     const navigate = useNavigate();
     const [otherUser, setOtherUser] = useState(null);
     const [latestMessage, setLatestMessage] = useState(null);
@@ -15,6 +16,13 @@ const Room = memo((props) => {
         setOtherUser(props.chat.members.find(member => member._id !== loggedInUser._id));
         setLatestMessage(props.chat.messages[props.chat.messages.length - 1]);
     }, [props.chat.members, props.chat.messages, loggedInUser._id]);
+
+    useEffect(() => {
+        console.log(props.newMessage);
+        if (props.newMessage && props.newMessage.chat === props.chat._id) {
+            setLatestMessage(props.newMessage);
+        }
+    }, [props.newMessage, props.chat._id]);
 
     const handleNavigation = useCallback((id) => {
         navigate(`/messages/${id}`);
@@ -40,13 +48,14 @@ const Room = memo((props) => {
             </div>
         </div>
     );
-});
+};
 
-export default function ChatPeople(props) {
+export default function ChatPeople() {
     const [chats, setChats] = useState([]);
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [newMessage, setNewMessage] = useState(null);
 
     const fetchChatRooms = useCallback(async () => {
         setLoading(true);
@@ -67,19 +76,27 @@ export default function ChatPeople(props) {
         fetchChatRooms();
     }, [fetchChatRooms]);
 
-    const chatComponents = useMemo(() => {
-        return chats.map(chat => (
-            <Room 
-                key={chat._id} 
-                chat={chat} 
-                active={id === chat._id} 
-            />
-        ));
-    }, [chats, id]);
+    useEffect(() => {
+        socket.on('new message', (data) => {
+            setNewMessage(data);
+        });
+
+        return () => {
+            socket.off('new message');
+        };
+    }, []);
 
     return (
         <div className="h-screen overflow-scroll">
-            {chatComponents}
+            {
+                chats && chats.map((chat) => {
+                    return (
+                        <>
+                            <Room key={chat._id} chat={chat} active={id === chat._id} newMessage={newMessage}/>
+                        </>
+                    )
+                })
+            }
             {error && <div className="text-center opacity-50 font-bold text-lg my-52">{error}</div>}
             {loading && <div className="flex justify-center mt-4"><div className="loader" /></div>}
         </div>
