@@ -69,6 +69,7 @@ module.exports = {
             return res.send(room);
         }
         catch(error) {
+            console.log(error.message);
             if(error.status === 404) return res.status(404).json({message: error.message});
             return res.status(500).json({message: 'An unknown error occurred'});
         }

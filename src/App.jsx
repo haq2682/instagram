@@ -45,7 +45,6 @@ function App() {
             .catch(() => {
                 dispatch(logout());
                 localStorage.clear();
-                // window.location.href = "/"
             })
             .finally(()=> {
                 setTimeout(()=>setLoader(false), 1000);
@@ -94,6 +93,7 @@ function App() {
             {loader ? <WelcomeLoader/> : null}
             <BrowserRouter>
                 <Routes>
+                    {!is_authenticated && !loader && <Route path="*" element={<Navigate to="/" />} />}
                     <Route index element={<Home/>}/>
                     <Route path="settings" element={getPage("settings")}/>
                     <Route path="explore" element={getPage("explore")}/>

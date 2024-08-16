@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import { Reply } from "@styled-icons/fa-solid/Reply";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { ThreeDotsVertical } from 'styled-icons/bootstrap';
@@ -14,52 +14,66 @@ import { SendFill } from 'styled-icons/bootstrap';
 import moment from 'moment';
 import MessageDetails from './MessageDetails';
 
-export default function Messages(props) {
+const groupMessagesByDateAndCluster = (messages) => {
+    const dateGroups = {};
+
+    messages.forEach((message) => {
+        const messageDate = new Date(message?.created_at).toLocaleDateString();
+        if (!dateGroups[messageDate]) {
+            dateGroups[messageDate] = [];
+        }
+        dateGroups[messageDate].push(message);
+    });
+
+    const groupedMessages = Object.keys(dateGroups).map(date => {
+        const clusters = [];
+        let currentCluster = [];
+        let prevMessage = null;
+
+        dateGroups[date].forEach((message) => {
+            if (!prevMessage ||
+                message.user._id !== prevMessage.user._id ||
+                new Date(message.created_at) - new Date(prevMessage.created_at) > 2 * 60 * 1000) {
+                if (currentCluster.length > 0) {
+                    clusters.push(currentCluster);
+                }
+                currentCluster = [message];
+            } else {
+                currentCluster.push(message);
+            }
+            prevMessage = message;
+        });
+
+        if (currentCluster.length > 0) {
+            clusters.push(currentCluster);
+        }
+
+        return { date, clusters };
+    });
+
+    return groupedMessages;
+};
+
+function Messages(props) {
     const [isMessageDetailsOpen, setIsMessageDetailsOpen] = useState(false);
     const loggedInUser = useSelector(state => state.auth);
+    const [groupedMessages, setGroupedMessages] = useState([]);
 
-    const groupMessagesByDateAndCluster = (messages) => {
-        const dateGroups = {};
+    console.log('re-rendered messages component');
 
-        messages.forEach((message) => {
-            const messageDate = new Date(message?.created_at).toLocaleDateString();
-            if (!dateGroups[messageDate]) {
-                dateGroups[messageDate] = [];
-            }
-            dateGroups[messageDate].push(message);
-        });
+    useEffect(() => {
+        setGroupedMessages([]);
+    }, [props.chatId]);
 
-        const groupedMessages = Object.keys(dateGroups).map(date => {
-            const clusters = [];
-            let currentCluster = [];
-            let prevMessage = null;
+    useEffect(() => {
+        if(props.messages) {
+            setGroupedMessages(groupMessagesByDateAndCluster(props.messages));
+        }
+    }, [props.messages]);
 
-            dateGroups[date].forEach((message) => {
-                if (!prevMessage ||
-                    message.user._id !== prevMessage.user._id ||
-                    new Date(message.created_at) - new Date(prevMessage.created_at) > 2 * 60 * 1000) {
-                    if (currentCluster.length > 0) {
-                        clusters.push(currentCluster);
-                    }
-                    currentCluster = [message];
-                } else {
-                    currentCluster.push(message);
-                }
-                prevMessage = message;
-            });
+    // let groupedMessages = groupMessagesByDateAndCluster(props.messages);
 
-            if (currentCluster.length > 0) {
-                clusters.push(currentCluster);
-            }
-
-            return { date, clusters };
-        });
-
-        return groupedMessages;
-    };
-
-    const groupedMessages = groupMessagesByDateAndCluster(props.messages);
-    const RenderAuthUserMessage = (props) => {
+    const RenderAuthUserMessage = memo((props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
@@ -232,9 +246,9 @@ export default function Messages(props) {
                 </div>
             </>
         )
-    }
+    });
 
-    const RenderOtherUserMessage = (props) => {
+    const RenderOtherUserMessage = memo((props) => {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
@@ -395,7 +409,7 @@ export default function Messages(props) {
                 </div>
             </>
         )
-    }
+    })
 
     return (
         <>
@@ -431,3 +445,7 @@ export default function Messages(props) {
         </>
     )
 }
+
+const memoizedMessages = memo(Messages);
+
+export default memoizedMessages;
