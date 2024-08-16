@@ -23,11 +23,9 @@ import MessageInput from "./MessageInput";
 import { Link, useParams } from "react-router-dom";
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import { io } from "socket.io-client";
+import socket from '../../socketConfig.js';
 import { dotStream } from 'ldrs';
 import ReactTimeAgo from 'react-time-ago';
-
-const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
 
 dotStream.register();
 
@@ -45,7 +43,6 @@ export default function Chat() {
     const [pageNumber, setPageNumber] = useState(1);
     const [otherUsers, setOtherUsers] = useState([])
     const [otherUser, setOtherUser] = useState(null);
-    const [latestMessage, setLatestMessage] = useState(null);
     const [typingUsers, setTypingUsers] = useState([]);
     const [fetchingDisabled, setFetchingDisabled] = useState(false);
     const observerRef = useRef(null);
@@ -131,9 +128,8 @@ export default function Chat() {
 
     useEffect(() => {
         socket.on('new message', (data) => {
-            console.log('new message');
+            console.log('new message chat component');
             setMessages((previous) => [...previous, data]);
-            setLatestMessage(data);
         })
 
         return () => {
@@ -399,7 +395,7 @@ export default function Chat() {
                     </div>
                 </div>
             </div>
-            <ChatRooms chatBarOpen={chatBarOpen} setOpen={setChatBarOpen} otherUser={otherUser} latestMessage={latestMessage}/>
+            <ChatRooms chatBarOpen={chatBarOpen} setOpen={setChatBarOpen} otherUser={otherUser}/>
             <ChatDetails detailsBarOpen={detailsBarOpen} setOpen={setDetailsBarOpen} />
             <Modal isOpen={reactionsModalOpen} onClose={() => setReactionsModalOpen(false)} placement="center">
                 <ModalContent>

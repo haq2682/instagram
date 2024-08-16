@@ -16,10 +16,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from "react";
 import {authenticate, verifyEmail, logout} from './redux/authSlice';
 import axios from "axios";
-import {io} from "socket.io-client";
 import WelcomeLoader from "./components/WelcomeLoader";
-
-const socket = io(process.env.REACT_APP_SOCKET_CLIENT_URL);
+import socket from "./socketConfig.js";
 
 function App() {
     const [loader, setLoader] = useState(true);

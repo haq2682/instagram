@@ -14,7 +14,7 @@ export default function ChatRooms(props) {
                 <div className="p-5 mt-5 xl:mt-0">
                     <Tabs fullWidth>
                         <Tab title="People">
-                            <ChatPeople otherUser={props.otherUser} latestMessage={props.latestMessage}/>
+                            <ChatPeople />
                         </Tab>
                         <Tab title="Groups">
                             <ChatGroups />
