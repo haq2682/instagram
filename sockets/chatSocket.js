@@ -16,7 +16,6 @@ const io = new Server(9000, {
 async function createNewMessage(data, socket) {
     try {
         const file = data.file;
-        console.log(file);
         const chatRoom = await Chat.findOne({ _id: data.chatId });
         const newMessage = new Message();
         if (!chatRoom) {
@@ -101,6 +100,7 @@ module.exports = {
             let typingUsers = new Set();
             let authUser;
             let authId;
+            let currentRoom;
 
             socket.on('init connection', async (data) => {
                 authUser = data;
@@ -112,11 +112,15 @@ module.exports = {
             socket.on('chat message', async (data) => {
                 const newMessage = await createNewMessage(data, socket);
                 socket.emit('message sent', false);
-                if (newMessage) io.emit('new message', newMessage);
+                if (newMessage) io.to(currentRoom).emit('new message', newMessage);
             });
 
             socket.on('join room', (data) => {
-                socket.join(data);
+                if(currentRoom) {
+                    socket.leave(currentRoom);    
+                }
+                currentRoom = data;
+                socket.join(currentRoom);
             });
 
             socket.on('typing', (data) => {

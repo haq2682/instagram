@@ -19,7 +19,7 @@ import { ThreeBars } from "@styled-icons/octicons/ThreeBars";
 import { ArrowForward } from "@styled-icons/typicons/ArrowForward";
 import { ArrowheadDownOutline } from "styled-icons/evaicons-outline";
 import { ChatSquareText } from "styled-icons/bootstrap";
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import "../../assets/css/Chat.css";
 import ChatDetails from "./ChatDetails";
 import ChatRooms from "./ChatRooms";
@@ -172,66 +172,125 @@ export default function Chat() {
     const [reactionsModalOpen, setReactionsModalOpen] = useState(false);
     const { id } = useParams();
 
-    const fetchRoom = useCallback(async () => {
-        if (id) {
-            socket.emit('join room', id);
-            setRoomFetchLoading(true);
-            setError('');
-            try {
-                const response = await axios.get(`/api/chat/room/${id}/get`);
-                setCurrentRoom(response.data);
+    useEffect(() => {
+        const cancelTokenSource = axios.CancelToken.source();
+
+        const fetchRoomAndMessages = async () => {
+            if (id) {
+                setRoomFetchLoading(true);
+                setMessageFetchLoading(true);
+                setPageNumber(1);
+                setError('');
+                setMessages([]);
+
+                try {
+                    const roomResponse = await axios.get(`/api/chat/room/${id}/get`, { cancelToken: cancelTokenSource.token });
+                    setCurrentRoom(roomResponse.data);
+                    socket.emit('join room', roomResponse.data._id);
+
+                    const messagesResponse = await axios.get(`/api/chat/room/${roomResponse.data._id}/messages/get/1`, { cancelToken: cancelTokenSource.token });
+                    setMessages(messagesResponse.data);
+                } catch (error) {
+                    if (axios.isCancel(error)) {
+                        console.log('Request canceled', error.message);
+                    }
+                    setMessages([]);
+                } finally {
+                    setRoomFetchLoading(false);
+                    setMessageFetchLoading(false);
+                    setFetchingDisabled(false);
+                    handleJumpToBottom();
+                }
             }
-            catch (error) {
-                setError(error.response.data.message);
-            }
-            finally {
-                setRoomFetchLoading(false);
-            }
-        }
+        };
+
+        fetchRoomAndMessages();
+
+        return () => {
+            cancelTokenSource.cancel('Operation canceled due to new request.');
+        };
     }, [id]);
 
-    const fetchMessages = useCallback(async () => {
-        if (currentRoom && !fetchingDisabled) {
+    // const fetchRoom = useCallback(async () => {
+    //     if(id) {
+    //         socket.emit('join room', id);
+    //         setRoomFetchLoading(true);
+    //         setPageNumber(1);
+    //         setError('');
+    //         try {
+    //             const response = await axios.get(`/api/chat/room/${id}/get`);
+    //             setCurrentRoom(response.data);
+    //         }
+    //         catch(error) {
+    //             setError(error.response?.data.message);
+    //             setMessages([]);
+    //         }
+    //         finally {
+    //             setRoomFetchLoading(false);
+    //             setFetchingDisabled(false);
+    //         }
+    //     }
+    // }, [id]);
+
+    // const fetchMessages = useCallback(async () => {
+    //     if (!currentRoom) return;
+    //     setMessageFetchLoading(true);
+    //     setError('');
+    //     try {
+    //         const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/1`);
+    //         setMessages(response.data);
+    //     } catch (error) {
+    //         setError(error.response?.data.message);
+    //         setMessages([]);
+    //     } finally {
+    //         setMessageFetchLoading(false);
+    //         handleJumpToBottom();
+    //     }
+    // }, [currentRoom]);
+
+    const fetchMoreMessages = useCallback(async (pgNumber) => {
+        if (currentRoom && !fetchingDisabled && pgNumber > 1) {
             setMessageFetchLoading(true);
             setError('');
+
             const messagesDiv = document.querySelector('.messages-sub-div');
             const prevScrollHeight = messagesDiv.scrollHeight;
             const prevScrollTop = messagesDiv.scrollTop;
 
             try {
-                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/${pageNumber}`);
-
-                if (pageNumber === 1) {
-                    setMessages(response.data);
-                    handleJumpToBottom();
-                } else {
-                    setMessages((prev) => [...response.data, ...prev]);
-                }
-
-                setLatestMessage(messages[messages.length - 1]);
+                const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/${pgNumber}`);
+                setMessages((prev) => [...response.data, ...prev]);
                 setTimeout(() => {
                     const newScrollHeight = messagesDiv.scrollHeight;
                     const scrollOffset = newScrollHeight - prevScrollHeight;
                     messagesDiv.scrollTop = prevScrollTop + scrollOffset - 5;
                 }, 0);
-            } catch (error) {
+            }
+            catch (error) {
                 setError(error.response?.data.message);
                 setFetchingDisabled(true);
-
-            } finally {
+            }
+            finally {
                 setMessageFetchLoading(false);
             }
         }
-    }, [currentRoom, pageNumber, fetchingDisabled]);
-
-
-    useEffect(() => {
-        fetchRoom();
-    }, [fetchRoom]);
+    }, [currentRoom, fetchingDisabled]);
 
     useEffect(() => {
-        fetchMessages(pageNumber);
-    }, [fetchMessages, pageNumber]);
+        fetchMoreMessages(pageNumber);
+    }, [pageNumber, fetchMoreMessages]);
+
+    // useEffect(() => {
+    //     console.log('room changed');
+    //     setMessages([]);
+    //     setPageNumber(1);
+    //     fetchRoom();
+    // }, [id, fetchRoom]);
+
+    // useEffect(() => {
+    //     fetchMessages();
+    // }, [fetchMessages]);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -293,27 +352,52 @@ export default function Chat() {
     }
 
     const handleDescriptionChange = useCallback((event) => {
-        const data = {};
-        data.roomId = id;
-        data.username = loggedInUser.username;
+        const value = event.target.value;
+        setDescription(value);
+
+        const data = { roomId: id, username: loggedInUser.username };
         socket.emit('typing', data);
 
         clearTimeout(typingTimeoutRef.current);
         typingTimeoutRef.current = setTimeout(() => {
             socket.emit('stopTyping', data);
         }, 2000);
-
-        setDescription(event.target.value)
     }, [id, loggedInUser]);
 
     const handleSetReply = (message) => {
         setReplyingToMessage(message);
     }
 
-    const handleFileChange = (event) => {
+    const handleFileChange = useCallback((event) => {
         const uploadedFile = event.target.files[0];
         setFile(uploadedFile);
-    }
+    }, []);
+
+    const endContent = useMemo(() => {
+        return (
+            <>
+                <input
+                    id="message-file-upload"
+                    name="message-file-upload"
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileChange}
+                />
+                <label htmlFor="message-file-upload" className="cursor-pointer">
+                    <Tooltip showArrow={true} content="Upload an image">
+                        <Paperclip size="25" />
+                    </Tooltip>
+                </label>
+                <input id="comment-submit" type="submit" className="hidden" />
+                <label htmlFor="comment-submit" className="cursor-pointer">
+                    <Tooltip showArrow={true} content="Submit">
+                        <ArrowForward size="30" />
+                    </Tooltip>
+                </label>
+                {submitLoading && <PuffLoader size="28px" color="gray" />}
+            </>
+        )
+    }, [handleFileChange, submitLoading]);
 
     const ChatHeader = () => {
         return (
@@ -331,7 +415,7 @@ export default function Chat() {
                                 <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : null}</h1>
                             </Link>
                             <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
-                                Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter"/>} ago
+                                Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter" />} ago
                             </>))) : null}</p>
                         </div>
                     </div>
@@ -364,6 +448,7 @@ export default function Chat() {
             <ThreeBars size="25" />
         </div>
     )
+
     return (
         <div className="w-screen">
             <div className="w-full flex h-screen">
@@ -375,7 +460,7 @@ export default function Chat() {
                         <div className="messages h-full w-full overflow-hidden border-b-neutral-300 dark:border-b-neutral-700 border-b relative">
                             {(messageFetchLoading || roomFetchLoading) && (
                                 <div className={`flex justify-center ${messages.length === 0 ? 'h-full' : null} items-center`}>
-                                    <div className="loader"/>
+                                    <div className="loader" />
                                 </div>
                             )}
                             {!id && (
@@ -396,8 +481,8 @@ export default function Chat() {
                             )}
                             <div className={`messages-sub-div overflow-y-auto ${messages.length !== 0 ? 'h-full' : null}`}>
                                 <div className="flex flex-col justify-end min-h-[96%] m-2">
-                                    <div className="mb-4 w-full" ref={lastMessageElementRef}/>
-                                    <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} />
+                                    {messages.length > 10 && <div className="mb-4 w-full" ref={lastMessageElementRef} />}
+                                    {!roomFetchLoading && <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} chatId={id} />}
                                     {
                                         otherUsers?.map((user) => {
                                             return typingUsers.includes(user.username) && (
@@ -407,7 +492,7 @@ export default function Chat() {
                                                         <div className="bg-neutral-200 dark:bg-neutral-800 p-2 ml-3 rounded-lg"><l-dot-stream color="gray" /></div>
                                                     </div>
                                                 </>
-                                            ) 
+                                            )
                                         })
                                     }
                                 </div>
@@ -438,17 +523,17 @@ export default function Chat() {
                                                 </div>
                                             ) : (
                                                 <div className="recepient-reply text-xs inline-block bg-neutral-200 dark:bg-neutral-800 p-2 rounded-xl mb-2 text-ellipsis max-h-[70px] line-clamp-3 overflow-hidden">
-                                                        <div className="font-bold mb-1">
-                                                            <img src={replyingToMessage.user.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />{replyingToMessage.user.username}
-                                                        </div>
-                                                        {replyingToMessage.media ? (
-                                                            replyingToMessage.media.media_type === 'image' ? (
-                                                                <div className="font-bold italic underline">Image</div>
-                                                            ) : (
-                                                                <div className="font-bold italic underline">Video</div>
-                                                            )
-                                                        ) : (replyingToMessage.description)}
+                                                    <div className="font-bold mb-1">
+                                                        <img src={replyingToMessage.user.profile_picture.filename} className="w-4 h-4 inline rounded-full mr-1" alt="pfp" />{replyingToMessage.user.username}
                                                     </div>
+                                                    {replyingToMessage.media ? (
+                                                        replyingToMessage.media.media_type === 'image' ? (
+                                                            <div className="font-bold italic underline">Image</div>
+                                                        ) : (
+                                                            <div className="font-bold italic underline">Video</div>
+                                                        )
+                                                    ) : (replyingToMessage.description)}
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -473,29 +558,7 @@ export default function Chat() {
                                     isDisabled={!currentRoom || submitLoading}
                                     value={description}
                                     onChange={handleDescriptionChange}
-                                    endContent={
-                                        <>
-                                            <input
-                                                id="message-file-upload"
-                                                name="message-file-upload"
-                                                type="file"
-                                                className="hidden"
-                                                onChange={handleFileChange}
-                                            />
-                                            <label htmlFor="message-file-upload" className="cursor-pointer">
-                                                <Tooltip showArrow={true} content="Upload an image">
-                                                    <Paperclip size="25" />
-                                                </Tooltip>
-                                            </label>
-                                            <input id="comment-submit" type="submit" className="hidden" />
-                                            <label htmlFor="comment-submit" className="cursor-pointer">
-                                                <Tooltip showArrow={true} content="Submit">
-                                                    <ArrowForward size="30" />
-                                                </Tooltip>
-                                            </label>
-                                            {submitLoading && <PuffLoader size="28px" color="gray"/>}
-                                        </>
-                                    }
+                                    endContent={endContent}
                                 />
                             </form>
                         </div>
