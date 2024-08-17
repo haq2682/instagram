@@ -26,7 +26,11 @@ const messageSchema = new Schema({
     }],
     seen_by: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'SeenMessage'
+    }],
+    delivered_to: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DeliveredMessage'
     }],
     media: {
         type: mongoose.Schema.Types.ObjectId,
