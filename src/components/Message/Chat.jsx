@@ -128,8 +128,17 @@ export default function Chat() {
 
     useEffect(() => {
         socket.on('new message', (data) => {
-            console.log('new message chat component');
-            setMessages((previous) => [...previous, data]);
+            const messagesDiv = document.querySelector('.messages-sub-div');
+            const initialScrollTop = messagesDiv.scrollTop;
+            setMessages((prev) => {
+                const newMessages = [...prev, data];
+
+                setTimeout(() => {
+                    messagesDiv.scrollTop = initialScrollTop + 100;
+                }, 100);
+
+                return newMessages;
+            });
         })
 
         return () => {
@@ -147,7 +156,12 @@ export default function Chat() {
 
     useEffect(() => {
         socket.on('isTyping', (users) => {
+            const messagesDiv = document.querySelector('.messages-sub-div');
+            const initialScrollTop = messagesDiv.scrollTop;
             setTypingUsers(users);
+            setTimeout(() => {
+                messagesDiv.scrollTop = initialScrollTop + 50;
+            }, 100);
         });
 
         return () => {
@@ -243,19 +257,20 @@ export default function Chat() {
         if (currentRoom && !fetchingDisabled && pgNumber > 1) {
             setMessageFetchLoading(true);
             setError('');
-
             const messagesDiv = document.querySelector('.messages-sub-div');
-            const prevScrollHeight = messagesDiv.scrollHeight;
-            const prevScrollTop = messagesDiv.scrollTop;
+            const initialScrollTop = messagesDiv.scrollTop;
 
             try {
                 const response = await axios.get(`/api/chat/room/${currentRoom._id}/messages/get/${pgNumber}`);
-                setMessages((prev) => [...response.data, ...prev]);
-                setTimeout(() => {
-                    const newScrollHeight = messagesDiv.scrollHeight;
-                    const scrollOffset = newScrollHeight - prevScrollHeight;
-                    messagesDiv.scrollTop = prevScrollTop + scrollOffset - 5;
-                }, 0);
+                setMessages((prev) => {
+                    const newMessages = [...response.data, ...prev];
+
+                    setTimeout(() => {
+                        messagesDiv.scrollTop = initialScrollTop + 100;
+                    }, 0);
+
+                    return newMessages;
+                });
             }
             catch (error) {
                 setError(error.response?.data.message);
