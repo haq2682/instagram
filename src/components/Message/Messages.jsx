@@ -59,8 +59,6 @@ export default function Messages(props) {
     const loggedInUser = useSelector(state => state.auth);
     const [groupedMessages, setGroupedMessages] = useState([]);
 
-    console.log('re-rendered messages component');
-
     useEffect(() => {
         setGroupedMessages([]);
     }, [props.chatId]);
