@@ -1,6 +1,7 @@
 const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 const MessageLike = require('../models/MessageLike');
+const User = require('../models/User');
 
 module.exports = {
     joinRoom: async (req, res) => {
@@ -14,6 +15,12 @@ module.exports = {
                 room = new Chat();
                 room.members = [req.user._id, req.params.id];
                 await room.save();
+                const authUser = await User.findOne({_id: req.user._id});
+                const otherUser = await User.findOne({_id: req.params.id});
+                authUser.chats.push(room._id);
+                await authUser.save();
+                otherUser.chats.push(room._id);
+                await otherUser.save();
             }
             return res.send(room);
         }
@@ -187,11 +194,23 @@ module.exports = {
                         },
                         {
                             path: 'likes'
+                        },
+                        {
+                            path: 'seen_by'
+                        },
+                        {
+                            path: 'delivered_to'
                         }
                     ]
                 },
                 {
                     path: 'likes'
+                },
+                {
+                    path: 'seen_by'
+                },
+                {
+                    path: 'delivered_to'
                 }
             ])
             .sort({created_at: 'desc'})

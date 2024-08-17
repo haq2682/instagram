@@ -4,6 +4,8 @@ const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 const Media = require('../models/Media');
 const User = require('../models/User');
+const SeenMessage = require('../models/SeenMessage');
+const DeliveredMessage = require('../models/DeliveredMessage');
 
 const io = new Server(9000, {
     cors: {
@@ -13,15 +15,39 @@ const io = new Server(9000, {
     }
 });
 
+async function deliverMessage(memberId, message, socket) {
+    try {
+        const newMessageDelivered = new DeliveredMessage();
+        newMessageDelivered.user = memberId;
+        newMessageDelivered.message = message;
+        await newMessageDelivered.save();
+        message.delivered_to.push(newMessageDelivered._id);
+        await message.save();
+    }
+    catch (error) {
+        console.log(error.message);
+        socket.emit('chat error', 'An unknown error occurred');
+    }
+}
+
+async function readMessage(memberId, message, socket) {
+    try {
+        
+    }
+    catch(error) {
+        socket.emit('chat error', 'An unknown error occurred');
+    }
+}
+
 async function createNewMessage(data, socket) {
     try {
         const file = data.file;
         const chatRoom = await Chat.findOne({ _id: data.chatId });
-        const newMessage = new Message();
         if (!chatRoom) {
             socket.emit('chat error', 'This chat does not exist');
             return;
         }
+        const newMessage = new Message();
         if (file) {
             let newMedia = new Media();
             newMedia.path = `/${file.path}`;
@@ -50,6 +76,21 @@ async function createNewMessage(data, socket) {
         chatRoom.messages.push(newMessage._id);
         if (data.reply_to) newMessage.reply_to = data.reply_to;
         await chatRoom.save();
+
+        await deliverMessage(data.authId, newMessage, socket);
+        await readMessage(data.authId, newMessage, socket);
+
+        const chatOfMessage = await Chat.findOne({_id: chatRoom._id}).populate('members');
+        const membersOfChat = chatOfMessage.members;
+
+        membersOfChat.forEach(async (member) => {
+            if(member._id.toString() !== data.authId) {
+                if(member.isOnline) {
+                    await deliverMessage(member._id, newMessage, socket);
+                }
+            }
+        });
+
         await newMessage.save();
 
         const message = await Message.findOne({ _id: newMessage._id }).populate([
@@ -80,16 +121,29 @@ async function createNewMessage(data, socket) {
                     },
                     {
                         path: 'likes'
+                    },
+                    {
+                        path: 'seen_by'
+                    },
+                    {
+                        path: 'delivered_to'
                     }
                 ]
             },
             {
                 path: 'likes'
+            },
+            {
+                path: 'seen_by'
+            },
+            {
+                path: 'delivered_to'
             }
         ]);
         return message;
     }
     catch (error) {
+        console.log(error.message);
         socket.emit('chat error', 'An unknown error occurred');
     }
 }
@@ -104,8 +158,29 @@ module.exports = {
 
             socket.on('init connection', async (data) => {
                 authUser = data;
-                const response = await User.findOneAndUpdate({username: authUser?.username}, {$set: {isOnline: true}}).populate('profile_picture');
+                const response = await User.findOneAndUpdate({username: authUser?.username}, {$set: {isOnline: true}}).populate([
+                    {
+                        path: 'profile_picture'
+                    },
+                    {
+                        path: 'chats',
+                        populate: [
+                            {
+                                path: 'messages'
+                            },
+                        ]
+                    }
+                ]);
+                
                 authId = response._id;
+                let chats = response.chats;
+                chats.forEach((chat) => {
+                    chat.messages.forEach((message) => {
+                        if (!message.delivered_to.includes(authId)) {
+                            deliverMessage(authId, message, socket);
+                        }
+                    })
+                })
                 io.emit('user status change', response);
             })
 
@@ -135,6 +210,7 @@ module.exports = {
 
             socket.on('disconnect', async () => {
                 typingUsers.delete(authUser?.username);
+                socket.leave(currentRoom);
                 socket.broadcast.emit('isTyping', Array.from(typingUsers));
                 await User.findOneAndUpdate({_id: authId}, {$set: {isOnline: false, lastActive: Date.now()}});
                 const response = await User.findOne({_id: authId}).populate('profile_picture');
