@@ -16,7 +16,7 @@ export default function MessageDetails(props) {
             const response = await axios.get('/api/chat/message/' + id);
             setMessage(response.data);
         }
-        catch(error) {
+        catch (error) {
             setError(error.response.data.message);
         }
         finally {
@@ -25,7 +25,7 @@ export default function MessageDetails(props) {
     }, []);
 
     useEffect(() => {
-        if(props.id) {
+        if (props.id) {
             fetchMessage(props.id)
         }
     }, [props.id, fetchMessage]);
@@ -37,7 +37,7 @@ export default function MessageDetails(props) {
                     <div className="flex items-center max-w-full overflow-hidden">
                         <img src={props.delivery.user.profile_picture.filename} alt="pfp" className="rounded-full object-cover w-12 h-12" />
                         <div className="font-bold max-w-full text-md ml-2 truncate">
-                            {props.delivery.user.username} 
+                            {props.delivery.user.username}
                         </div>
                     </div>
                     <div className="text-xs sm:text-sm">
@@ -54,28 +54,19 @@ export default function MessageDetails(props) {
                 <ModalContent>
                     {() => (
                         <>
-                            {
-                                loading && <div className="flex justify-center items-center"><div className="loader"/></div>
-                            }
-                            {
-                                (!loading && error) && <div className="text-center opacity-75 font-bold text-md">{error}</div>
-                            }
-                            {
-                                (!loading && message) && (
-                                    <>
-                                        <ModalHeader className="flex justify-center text-center font-bold text-md md:text-lg">Message Details</ModalHeader>
-                                        <ModalBody>
-                                            <div className="mb-4">
+                            <ModalHeader className="flex justify-center text-center font-bold text-md md:text-lg">Message Details</ModalHeader>
+                            <ModalBody>
+                                <div className="mb-4">
+                                    {
+                                        loading && <div className="flex justify-center items-center"><div className="loader" /></div>
+                                    }
+                                    {
+                                        (!loading && error) && <div className="text-center opacity-75 font-bold text-md">{error}</div>
+                                    }
+                                    {
+                                        (!loading && message) && (
+                                            <>
                                                 <Accordion variant="splitted">
-                                                    <AccordionItem key="sent" aria-label="sent" title="Sent" startContent={(
-                                                        <>
-                                                            <Send size="24" />
-                                                        </>
-                                                    )}>
-                                                        <div className="my-2 w-full max-h-[500px] overflow-y-scroll">
-                                                            <UserComponent />
-                                                        </div>
-                                                    </AccordionItem>
                                                     <AccordionItem key="delivered" aria-label="delivered" title="Delivered" startContent={(
                                                         <>
                                                             <SendFill size="24" />
@@ -84,7 +75,7 @@ export default function MessageDetails(props) {
                                                         <div className="my-2 w-full max-h-[500px] overflow-y-scroll">
                                                             {
                                                                 message.delivered_to.map((delivery) => {
-                                                                    return <UserComponent delivery={delivery}/>
+                                                                    return <UserComponent delivery={delivery} />
                                                                 })
                                                             }
                                                         </div>
@@ -95,15 +86,19 @@ export default function MessageDetails(props) {
                                                         </>
                                                     )}>
                                                         <div className="my-2 w-full max-h-[500px] overflow-y-scroll">
-                                                            <UserComponent />
+                                                            {
+                                                                message.seen_by.map((seen) => {
+                                                                    return <UserComponent delivery={seen} />
+                                                                })
+                                                            } 
                                                         </div>
                                                     </AccordionItem>
                                                 </Accordion>
-                                            </div>
-                                        </ModalBody>
-                                    </> 
-                                )
-                            }
+                                            </>
+                                        )
+                                    }
+                                </div>
+                            </ModalBody>
                         </>
                     )}
                 </ModalContent>
