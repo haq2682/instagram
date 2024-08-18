@@ -18,11 +18,25 @@ const Room = (props) => {
     }, [props.chat.members, props.chat.messages, loggedInUser._id]);
 
     useEffect(() => {
-        console.log(props.newMessage);
+        console.log(props.newMessage); //The feature does not work if we remove this, don't know why
         if (props.newMessage && props.newMessage.chat === props.chat._id) {
             setLatestMessage(props.newMessage);
         }
     }, [props.newMessage, props.chat._id]);
+
+    useEffect(() => {
+        socket.on('user status change', (data) => {
+            if(data._id === otherUser?._id) {
+                setOtherUser((previous) => {
+                    return {...previous, ...data}
+                });
+            }
+        });
+
+        return () => {
+            socket.off('user status change');
+        }
+    }, [otherUser?._id]);
 
     const handleNavigation = useCallback((id) => {
         navigate(`/messages/${id}`);
