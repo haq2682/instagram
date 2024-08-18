@@ -58,6 +58,7 @@ export default function Messages(props) {
     const [isMessageDetailsOpen, setIsMessageDetailsOpen] = useState(false);
     const loggedInUser = useSelector(state => state.auth);
     const [groupedMessages, setGroupedMessages] = useState([]);
+    const [messageId, setMessageId] = useState(null);
 
     useEffect(() => {
         setGroupedMessages([]);
@@ -68,6 +69,11 @@ export default function Messages(props) {
             setGroupedMessages(groupMessagesByDateAndCluster(props.messages));
         }
     }, [props.messages]);
+
+    const handleSetMessageDetails = (id) => {
+        setMessageId(id);
+        setIsMessageDetailsOpen(true);
+    }
 
     // let groupedMessages = groupMessagesByDateAndCluster(props.messages);
 
@@ -128,7 +134,7 @@ export default function Messages(props) {
                                 <DropdownItem key="copy">Copy Message Description</DropdownItem>
                                 <DropdownItem key="like">Like Message</DropdownItem>
                                 <DropdownItem key="reply" onClick={() => props.setReply(props.message)}>Reply</DropdownItem>
-                                <DropdownItem key="details" onClick={() => setIsMessageDetailsOpen(true)}>Message Details</DropdownItem>
+                                <DropdownItem key="details" onClick={() => handleSetMessageDetails(props.message._id)}>Message Details</DropdownItem>
                                 <DropdownItem key="delete" className="text-danger" color="danger">
                                     Delete Message
                                 </DropdownItem>
@@ -224,7 +230,13 @@ export default function Messages(props) {
                             <p className="text-white">{props.message?.description}</p>
                             <div className="mt-1">
                                 <div className="float-end text-xs text-white opacity-60">
-                                    {moment(props.message.created_at).format('LT')} <Send size="15" /> <SendFill size="15" />
+                                    <span className="mr-2">{moment(props.message.created_at).format('LT')}</span>
+                                    {
+                                        props.message.delivered_to.length !== props.chat.members.length && <Send size="15" />
+                                    } 
+                                    {
+                                        props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" />
+                                    }
                                 </div>
                             </div>
                             {
@@ -386,7 +398,13 @@ export default function Messages(props) {
                                 <p>{props.message?.description}</p>
                                 <div className="mt-1 opacity-50">
                                     <div className="float-start text-xs">
-                                        <Send size="15" /> <SendFill size="15" /> {moment(props.message.created_at).format('LT')}
+                                        {
+                                            props.message.delivered_to.length !== props.chat.members.length && <Send size="15" />
+                                        }
+                                        {
+                                            props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" />
+                                        }
+                                        <span className="ml-2">{moment(props.message.created_at).format('LT')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -428,9 +446,9 @@ export default function Messages(props) {
                                         const showProfilePicture = messageIndex === 0;
 
                                         if (message?.user.username === loggedInUser.username) {
-                                            return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                            return <RenderAuthUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} chat={props.chat}/>
                                         } else {
-                                            return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} />
+                                            return <RenderOtherUserMessage key={message?._id} message={message} setReply={props.setReply} showProfilePicture={showProfilePicture} chat={props.chat}/>
                                         }
                                     })
                                 ))
@@ -439,7 +457,7 @@ export default function Messages(props) {
                     </div>
                 ))
             }
-            <MessageDetails isMessageDetailsOpen={isMessageDetailsOpen} setIsMessageDetailsOpen={setIsMessageDetailsOpen}/>
+            <MessageDetails isMessageDetailsOpen={isMessageDetailsOpen} setIsMessageDetailsOpen={setIsMessageDetailsOpen} id={messageId}/>
         </>
     )
 }

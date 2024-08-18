@@ -384,7 +384,7 @@ export default function Chat() {
                             <div className={`messages-sub-div overflow-y-auto ${messages.length !== 0 ? 'h-full' : null}`}>
                                 <div className="flex flex-col justify-end min-h-[96%] m-2">
                                     {messages.length > 10 && <div className="mb-4 w-full" ref={lastMessageElementRef} />}
-                                    {!roomFetchLoading && <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} chatId={id} />}
+                                    {!roomFetchLoading && <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} chatId={id} chat={currentRoom}/>}
                                     {
                                         otherUsers?.map((user) => {
                                             return typingUsers.includes(user.username) && (

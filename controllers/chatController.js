@@ -226,5 +226,101 @@ module.exports = {
             console.log(error.message);
             return res.status(500).json({message: 'An unknown error occurred'});
         }
+    },
+    getMessage: async (req, res) => {
+        try {
+            const message = await Message.findOne({_id: req.params.id}).populate([
+                {
+                    path: 'media',
+                },
+                {
+                    path: 'user',
+                    populate: [
+                        {
+                            path: 'profile_picture'
+                        }
+                    ]
+                },
+                {
+                    path: 'reply_to',
+                    populate: [
+                        {
+                            path: 'media'
+                        },
+                        {
+                            path: 'user',
+                            populate: [
+                                {
+                                    path: 'profile_picture'
+                                }
+                            ]
+                        },
+                        {
+                            path: 'likes'
+                        },
+                        {
+                            path: 'seen_by',
+                            populate: [
+                                {
+                                    path: 'user',
+                                    populate: [
+                                        {
+                                            path: 'profile_picture'
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            path: 'delivered_to',
+                            populate: [
+                                {
+                                    path: 'user',
+                                    populate: [
+                                        {
+                                            path: 'profile_picture'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    path: 'likes'
+                },
+                {
+                    path: 'seen_by',
+                    populate: [
+                        {
+                            path: 'user',
+                            populate: [
+                                {
+                                    path: 'profile_picture'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    path: 'delivered_to',
+                    populate: [
+                        {
+                            path: 'user',
+                            populate: [
+                                {
+                                    path: 'profile_picture'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]);
+            if(!message) return res.status(404).json({message: 'This message does not exist'});
+            return res.send(message);
+        }
+        catch(error) {
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
     }
 }

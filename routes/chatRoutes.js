@@ -21,5 +21,6 @@ router.get('/individual/getAll', attachUser, chatController.getAllIndividualRoom
 router.get('/room/:id/get', attachUser, chatController.getRoom);
 router.post('/new/message', attachUser, upload.single('file'), chatController.newMessage);
 router.get('/room/:id/messages/get/:page_number', attachUser, chatController.getRoomMessages);
+router.get('/message/:id', attachUser, chatController.getMessage);
 
 module.exports = router;
