@@ -13,6 +13,7 @@ import { Send } from '@styled-icons/bootstrap/Send';
 import { SendFill } from 'styled-icons/bootstrap';
 import moment from 'moment';
 import MessageDetails from './MessageDetails';
+import socket from '../../socketConfig';
 
 const groupMessagesByDateAndCluster = (messages) => {
     const dateGroups = {};
@@ -77,6 +78,23 @@ export default function Messages(props) {
     };
 
     useEffect(() => {
+        socket.on('message seen', (data) => {
+            if(data) {
+                setGroupedMessages((prevGroupedMessages) =>
+                    prevGroupedMessages.map(group => ({
+                        date: group.date,
+                        clusters: group.clusters.map(cluster =>
+                            cluster.map(message =>
+                                message._id === data._id ? { ...message, ...data } : message
+                            )
+                        )
+                    }))
+                );
+            }
+        });
+    }, []);
+
+    useEffect(() => {
         setGroupedMessages([]);
     }, [props.chatId]);
 
@@ -98,9 +116,13 @@ export default function Messages(props) {
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
         const messageRef = useRef(null);
-        useIntersectionObserver(messageRef, () => {
-            console.log('RenderAuthUserMessage is in the viewport');
-        });
+        // useIntersectionObserver(messageRef, () => {
+        //     props.message.seen_by.forEach((message) => {
+        //         if(message.user._id === loggedInUser._id) {
+        //             console.log('Already seen');
+        //         }
+        //     })
+        // });
         useEffect(() => {
             if (!isSwiping && deviation < 0) {
                 const timer = setTimeout(() => {
@@ -255,7 +277,7 @@ export default function Messages(props) {
                                         props.message.delivered_to.length !== props.chat.members.length && <Send size="15" className={`opacity-50`}/>
                                     } 
                                     {
-                                        props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" className={`text-emerald-300`}/>
+                                        props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" className={`${props.message.seen_by.length === props.chat.members.length ? 'text-emerald-300 opacity-100' : 'opacity-50'}`}/>
                                     }
                                 </div>
                             </div>
@@ -284,7 +306,16 @@ export default function Messages(props) {
         const [isSwiping, setIsSwiping] = useState(false);
         const messageRef = useRef(null);
         useIntersectionObserver(messageRef, () => {
-            console.log('RenderOtherUserMessage is in the viewport');
+            let found = false;
+            for(let seenMessage of props.message.seen_by) {
+                if(seenMessage.user && seenMessage.user._id === loggedInUser._id) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                socket.emit('read message', props.message);
+            }
         });
         useEffect(() => {
             if (!isSwiping && deviation > 0) {
@@ -426,7 +457,7 @@ export default function Messages(props) {
                                             props.message.delivered_to.length !== props.chat.members.length && <Send size="15" className={`opacity-50`}/>
                                         }
                                         {
-                                            props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" className={`text-emerald-300`}/>
+                                            props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" className={`${props.message.seen_by.length === props.chat.members.length ? 'text-emerald-500 dark:text-emerald-400 opacity-100' : 'opacity-50'}`}/>
                                         }
                                         <span className="ml-2 opacity-50">{moment(props.message.created_at).format('LT')}</span>
                                     </div>
