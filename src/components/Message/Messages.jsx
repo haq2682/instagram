@@ -57,6 +57,25 @@ export default function Messages(props) {
     const [groupedMessages, setGroupedMessages] = useState([]);
     const [messageId, setMessageId] = useState(null);
 
+    const useIntersectionObserver = (ref, callback, options) => {
+        useEffect(() => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        callback(); // Call the provided callback when the element is in view
+                    }
+                });
+            }, options);
+
+            const currentRef = ref.current;
+            if (currentRef) observer.observe(currentRef);
+
+            return () => {
+                if (currentRef) observer.unobserve(currentRef);
+            };
+        }, [ref, callback, options]);
+    };
+
     useEffect(() => {
         setGroupedMessages([]);
     }, [props.chatId]);
@@ -78,6 +97,10 @@ export default function Messages(props) {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
+        const messageRef = useRef(null);
+        useIntersectionObserver(messageRef, () => {
+            console.log('RenderAuthUserMessage is in the viewport');
+        });
         useEffect(() => {
             if (!isSwiping && deviation < 0) {
                 const timer = setTimeout(() => {
@@ -97,7 +120,7 @@ export default function Messages(props) {
         }
 
         function handleTouchEnd() {
-            if (deviation <= 75 && !props.replyingToMessage) {
+            if (deviation <= -75 && !props.replyingToMessage) {
                 props.setReply(props.message);
             }
             startX.current = null;
@@ -119,7 +142,7 @@ export default function Messages(props) {
 
         return (
             <>
-                <div className="message w-full flex justify-end text-sm relative">
+                <div ref={messageRef} className="message w-full flex justify-end text-sm relative">
                     <div className="absolute top-1/2 -translate-y-1/2 mr-10"><Reply size="25" /></div>
                     <div className="more-options my-3 mx-1">
                         <Dropdown>
@@ -259,6 +282,10 @@ export default function Messages(props) {
         const startX = useRef(null);
         const [deviation, setDeviation] = useState(0);
         const [isSwiping, setIsSwiping] = useState(false);
+        const messageRef = useRef(null);
+        useIntersectionObserver(messageRef, () => {
+            console.log('RenderOtherUserMessage is in the viewport');
+        });
         useEffect(() => {
             if (!isSwiping && deviation > 0) {
                 const timer = setTimeout(() => {
@@ -299,7 +326,7 @@ export default function Messages(props) {
         }
         return (
             <>
-                <div className="message relative flex">
+                <div ref={messageRef} className="message relative flex">
                     <div className="absolute top-1/2 -translate-y-1/2 ml-10"><Reply size="25" /></div>
                     <div className="w-6 h-6 mt-3 mr-3">
                         {props.showProfilePicture && <img src={props.message.user.profile_picture.filename} alt="pfp" className="w-full h-full object-cover rounded-full" />}
