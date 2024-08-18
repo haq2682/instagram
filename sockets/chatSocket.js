@@ -19,10 +19,14 @@ async function deliverMessage(memberId, message, socket) {
     try {
         const newMessageDelivered = new DeliveredMessage();
         newMessageDelivered.user = memberId;
-        newMessageDelivered.message = message;
+        newMessageDelivered.message = message._id;
         await newMessageDelivered.save();
-        message.delivered_to.push(newMessageDelivered._id);
-        await message.save();
+        
+        await Message.findOneAndUpdate(
+            { _id: message._id },
+            { $addToSet: { delivered_to: newMessageDelivered._id } },
+            { new: true }
+        );
     }
     catch (error) {
         console.log(error.message);
@@ -32,9 +36,9 @@ async function deliverMessage(memberId, message, socket) {
 
 async function readMessage(memberId, message, socket) {
     try {
-        
+
     }
-    catch(error) {
+    catch (error) {
         socket.emit('chat error', 'An unknown error occurred');
     }
 }
@@ -76,22 +80,19 @@ async function createNewMessage(data, socket) {
         chatRoom.messages.push(newMessage._id);
         if (data.reply_to) newMessage.reply_to = data.reply_to;
         await chatRoom.save();
+        await newMessage.save();
 
         await deliverMessage(data.authId, newMessage, socket);
-        await readMessage(data.authId, newMessage, socket);
+        // await readMessage(data.authId, newMessage, socket);
 
-        const chatOfMessage = await Chat.findOne({_id: chatRoom._id}).populate('members');
+        const chatOfMessage = await Chat.findOne({ _id: chatRoom._id }).populate('members');
         const membersOfChat = chatOfMessage.members;
 
-        membersOfChat.forEach(async (member) => {
-            if(member._id.toString() !== data.authId) {
-                if(member.isOnline) {
-                    await deliverMessage(member._id, newMessage, socket);
-                }
+        await Promise.all(membersOfChat.map(async (member) => {
+            if (member._id.toString() !== data.authId && member.isOnline) {
+                await deliverMessage(member._id, newMessage, socket);
             }
-        });
-
-        await newMessage.save();
+        }));
 
         const message = await Message.findOne({ _id: newMessage._id }).populate([
             {
@@ -123,10 +124,30 @@ async function createNewMessage(data, socket) {
                         path: 'likes'
                     },
                     {
-                        path: 'seen_by'
+                        path: 'seen_by',
+                        populate: [
+                            {
+                                path: 'user',
+                                populate: [
+                                    {
+                                        path: 'profile_picture'
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
-                        path: 'delivered_to'
+                        path: 'delivered_to',
+                        populate: [
+                            {
+                                path: 'user',
+                                populate: [
+                                    {
+                                        path: 'profile_picture'
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             },
@@ -134,10 +155,30 @@ async function createNewMessage(data, socket) {
                 path: 'likes'
             },
             {
-                path: 'seen_by'
+                path: 'seen_by',
+                populate: [
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    }
+                ]
             },
             {
-                path: 'delivered_to'
+                path: 'delivered_to',
+                populate: [
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    }
+                ]
             }
         ]);
         return message;
@@ -158,7 +199,7 @@ module.exports = {
 
             socket.on('init connection', async (data) => {
                 authUser = data;
-                const response = await User.findOneAndUpdate({username: authUser?.username}, {$set: {isOnline: true}}).populate([
+                const response = await User.findOneAndUpdate({ username: authUser?.username }, { $set: { isOnline: true } }).populate([
                     {
                         path: 'profile_picture'
                     },
@@ -171,13 +212,17 @@ module.exports = {
                         ]
                     }
                 ]);
-                
+
                 authId = response._id;
                 let chats = response.chats;
                 chats.forEach((chat) => {
-                    chat.messages.forEach((message) => {
-                        if (!message.delivered_to.includes(authId)) {
-                            deliverMessage(authId, message, socket);
+                    chat.messages.forEach(async (message) => {
+                        try {
+                            const deliveredMessage = await DeliveredMessage.findOne({ message: message, user: authId });
+                            if(!deliveredMessage) deliverMessage(authId, message, socket);
+                        }
+                        catch(error) {
+                            socket.emit('chat error', 'An unknown error occurred');
                         }
                     })
                 })
@@ -191,8 +236,8 @@ module.exports = {
             });
 
             socket.on('join room', (data) => {
-                if(currentRoom) {
-                    socket.leave(currentRoom);    
+                if (currentRoom) {
+                    socket.leave(currentRoom);
                 }
                 currentRoom = data;
                 socket.join(currentRoom);
@@ -212,8 +257,8 @@ module.exports = {
                 typingUsers.delete(authUser?.username);
                 socket.leave(currentRoom);
                 socket.broadcast.emit('isTyping', Array.from(typingUsers));
-                await User.findOneAndUpdate({_id: authId}, {$set: {isOnline: false, lastActive: Date.now()}});
-                const response = await User.findOne({_id: authId}).populate('profile_picture');
+                await User.findOneAndUpdate({ _id: authId }, { $set: { isOnline: false, lastActive: Date.now() } });
+                const response = await User.findOne({ _id: authId }).populate('profile_picture');
                 io.emit('user status change', response);
             });
         });
