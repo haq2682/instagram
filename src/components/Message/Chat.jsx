@@ -155,6 +155,24 @@ export default function Chat() {
     }, []);
 
     useEffect(() => {
+        socket.on('messages delivered', (data) => {
+            setMessages((prevMessages) => {
+                return prevMessages.map(message => {
+                    const deliveredMessage = data.find(m => m._id === message._id);
+                    if (deliveredMessage) {
+                        return { ...message, ...deliveredMessage };
+                    }
+                    return message;
+                });
+            });
+        });
+
+        return () => {
+            socket.off('messages delivered');
+        }
+    }, []);
+
+    useEffect(() => {
         socket.on('isTyping', (users) => {
             const messagesDiv = document.querySelector('.messages-sub-div');
             const initialScrollTop = messagesDiv.scrollTop;

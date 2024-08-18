@@ -22,11 +22,98 @@ async function deliverMessage(memberId, message, socket) {
         newMessageDelivered.message = message._id;
         await newMessageDelivered.save();
         
-        await Message.findOneAndUpdate(
+        const delivered = await Message.findOneAndUpdate(
             { _id: message._id },
             { $addToSet: { delivered_to: newMessageDelivered._id } },
             { new: true }
-        );
+        ).populate([
+            {
+                path: 'media',
+            },
+            {
+                path: 'user',
+                populate: [
+                    {
+                        path: 'profile_picture'
+                    }
+                ]
+            },
+            {
+                path: 'reply_to',
+                populate: [
+                    {
+                        path: 'media'
+                    },
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    },
+                    {
+                        path: 'likes'
+                    },
+                    {
+                        path: 'seen_by',
+                        populate: [
+                            {
+                                path: 'user',
+                                populate: [
+                                    {
+                                        path: 'profile_picture'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        path: 'delivered_to',
+                        populate: [
+                            {
+                                path: 'user',
+                                populate: [
+                                    {
+                                        path: 'profile_picture'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                path: 'likes'
+            },
+            {
+                path: 'seen_by',
+                populate: [
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                path: 'delivered_to',
+                populate: [
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]);
+        return delivered;
     }
     catch (error) {
         console.log(error.message);
@@ -36,9 +123,106 @@ async function deliverMessage(memberId, message, socket) {
 
 async function readMessage(memberId, message, socket) {
     try {
-
+        const newMessageSeen = new SeenMessage();
+        newMessageSeen.user = memberId;
+        newMessageSeen.message = message._id;
+        await newMessageSeen.save();
+        
+        const seen = await Message.findOneAndUpdate(
+            { _id: message._id },
+            { $addToSet: { seen_by: newMessageSeen._id } },
+            { new: true }
+        ).populate([
+            {
+                path: 'media',
+            },
+            {
+                path: 'user',
+                populate: [
+                    {
+                        path: 'profile_picture'
+                    }
+                ]
+            },
+            {
+                path: 'reply_to',
+                populate: [
+                    {
+                        path: 'media'
+                    },
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    },
+                    {
+                        path: 'likes'
+                    },
+                    {
+                        path: 'seen_by',
+                        populate: [
+                            {
+                                path: 'user',
+                                populate: [
+                                    {
+                                        path: 'profile_picture'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        path: 'delivered_to',
+                        populate: [
+                            {
+                                path: 'user',
+                                populate: [
+                                    {
+                                        path: 'profile_picture'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                path: 'likes'
+            },
+            {
+                path: 'seen_by',
+                populate: [
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                path: 'delivered_to',
+                populate: [
+                    {
+                        path: 'user',
+                        populate: [
+                            {
+                                path: 'profile_picture'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]);
+        return seen;
     }
     catch (error) {
+        console.log(error.message);
         socket.emit('chat error', 'An unknown error occurred');
     }
 }
@@ -83,7 +267,7 @@ async function createNewMessage(data, socket) {
         await newMessage.save();
 
         await deliverMessage(data.authId, newMessage, socket);
-        // await readMessage(data.authId, newMessage, socket);
+        await readMessage(data.authId, newMessage, socket);
 
         const chatOfMessage = await Chat.findOne({ _id: chatRoom._id }).populate('members');
         const membersOfChat = chatOfMessage.members;
@@ -184,7 +368,6 @@ async function createNewMessage(data, socket) {
         return message;
     }
     catch (error) {
-        console.log(error.message);
         socket.emit('chat error', 'An unknown error occurred');
     }
 }
@@ -214,18 +397,34 @@ module.exports = {
                 ]);
 
                 authId = response._id;
-                let chats = response.chats;
-                chats.forEach((chat) => {
-                    chat.messages.forEach(async (message) => {
-                        try {
-                            const deliveredMessage = await DeliveredMessage.findOne({ message: message, user: authId });
-                            if(!deliveredMessage) deliverMessage(authId, message, socket);
+                const undeliveredMessages = await Message.aggregate([
+                    { $match: { chat: { $in: response.chats } } },
+                    {
+                        $lookup: {
+                            from: 'deliveredmessages',
+                            localField: '_id',
+                            foreignField: 'message',
+                            as: 'deliveries'
                         }
-                        catch(error) {
-                            socket.emit('chat error', 'An unknown error occurred');
+                    },
+                    {
+                        $match: {
+                            deliveries: {
+                                $not: { $elemMatch: { user: authId } }
+                            }
                         }
-                    })
-                })
+                    }
+                ]);
+
+                if(undeliveredMessages.length > 0) {
+                    let deliveredMessages = [];
+                    for (const message of undeliveredMessages) {
+                        const delivered = await deliverMessage(authId, message, socket);
+                        deliveredMessages.push(delivered);
+                    }
+                    io.emit('messages delivered', deliveredMessages);
+                }
+                
                 io.emit('user status change', response);
             })
 

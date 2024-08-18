@@ -43,14 +43,11 @@ const groupMessagesByDateAndCluster = (messages) => {
             }
             prevMessage = message;
         });
-
         if (currentCluster.length > 0) {
             clusters.push(currentCluster);
         }
-
         return { date, clusters };
     });
-
     return groupedMessages;
 };
 
@@ -229,13 +226,13 @@ export default function Messages(props) {
                             }
                             <p className="text-white">{props.message?.description}</p>
                             <div className="mt-1">
-                                <div className="float-end text-xs text-white opacity-60">
-                                    <span className="mr-2">{moment(props.message.created_at).format('LT')}</span>
+                                <div className="float-end text-xs text-white opacity-100">
+                                    <span className="mr-2 opacity-60">{moment(props.message.created_at).format('LT')}</span>
                                     {
-                                        props.message.delivered_to.length !== props.chat.members.length && <Send size="15" />
+                                        props.message.delivered_to.length !== props.chat.members.length && <Send size="15" className={`opacity-50`}/>
                                     } 
                                     {
-                                        props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" />
+                                        props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" className={`text-emerald-300`}/>
                                     }
                                 </div>
                             </div>
@@ -396,15 +393,15 @@ export default function Messages(props) {
                                     )
                                 }
                                 <p>{props.message?.description}</p>
-                                <div className="mt-1 opacity-50">
+                                <div className="mt-1 opacity-100">
                                     <div className="float-start text-xs">
                                         {
-                                            props.message.delivered_to.length !== props.chat.members.length && <Send size="15" />
+                                            props.message.delivered_to.length !== props.chat.members.length && <Send size="15" className={`opacity-50`}/>
                                         }
                                         {
-                                            props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" />
+                                            props.message.delivered_to.length === props.chat.members.length && <SendFill size="15" className={`text-emerald-300`}/>
                                         }
-                                        <span className="ml-2">{moment(props.message.created_at).format('LT')}</span>
+                                        <span className="ml-2 opacity-50">{moment(props.message.created_at).format('LT')}</span>
                                     </div>
                                 </div>
                             </div>
