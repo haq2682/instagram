@@ -123,103 +123,106 @@ async function deliverMessage(memberId, message, socket) {
 
 async function readMessage(memberId, message, socket) {
     try {
-        const newMessageSeen = new SeenMessage();
-        newMessageSeen.user = memberId;
-        newMessageSeen.message = message._id;
-        await newMessageSeen.save();
-        
-        const seen = await Message.findOneAndUpdate(
-            { _id: message._id },
-            { $addToSet: { seen_by: newMessageSeen._id } },
-            { new: true }
-        ).populate([
-            {
-                path: 'media',
-            },
-            {
-                path: 'user',
-                populate: [
-                    {
-                        path: 'profile_picture'
-                    }
-                ]
-            },
-            {
-                path: 'reply_to',
-                populate: [
-                    {
-                        path: 'media'
-                    },
-                    {
-                        path: 'user',
-                        populate: [
-                            {
-                                path: 'profile_picture'
-                            }
-                        ]
-                    },
-                    {
-                        path: 'likes'
-                    },
-                    {
-                        path: 'seen_by',
-                        populate: [
-                            {
-                                path: 'user',
-                                populate: [
-                                    {
-                                        path: 'profile_picture'
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        path: 'delivered_to',
-                        populate: [
-                            {
-                                path: 'user',
-                                populate: [
-                                    {
-                                        path: 'profile_picture'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                path: 'likes'
-            },
-            {
-                path: 'seen_by',
-                populate: [
-                    {
-                        path: 'user',
-                        populate: [
-                            {
-                                path: 'profile_picture'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                path: 'delivered_to',
-                populate: [
-                    {
-                        path: 'user',
-                        populate: [
-                            {
-                                path: 'profile_picture'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]);
-        return seen;
+        const seenMessage = await SeenMessage.findOne({ user: memberId, message: message._id });
+        if (!seenMessage) {
+            const newMessageSeen = new SeenMessage();
+            newMessageSeen.user = memberId;
+            newMessageSeen.message = message._id;
+            await newMessageSeen.save();
+
+            const seen = await Message.findOneAndUpdate(
+                { _id: message._id },
+                { $addToSet: { seen_by: newMessageSeen._id } },
+                { new: true }
+            ).populate([
+                {
+                    path: 'media',
+                },
+                {
+                    path: 'user',
+                    populate: [
+                        {
+                            path: 'profile_picture'
+                        }
+                    ]
+                },
+                {
+                    path: 'reply_to',
+                    populate: [
+                        {
+                            path: 'media'
+                        },
+                        {
+                            path: 'user',
+                            populate: [
+                                {
+                                    path: 'profile_picture'
+                                }
+                            ]
+                        },
+                        {
+                            path: 'likes'
+                        },
+                        {
+                            path: 'seen_by',
+                            populate: [
+                                {
+                                    path: 'user',
+                                    populate: [
+                                        {
+                                            path: 'profile_picture'
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            path: 'delivered_to',
+                            populate: [
+                                {
+                                    path: 'user',
+                                    populate: [
+                                        {
+                                            path: 'profile_picture'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    path: 'likes'
+                },
+                {
+                    path: 'seen_by',
+                    populate: [
+                        {
+                            path: 'user',
+                            populate: [
+                                {
+                                    path: 'profile_picture'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    path: 'delivered_to',
+                    populate: [
+                        {
+                            path: 'user',
+                            populate: [
+                                {
+                                    path: 'profile_picture'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]);
+            return seen;
+        }
     }
     catch (error) {
         console.log(error.message);
@@ -441,6 +444,12 @@ module.exports = {
                 currentRoom = data;
                 socket.join(currentRoom);
             });
+
+            socket.on('read message', async (data) => {
+                const message = await Message.findOne({_id: data._id});
+                const seenMessage = await readMessage(authId, message, socket);
+                io.emit('message seen', seenMessage);
+            })
 
             socket.on('typing', (data) => {
                 typingUsers.add(data.username);

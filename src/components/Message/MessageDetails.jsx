@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, Accordion, AccordionItem } from "@nextui-org/react";
-import { Send } from '@styled-icons/bootstrap/Send';
 import { SendFill } from 'styled-icons/bootstrap';
 import axios from 'axios';
 
