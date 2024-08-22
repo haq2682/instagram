@@ -26,7 +26,7 @@ const Room = (props) => {
 
     useEffect(() => {
         socket.on('user status change', (data) => {
-            if(data._id === otherUser?._id) {
+            if(data?._id === otherUser?._id) {
                 setOtherUser((previous) => {
                     return {...previous, ...data}
                 });

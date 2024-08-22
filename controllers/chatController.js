@@ -373,5 +373,22 @@ module.exports = {
         catch(error) {
             return res.status(500).json({message: 'An unknown error occurred'});
         }
+    },
+    newGroup: async (req, res) => {
+        try {
+            const newGroup = new Chat();
+            newGroup.members.push(req.user._id);
+            for(const user of req.body.users) {
+                newGroup.members.push(user);
+            }
+            newGroup.group_name = req.body.group_name;
+            newGroup.chat_type = 'group';
+            newGroup.administrators.push(req.user._id);
+            newGroup.save();
+            return res.send(newGroup);
+        }
+        catch(error) {
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
     }
 }

@@ -327,14 +327,34 @@ export default function Chat() {
                 {currentRoom && (
                     <div className="flex w-full ml-3">
                         <div className="flex items-center">
-                            <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={(currentRoom.chat_type === 'individual' && !otherUser?.isOnline)}>
-                                <img src={`${currentRoom.chat_type === 'individual' ? otherUser?.profile_picture.filename : null}`}
-                                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp" />
-                            </Badge>
+                            {
+                                currentRoom.chat_type === 'individual' ? (
+                                    <>
+                                        <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={(currentRoom.chat_type === 'individual' || !otherUser?.isOnline)}>
+                                            <img src={`${currentRoom.chat_type === 'individual' ? otherUser?.profile_picture.filename : null}`}
+                                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp" />
+                                        </Badge>
+                                    </>
+                                ) : (
+                                    <>
+                                        {
+                                            currentRoom.profile_picture ? (
+                                                <>
+                                                    <img src={`${currentRoom.profile_picture}`} alt="groupPfp"/>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Avatar name={`${currentRoom.group_name?.charAt(0)}`} />
+                                                </>
+                                            )
+                                        }
+                                    </>
+                                )
+                            }
                         </div>
                         <div className="m-3 w-full">
                             <Link to={`/profile/${otherUser?.username}`}>
-                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : null}</h1>
+                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : currentRoom.group_name}</h1>
                             </Link>
                             <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
                                 Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter-first-minute" />}
