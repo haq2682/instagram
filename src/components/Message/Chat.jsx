@@ -209,6 +209,7 @@ export default function Chat() {
                 try {
                     const roomResponse = await axios.get(`/api/chat/room/${id}/get`, { cancelToken: cancelTokenSource.token });
                     setCurrentRoom(roomResponse.data);
+                    setMessages([]);
                     socket.emit('join room', roomResponse.data._id);
 
                     const messagesResponse = await axios.get(`/api/chat/room/${roomResponse.data._id}/messages/get/1`, { cancelToken: cancelTokenSource.token });
@@ -217,6 +218,7 @@ export default function Chat() {
                     if (axios.isCancel(error)) {
                         console.log('Request canceled', error.message);
                     }
+                    setError(error.response.data.message);
                     setMessages([]);
                 } finally {
                     setRoomFetchLoading(false);
@@ -335,7 +337,7 @@ export default function Chat() {
                                 <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : null}</h1>
                             </Link>
                             <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
-                                Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter" />} ago
+                                Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter-first-minute" />}
                             </>))) : null}</p>
                         </div>
                     </div>

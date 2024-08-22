@@ -17,7 +17,9 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 router.get('/join/:id', attachUser, chatController.joinRoom);
-router.get('/individual/getAll', attachUser, chatController.getAllIndividualRooms);
+router.get('/individual/getAllIndividualRooms', attachUser, chatController.getAllIndividualRooms);
+router.get('/group/getAll', attachUser, chatController.getAllGroupRooms);
+router.get('/group/user/followers/:page_number/get', attachUser, chatController.getFollowers);
 router.get('/room/:id/get', attachUser, chatController.getRoom);
 router.post('/new/message', attachUser, upload.single('file'), chatController.newMessage);
 router.get('/room/:id/messages/get/:page_number', attachUser, chatController.getRoomMessages);

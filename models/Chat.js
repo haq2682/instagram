@@ -18,6 +18,9 @@ const chatSchema = new Schema({
         type: String,
         default: 'individual'
     },
+    profile_picture: {
+        type: String
+    },
     messages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'

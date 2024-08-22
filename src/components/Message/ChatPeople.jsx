@@ -58,7 +58,7 @@ const Room = (props) => {
             </div>
             <div className="flex flex-col items-center">
                 <div className="rounded-full bg-red-500 text-white text-center px-1 text-xs my-1">99+</div>
-                <p className="text-xs">{latestMessage && <ReactTimeAgo date={latestMessage?.created_at} locale="en-US" timeStyle="twitter" />}</p>
+                <p className="text-xs">{latestMessage && <ReactTimeAgo date={latestMessage?.created_at} locale="en-US" timeStyle="twitter-first-minute" />}</p>
             </div>
         </div>
     );
@@ -75,7 +75,7 @@ export default function ChatPeople() {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.get('/api/chat/individual/getAll');
+            const response = await axios.get('/api/chat/individual/getAllIndividualRooms');
             setChats(response.data);
         }
         catch(error) {
