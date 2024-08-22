@@ -31,7 +31,7 @@ module.exports = {
     },
     getAllIndividualRooms: async (req, res) => {
         try {
-            const rooms = await Chat.find({members: {$in: req.user._id}}).populate([
+            const rooms = await Chat.find({members: {$in: req.user._id}, chat_type: 'individual'}).populate([
                 {
                     path: 'members',
                     model: 'User',
@@ -54,6 +54,33 @@ module.exports = {
                 }
             ]);
             if(rooms.length === 0) return res.status(404).json({message: 'No chats found'});
+            return res.send(rooms);
+        }
+        catch(error) {
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    },
+    getAllGroupRooms: async (req, res) => {
+        try {
+            const rooms = await Chat.find({members: {$in: req.user._id}, chat_type: 'group'}).populate([
+                {
+                    path: 'members',
+                    populate: [
+                        {
+                            path: 'profile_picture',
+                        }
+                    ]
+                },
+                {
+                    path: 'messages',
+                    populate: [
+                        {
+                            path: 'user'
+                        }
+                    ]
+                }
+            ]);
+            if(rooms.length === 0) return res.status(404).json({message: 'No groups found'});
             return res.send(rooms);
         }
         catch(error) {
@@ -318,6 +345,30 @@ module.exports = {
             ]);
             if(!message) return res.status(404).json({message: 'This message does not exist'});
             return res.send(message);
+        }
+        catch(error) {
+            return res.status(500).json({message: 'An unknown error occurred'});
+        }
+    },
+    getFollowers: async (req, res) => {
+        try {
+            const user = await User.findOne({_id: req.user._id}).select("followers").populate([
+                {
+                    path: 'followers',
+                    populate: [
+                        {
+                            path: 'profile_picture',
+                        }
+                    ],
+                    options: {
+                        limit: 10,
+                        skip: (req.params.page_number - 1) * 10
+                    }
+                }
+            ]);
+            const followers = user.followers;
+            if(!followers) return res.status(404).json({message: "No followers found"});
+            return res.send(followers);
         }
         catch(error) {
             return res.status(500).json({message: 'An unknown error occurred'});
