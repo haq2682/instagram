@@ -11,11 +11,8 @@ const Group = (props) => {
     const [latestMessage, setLatestMessage] = useState(null);
 
     useEffect(() => {
-        console.log(props.newMessage); //The feature does not work if we remove this, don't know why
-        if (props.newMessage && props.newMessage.chat === props.group._id) {
-            setLatestMessage(props.newMessage);
-        }
-    }, [props.newMessage, props.group._id]);
+        setLatestMessage(props.group.messages[props.group.messages.length - 1]);
+    }, [props.group.members, props.group.messages]);
 
     useEffect(() => {
         console.log(props.newMessage); //The feature does not work if we remove this, don't know why
@@ -29,7 +26,7 @@ const Group = (props) => {
     }, [navigate]);
     return (
         <>
-            <div onClick={() => handleNavigation(props.chat._id)}
+            <div onClick={() => handleNavigation(props.group._id)}
                 className={`user my-3 flex justify-between transition-color duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 active:bg-neutral-300 dark:active:bg-neutral-900 p-3 rounded-xl cursor-pointer ${props.active && 'bg-neutral-200 dark:bg-neutral-800'}`}>
                 <div className="flex my-auto w-full h-full overflow-hidden">
                     <div>
@@ -58,13 +55,16 @@ const NewGroupModal = (props) => {
     const [error, setError] = useState('');
     const [pageNumber, setPageNumber] = useState(1);
     const [groupName, setGroupName] = useState('');
+    const bottomRef = useRef();
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const fetchUsers = useCallback(async (pgNumber) => {
         setLoading(true);
         setError('');
         try {
             const response = await axios.get(`/api/chat/group/user/followers/${pgNumber}/get`);
-            setUsers(response.data);
+            if(pgNumber === 1) setUsers(response.data);
+            else setUsers((prev) => [...prev, ...response.data]);
         }
         catch(error) {
             console.log(error);
@@ -75,12 +75,22 @@ const NewGroupModal = (props) => {
         }
     }, []);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setSubmitLoading(true);
+        setError('');
         try {
-
+            const response = await axios.post('/api/chat/group/new', {
+                users: selected,
+                group_name: groupName
+            });
+            props.setGroups(response.data);
         }
         catch(error) {
             setError(error.response.data.message);
+        }
+        finally {
+            setSubmitLoading(false); 
         }
     }
 
@@ -93,53 +103,53 @@ const NewGroupModal = (props) => {
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex justify-center">Create a new Group</ModalHeader>
-                            <ModalBody>
-                            <div>
-                                <Input value={groupName} label="Enter Group Name" size={`md`} variant="bordered" onChange={(event) => setGroupName(event.target.value)}/>
-                            </div>
-                            <div className="w-full">
-                                    {
-                                        users && (
-                                            <>
-                                                <CheckboxGroup
-                                                    label="Select Followers"
-                                                    value={selected}
-                                                    onChange={setSelected}
-                                                    classNames={{
-                                                        base: "w-full"
-                                                    }}
-                                                >
-                                                <div className="border border-neutral-500 rounded-lg max-h-[500px] overflow-y-auto">
-                                                        {
-                                                            users && users.map((user) => {
-                                                                return (
-                                                                    <>
-                                                                        <UserCheckbox user={user} />
-                                                                    </>
-                                                                )
-                                                            })
-                                                        }
-                                                </div>
-                                                </CheckboxGroup>
-                                                <p className="mt-4 ml-1 text-default-500">
-                                                    Selected: {selected.join(", ")}
-                                                </p>
-                                            </>
-                                        )
-                                    }
-                            </div>
-                            {error && <div className="text-center opacity-50 font-bold text-lg">{error}</div>}
-                            {loading && <div className="flex justify-center mt-4"><div className="loader" /></div>}
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button color="success" onPress={onClose}>
-                                    Submit
-                                </Button>
-                            </ModalFooter>
+                            <form method="POST" onSubmit={handleSubmit}>
+                                <ModalHeader className="flex justify-center">Create a new Group</ModalHeader>
+                                <ModalBody>
+                                    <div>
+                                        <Input value={groupName} label="Enter Group Name" size={`md`} variant="bordered" onChange={(event) => setGroupName(event.target.value)} />
+                                    </div>
+                                    <div className="w-full">
+                                        {
+                                            users && (
+                                                <>
+                                                    <CheckboxGroup
+                                                        label="Select Followers"
+                                                        value={selected}
+                                                        onChange={setSelected}
+                                                        classNames={{
+                                                            base: "w-full"
+                                                        }}
+                                                    >
+                                                        <div className="border border-neutral-500 rounded-lg max-h-[500px] overflow-y-auto">
+                                                            {
+                                                                users && users.map((user) => {
+                                                                    return (
+                                                                        <>
+                                                                            <UserCheckbox user={user} />
+                                                                        </>
+                                                                    )
+                                                                })
+                                                            }
+                                                            <div ref={bottomRef}/>
+                                                        </div>
+                                                    </CheckboxGroup>
+                                                </>
+                                            )
+                                        }
+                                    </div>
+                                    {error && <div className="text-center opacity-50 font-bold text-lg">{error}</div>}
+                                    {loading && <div className="flex justify-center mt-4"><div className="loader" /></div>}
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="danger" variant="light" onPress={onClose}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit" color="success" onPress={onClose} isDisabled={selected.length < 2 || !groupName || submitLoading} isLoading={submitLoading}>
+                                        Submit
+                                    </Button>
+                                </ModalFooter>
+                            </form>
                         </>
                     )}
                 </ModalContent>
@@ -152,7 +162,7 @@ const UserCheckbox = (props) => {
     return (
         <>
             <Checkbox
-                aria-label={props}
+                aria-label={props.user.username}
                 classNames={{
                     base: cn(
                         "w-full max-w-full bg-content1 m-0",
@@ -162,7 +172,7 @@ const UserCheckbox = (props) => {
                     ),
                     label: "w-full",
                 }}
-                value={props.user.username}
+                value={props.user._id}
             >
                 <div className="w-full flex gap-2">
                     <User
@@ -237,7 +247,7 @@ export default function ChatGroups() {
             }
             {error && <div className="text-center opacity-50 font-bold text-lg my-52">{error}</div>}
             {loading && <div className="flex justify-center mt-4"><div className="loader" /></div>}
-            <NewGroupModal isOpen={newGroupOpen} setClose={() => setNewGroupOpen(false)}/>
+            <NewGroupModal isOpen={newGroupOpen} setClose={() => setNewGroupOpen(false)} setGroups={setGroups}/>
         </div>
     );
 }

@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 router.get('/join/:id', attachUser, chatController.joinRoom);
+router.post('/group/new', attachUser, chatController.newGroup);
 router.get('/individual/getAllIndividualRooms', attachUser, chatController.getAllIndividualRooms);
 router.get('/group/getAll', attachUser, chatController.getAllGroupRooms);
 router.get('/group/user/followers/:page_number/get', attachUser, chatController.getFollowers);
