@@ -158,7 +158,7 @@ export default function Chat() {
         socket.on('messages delivered', (data) => {
             setMessages((prevMessages) => {
                 return prevMessages.map(message => {
-                    const deliveredMessage = data.find(m => m._id === message._id);
+                    const deliveredMessage = data.find(m => m?._id === message?._id);
                     if (deliveredMessage) {
                         return { ...message, ...deliveredMessage };
                     }
@@ -330,7 +330,7 @@ export default function Chat() {
                             {
                                 currentRoom.chat_type === 'individual' ? (
                                     <>
-                                        <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={(currentRoom.chat_type === 'individual' || !otherUser?.isOnline)}>
+                                        <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={(currentRoom.chat_type !== 'individual' || !otherUser?.isOnline)}>
                                             <img src={`${currentRoom.chat_type === 'individual' ? otherUser?.profile_picture.filename : null}`}
                                                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover" alt="otherUser-pfp" />
                                         </Badge>

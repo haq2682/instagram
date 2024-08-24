@@ -16,12 +16,13 @@ const io = new Server(9000, {
 });
 
 async function deliverMessage(memberId, message, socket) {
+    if (!memberId) return;
     try {
         const newMessageDelivered = new DeliveredMessage();
         newMessageDelivered.user = memberId;
         newMessageDelivered.message = message._id;
         await newMessageDelivered.save();
-        
+
         const delivered = await Message.findOneAndUpdate(
             { _id: message._id },
             { $addToSet: { delivered_to: newMessageDelivered._id } },
@@ -122,6 +123,7 @@ async function deliverMessage(memberId, message, socket) {
 }
 
 async function readMessage(memberId, message, socket) {
+    if (!memberId) return;
     try {
         const seenMessage = await SeenMessage.findOne({ user: memberId, message: message._id });
         if (!seenMessage) {
@@ -375,17 +377,27 @@ async function createNewMessage(data, socket) {
     }
 }
 
+async function getUnseenMessagesCount(loggedInUserId) {
+    const seenMessageIds = await SeenMessage.find({ user: loggedInUserId }).distinct('message');
+    const unseenMessages = await Message.countDocuments({
+        chat: {
+            $in: await Chat.find({ members: { $in: loggedInUserId } }).distinct('_id')
+        },
+        deleted: false,
+        _id: { $nin: seenMessageIds }  // Exclude messages that the user has seen
+    });
+    return unseenMessages;
+}
+
 module.exports = {
     initChatSocket: () => {
         io.on("connection", async (socket) => {
             let typingUsers = new Set();
-            let authUser;
-            let authId;
             let currentRoom;
 
             socket.on('init connection', async (data) => {
-                authUser = data;
-                const response = await User.findOneAndUpdate({ username: authUser?.username }, { $set: { isOnline: true } }).populate([
+                socket.authUser = data;
+                const response = await User.findOneAndUpdate({ username: socket.authUser.username }, { $set: { isOnline: true } }).populate([
                     {
                         path: 'profile_picture'
                     },
@@ -399,7 +411,6 @@ module.exports = {
                     }
                 ]);
 
-                authId = response._id;
                 const undeliveredMessages = await Message.aggregate([
                     { $match: { chat: { $in: response.chats } } },
                     {
@@ -413,25 +424,32 @@ module.exports = {
                     {
                         $match: {
                             deliveries: {
-                                $not: { $elemMatch: { user: authId } }
+                                $not: { $elemMatch: { user: socket.authUser._id } }
                             }
                         }
                     }
                 ]);
 
-                if(undeliveredMessages.length > 0) {
+                if (undeliveredMessages.length > 0) {
                     let deliveredMessages = [];
                     for (const message of undeliveredMessages) {
-                        const delivered = await deliverMessage(authId, message, socket);
+                        const delivered = await deliverMessage(socket.authUser._id, message, socket);
                         deliveredMessages.push(delivered);
                     }
                     io.emit('messages delivered', deliveredMessages);
                 }
-                
+
                 io.emit('user status change', response);
-            })
+            });
+
+            socket.on('get unseen messages count', async () => {
+                if (!socket.authUser) return;
+                let unseenMessagesCount = await getUnseenMessagesCount(socket.authUser._id);
+                socket.emit('response unseen messages count', unseenMessagesCount);
+            });
 
             socket.on('chat message', async (data) => {
+                if (!socket.authUser) return;
                 const newMessage = await createNewMessage(data, socket);
                 socket.emit('message sent', false);
                 if (newMessage) io.to(currentRoom).emit('new message', newMessage);
@@ -446,10 +464,11 @@ module.exports = {
             });
 
             socket.on('read message', async (data) => {
-                const message = await Message.findOne({_id: data._id});
-                const seenMessage = await readMessage(authId, message, socket);
+                if (!socket.authUser) return;
+                const message = await Message.findOne({ _id: data._id });
+                const seenMessage = await readMessage(socket.authUser._id, message, socket);
                 io.emit('message seen', seenMessage);
-            })
+            });
 
             socket.on('typing', (data) => {
                 typingUsers.add(data.username);
@@ -462,12 +481,14 @@ module.exports = {
             });
 
             socket.on('disconnect', async () => {
-                typingUsers.delete(authUser?.username);
+                typingUsers.delete(socket.authUser?.username);
                 socket.leave(currentRoom);
                 socket.broadcast.emit('isTyping', Array.from(typingUsers));
-                await User.findOneAndUpdate({ _id: authId }, { $set: { isOnline: false, lastActive: Date.now() } });
-                const response = await User.findOne({ _id: authId }).populate('profile_picture');
-                io.emit('user status change', response);
+                if (socket.authUser) {
+                    await User.findOneAndUpdate({ _id: socket.authUser._id }, { $set: { isOnline: false, lastActive: Date.now() } });
+                    const response = await User.findOne({ _id: socket.authUser._id }).populate('profile_picture');
+                    io.emit('user status change', response);
+                }
             });
         });
     }

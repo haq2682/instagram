@@ -14,6 +14,8 @@ const deliveredMessageSchema = new Schema({
     timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'}
 });
 
+deliveredMessageSchema.index({ user: 1, message: 1 }, { unique: true });
+
 const DeliveredMessage = mongoose.model('DeliveredMessage', deliveredMessageSchema);
 
 module.exports = DeliveredMessage;

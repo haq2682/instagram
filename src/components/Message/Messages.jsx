@@ -315,6 +315,7 @@ export default function Messages(props) {
             }
             if(!found) {
                 socket.emit('read message', props.message);
+                socket.emit('get unseen messages count');
             }
         });
         useEffect(() => {
