@@ -10,7 +10,26 @@ const Room = (props) => {
     const navigate = useNavigate();
     const [otherUser, setOtherUser] = useState(null);
     const [latestMessage, setLatestMessage] = useState(null);
+    const [unseenMessagesCount, setUnseenMessagesCount] = useState(0);
     const loggedInUser = useSelector(state => state.auth);
+
+    useEffect(() => {
+        socket.emit('get chat unseen messages count', props.chat._id);
+
+        return () => {
+            socket.off('get chat unseen messages count');
+        }
+    }, [props.chat._id]);
+
+    useEffect(() => {
+        socket.on('response chat unseen messages count', (data) => {
+            if(data.roomId === props.chat._id) setUnseenMessagesCount(data.count);
+        });
+
+        return () => {
+            socket.off('response chat unseen messages count')
+        }
+    }, [props.chat._id]);
 
     useEffect(() => {
         setOtherUser(props.chat.members.find(member => member._id !== loggedInUser._id));
@@ -44,21 +63,21 @@ const Room = (props) => {
 
     return (
         <div onClick={() => handleNavigation(props.chat._id)}
-            className={`user my-3 flex justify-between transition-color duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 active:bg-neutral-300 dark:active:bg-neutral-900 p-3 rounded-xl cursor-pointer ${props.active && 'bg-neutral-200 dark:bg-neutral-800'}`}>
+            className={`user my-3 flex justify-between transition-color duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 active:bg-neutral-300 dark:active:bg-neutral-900 px-3 pt-3 rounded-xl cursor-pointer ${props.active && 'bg-neutral-200 dark:bg-neutral-800'}`}>
             <div className="flex my-auto w-full h-full overflow-hidden">
                 <div>
                     <Badge content="" color="success" shape="circle" placement="bottom-right" isInvisible={!otherUser?.isOnline}>
                         <img src={`${otherUser?.profile_picture.filename}`} alt="people-pfp" className="rounded-full object-cover w-10 h-10" />
                     </Badge>
                 </div>
-                <div className="w-full overflow-hidden">
-                    <p className="my-auto mx-2 font-bold max-w-full truncate">{otherUser?.username}</p>
-                    {latestMessage && <p className="mx-2 text-xs max-w-full truncate">{latestMessage?.description}</p>}
+                <div className="w-full overflow-hidden flex flex-col justify-between">
+                    <p className="font-bold max-w-full truncate mx-2">{otherUser?.username}</p>
+                    {latestMessage && <p className="mx-2 text-xs max-w-full truncate mb-4">{latestMessage?.description}</p>}
                 </div>
             </div>
-            <div className="flex flex-col items-center">
-                <div className="rounded-full bg-red-500 text-white text-center px-1 text-xs my-1">99+</div>
-                <p className="text-xs">{latestMessage && <ReactTimeAgo date={latestMessage?.created_at} locale="en-US" timeStyle="twitter-first-minute" />}</p>
+            <div className="flex flex-col items-center justify-between">
+                <div className="rounded-full bg-red-500 text-white text-center px-1 text-xs my-1">{unseenMessagesCount > 0 && unseenMessagesCount}</div>
+                <p className="text-xs mb-4">{latestMessage && <ReactTimeAgo date={latestMessage?.created_at} locale="en-US" timeStyle="twitter-first-minute" />}</p>
             </div>
         </div>
     );

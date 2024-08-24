@@ -77,22 +77,22 @@ export default function Messages(props) {
         }, [ref, callback, options]);
     };
 
-    useEffect(() => {
-        socket.on('message seen', (data) => {
-            if(data) {
-                setGroupedMessages((prevGroupedMessages) =>
-                    prevGroupedMessages.map(group => ({
-                        date: group.date,
-                        clusters: group.clusters.map(cluster =>
-                            cluster.map(message =>
-                                message._id === data._id ? { ...message, ...data } : message
-                            )
-                        )
-                    }))
-                );
-            }
-        });
-    }, []);
+    // useEffect(() => {
+    //     socket.on('message seen', (data) => {
+    //         if(data) {
+    //             setGroupedMessages((prevGroupedMessages) =>
+    //                 prevGroupedMessages.map(group => ({
+    //                     date: group.date,
+    //                     clusters: group.clusters.map(cluster =>
+    //                         cluster.map(message =>
+    //                             message._id === data._id ? { ...message, ...data } : message
+    //                         )
+    //                     )
+    //                 }))
+    //             );
+    //         }
+    //     });
+    // }, []);
 
     useEffect(() => {
         setGroupedMessages([]);
@@ -316,6 +316,7 @@ export default function Messages(props) {
             if(!found) {
                 socket.emit('read message', props.message);
                 socket.emit('get unseen messages count');
+                socket.emit('get chat unseen messages count', props.chat._id);
             }
         });
         useEffect(() => {

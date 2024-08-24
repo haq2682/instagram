@@ -30,20 +30,12 @@ export default function Bottombar() {
 
     useEffect(() => {
         socket.emit('get unseen messages count');
-
-        return () => {
-            socket.off('get unseen messages count');
-        }
-    }, []);
+    });
 
     useEffect(() => {
         socket.on('response unseen messages count', (data) => {
             setUnseenMessagesCount(data);
         });
-
-        return () => {
-            socket.off('response unseen messages count');
-        }
     });
     const content = (
         <PopoverContent className="sm:hidden">

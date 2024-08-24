@@ -41,7 +41,7 @@ export default function Sidebar() {
         return () => {
             socket.off('response unseen messages count');
         }
-    });
+    }, []);
 
     const togglePostModal = () => {
         setPostModal(!postModal);
