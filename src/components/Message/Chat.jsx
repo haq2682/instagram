@@ -147,6 +147,25 @@ export default function Chat() {
     }, []);
 
     useEffect(() => {
+        socket.on('message seen', (data) => {
+            if (data) {
+                setMessages((prev) =>
+                    prev.map((message) => {
+                        if (message._id === data._id) {
+                            return { ...message, seen_by: data.seen_by };
+                        }
+                        return message;
+                    })
+                );
+            }
+        });
+
+        return () => {
+            socket.off('message seen');
+        };
+    }, []);
+
+    useEffect(() => {
         socket.on('chat error', (data) => setError(data));
 
         return () => {
@@ -218,7 +237,7 @@ export default function Chat() {
                     if (axios.isCancel(error)) {
                         console.log('Request canceled', error.message);
                     }
-                    setError(error.response.data.message);
+                    setError(error.response?.data.message);
                     setMessages([]);
                 } finally {
                     setRoomFetchLoading(false);
@@ -352,14 +371,20 @@ export default function Chat() {
                                 )
                             }
                         </div>
-                        <div className="m-3 w-full">
-                            <Link to={`/profile/${otherUser?.username}`}>
-                                <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : currentRoom.group_name}</h1>
-                            </Link>
-                            <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
-                                Active {otherUser?.lastActive && <ReactTimeAgo date={otherUser?.lastActive} locale="en-US" timeStyle="twitter-first-minute" />}
-                            </>))) : null}</p>
-                        </div>
+                        {
+                            otherUser && (
+                                <>
+                                    <div className="m-3 w-full">
+                                        <Link to={`/profile/${otherUser?.username}`}>
+                                            <h1 className="text-sm sm:text-md font-bold cursor-pointer truncate max-w-full">{currentRoom.chat_type === 'individual' ? otherUser?.username : currentRoom.group_name}</h1>
+                                        </Link>
+                                        <p className="opacity-40 text-xs">{(currentRoom.chat_type === 'individual') ? ((otherUser?.isOnline ? 'Online' : (<>
+                                            Active {otherUser.lastActive && <ReactTimeAgo date={otherUser.lastActive} locale="en-US" timeStyle="twitter-first-minute" />}
+                                        </>))) : null}</p>
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
                 )}
                 <div className="flex p-3 justify-end w-full">
@@ -416,14 +441,14 @@ export default function Chat() {
                                     <div className="text-center font-bold text-md opacity-50">{error}</div>
                                 </div>
                             )}
-                            {!messageFetchLoading && !roomFetchLoading && id && messages.length === 0 && (
+                            {!messageFetchLoading && !roomFetchLoading && id && messages?.length === 0 && (
                                 <div className="flex justify-center items-center h-full">
                                     <div className="text-center font-bold text-md opacity-50">This chat seems empty. Be the first one to initiate the chat :)</div>
                                 </div>
                             )}
-                            <div className={`messages-sub-div overflow-y-auto ${messages.length !== 0 ? 'h-full' : null}`}>
+                            <div className={`messages-sub-div overflow-y-auto ${messages?.length !== 0 ? 'h-full' : null}`}>
                                 <div className="flex flex-col justify-end min-h-[96%] m-2">
-                                    {messages.length > 10 && <div className="mb-4 w-full" ref={lastMessageElementRef} />}
+                                    {messages?.length > 10 && <div className="mb-4 w-full" ref={lastMessageElementRef} />}
                                     {!roomFetchLoading && <Messages messages={messages} otherUser={otherUser} setReply={handleSetReply} chatId={id} chat={currentRoom}/>}
                                     {
                                         otherUsers?.map((user) => {

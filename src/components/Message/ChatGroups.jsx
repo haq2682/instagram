@@ -9,6 +9,25 @@ import { AddCircle } from "styled-icons/ionicons-solid";
 const Group = (props) => {
     const navigate = useNavigate();
     const [latestMessage, setLatestMessage] = useState(null);
+    const [unseenMessagesCount, setUnseenMessagesCount] = useState(0);
+
+    useEffect(() => {
+        socket.emit('get chat unseen messages count', props.group._id);
+
+        return () => {
+            socket.off('get chat unseen messages count');
+        }
+    }, [props.group._id]);
+
+    useEffect(() => {
+        socket.on('response chat unseen messages count', (data) => {
+            if (data.roomId === props.group._id) setUnseenMessagesCount(data.count);
+        });
+
+        return () => {
+            socket.off('response chat unseen messages count')
+        }
+    }, [props.group._id]);
 
     useEffect(() => {
         setLatestMessage(props.group.messages[props.group.messages.length - 1]);
@@ -27,21 +46,21 @@ const Group = (props) => {
     return (
         <>
             <div onClick={() => handleNavigation(props.group._id)}
-                className={`user my-3 flex justify-between transition-color duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 active:bg-neutral-300 dark:active:bg-neutral-900 p-3 rounded-xl cursor-pointer ${props.active && 'bg-neutral-200 dark:bg-neutral-800'}`}>
+                className={`user my-3 flex justify-between transition-color duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 active:bg-neutral-300 dark:active:bg-neutral-900 px-3 pt-3 rounded-xl cursor-pointer ${props.active && 'bg-neutral-200 dark:bg-neutral-800'}`}>
                 <div className="flex my-auto w-full h-full overflow-hidden">
                     <div>
                         {
                             props.group.profile_picture ? (<img src={`${props.group?.profile_picture}`} alt="people-pfp" className="rounded-full object-cover w-10 h-10" />) : (<Avatar name={`${props.group.group_name?.charAt(0)}`} />)
                         }
                     </div>
-                    <div className="w-full overflow-hidden">
+                    <div className="w-full overflow-hidden flex flex-col justify-between">
                         <p className="my-auto mx-2 font-bold max-w-full truncate">{props.group.group_name}</p>
-                        {latestMessage && <p className="mx-2 text-xs max-w-full truncate">{latestMessage?.description}</p>}
+                        {latestMessage && <p className="mx-2 text-xs max-w-full truncate">{latestMessage.description}</p>}
                     </div>
                 </div>
-                <div className="flex flex-col items-center">
-                    <div className="rounded-full bg-red-500 text-white text-center px-1 text-xs my-1">99+</div>
-                    <p className="text-xs">{latestMessage && <ReactTimeAgo date={latestMessage?.created_at} locale="en-US" timeStyle="twitter" />}</p>
+                <div className="flex flex-col items-center justify-between">
+                    <div className="rounded-full bg-red-500 text-white text-center px-1 text-xs my-1">{unseenMessagesCount > 0 && unseenMessagesCount}</div>
+                    <p className="text-xs mb-4">{latestMessage && <ReactTimeAgo date={latestMessage.created_at} locale="en-US" timeStyle="twitter" />}</p>
                 </div>
             </div>
         </>
