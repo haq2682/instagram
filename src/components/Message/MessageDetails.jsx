@@ -34,13 +34,13 @@ export default function MessageDetails(props) {
             <>
                 <div className="shadow-md rounded-lg flex justify-between items-center w-full mb-4 p-4 bg-neutral-200 dark:bg-neutral-800">
                     <div className="flex items-center max-w-full overflow-hidden">
-                        <img src={props.delivery.user.profile_picture.filename} alt="pfp" className="rounded-full object-cover w-12 h-12" />
+                        <img src={props.delivery.user?.profile_picture.filename} alt="pfp" className="rounded-full object-cover w-12 h-12" />
                         <div className="font-bold max-w-full text-md ml-2 truncate">
-                            {props.delivery.user.username}
+                            {props.delivery.user?.username}
                         </div>
                     </div>
                     <div className="text-xs sm:text-sm">
-                        {props.delivery.created_at}
+                        {props.delivery?.created_at}
                     </div>
                 </div>
             </>
@@ -74,7 +74,7 @@ export default function MessageDetails(props) {
                                                         <div className="my-2 w-full max-h-[500px] overflow-y-scroll">
                                                             {
                                                                 message.delivered_to.map((delivery) => {
-                                                                    return <UserComponent delivery={delivery} />
+                                                                    return <UserComponent key={delivery._id} delivery={delivery} />
                                                                 })
                                                             }
                                                         </div>
@@ -87,7 +87,7 @@ export default function MessageDetails(props) {
                                                         <div className="my-2 w-full max-h-[500px] overflow-y-scroll">
                                                             {
                                                                 message.seen_by.map((seen) => {
-                                                                    return <UserComponent delivery={seen} />
+                                                                    return <UserComponent key={seen._id} delivery={seen} />
                                                                 })
                                                             } 
                                                         </div>

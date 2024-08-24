@@ -1,6 +1,6 @@
 import Logo from '../../assets/instagram-logo.svg';
 import ThemeSwitcher from '../ThemeSwitcher';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {Link, Outlet, useLocation} from 'react-router-dom';
 import {Home} from '@styled-icons/material/Home';
 import {Search} from '@styled-icons/evaicons-solid/Search';
@@ -16,12 +16,32 @@ import {Moon} from "@styled-icons/heroicons-solid/Moon";
 import {useDispatch} from 'react-redux';
 import {openNotificationBar} from '../../redux/notificationBarSlice';
 import PostModal from "../PostModal";
+import socket from "../../socketConfig";
 
 export default function Sidebar() {
     const dispatch = useDispatch();
     const [postModal, setPostModal] = useState(false);
     const [darkState, setDarkState] = useState(null);
+    const [unseenMessagesCount, setUnseenMessagesCount] = useState(0);
     let location = useLocation();
+
+    useEffect(() => {
+        socket.emit('get unseen messages count');
+
+        return () => {
+            socket.off('get unseen messages count');
+        }
+    }, []);
+
+    useEffect(() => {
+        socket.on('response unseen messages count', (data) => {
+            setUnseenMessagesCount(data);
+        });
+
+        return () => {
+            socket.off('response unseen messages count');
+        }
+    });
 
     const togglePostModal = () => {
         setPostModal(!postModal);
@@ -63,7 +83,7 @@ export default function Sidebar() {
                             <Link to="/messages">
                                 <li className={`mx-2 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-800 transition px-4 py-4 active:bg-neutral-400 dark:active:bg-neutral-900 relative ${(location.pathname.startsWith('/messages') && localStorage.theme === 'dark') ? 'dark-active' : (location.pathname.startsWith('/messages') ? 'active' : '')}`}>
                                     <div className="lg:float-left lg:relative lg:bottom-2 lg:mr-4">
-                                        <Badge color="danger" content="99+">
+                                        <Badge color="danger" content={unseenMessagesCount} isInvisible={unseenMessagesCount === 0}>
                                             <MessageAltDetail size="33"/>
                                         </Badge>
                                     </div>

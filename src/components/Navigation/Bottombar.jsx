@@ -11,20 +11,40 @@ import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
 import {Popover, PopoverTrigger, PopoverContent, Badge} from "@nextui-org/react";
 import {Link, Outlet} from 'react-router-dom';
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {SunFill} from "@styled-icons/bootstrap/SunFill";
 import {Moon} from "@styled-icons/heroicons-solid/Moon";
 import {useDispatch} from 'react-redux';
 import { openNotificationBar } from '../../redux/notificationBarSlice';
 import PostModal from "../PostModal";
+import socket from "../../socketConfig";
 
 export default function Bottombar() {
     const dispatch = useDispatch();
     const [postModal, setPostModal] = useState(false);
     const [darkState, setDarkState] = useState(false);
+    const [unseenMessagesCount, setUnseenMessagesCount] = useState(0);
     const togglePostModal = () => {
         setPostModal(!postModal);
     }
+
+    useEffect(() => {
+        socket.emit('get unseen messages count');
+
+        return () => {
+            socket.off('get unseen messages count');
+        }
+    }, []);
+
+    useEffect(() => {
+        socket.on('response unseen messages count', (data) => {
+            setUnseenMessagesCount(data);
+        });
+
+        return () => {
+            socket.off('response unseen messages count');
+        }
+    });
     const content = (
         <PopoverContent className="sm:hidden">
             <ul className="px-1 py-3">
@@ -88,7 +108,7 @@ export default function Bottombar() {
                 </li>
                 <Link to="/messages">
                     <li className="mt-2.5 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
-                        <Badge color="danger" content="99+"><MessageAltDetail size="34"/></Badge>
+                        <Badge content={unseenMessagesCount} isInvisible={unseenMessagesCount === 0} color="danger"><MessageAltDetail size="34"/></Badge>
                     </li>
                 </Link>
                 <li onClick={() => dispatch(openNotificationBar())} className="mt-2.5 hover:bg-neutral-300 p-1.5 rounded-lg dark:hover:bg-neutral-800 transition active:bg-neutral-400 dark:active:bg-neutral-900">
