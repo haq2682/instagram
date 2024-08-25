@@ -476,7 +476,7 @@ export default function Chat() {
                 </div>
             </div>
             <ChatRooms chatBarOpen={chatBarOpen} setOpen={setChatBarOpen} otherUser={otherUser}/>
-            <ChatDetails detailsBarOpen={detailsBarOpen} setOpen={setDetailsBarOpen} />
+            <ChatDetails detailsBarOpen={detailsBarOpen} setOpen={setDetailsBarOpen} currentRoom={currentRoom}/>
             <Modal isOpen={reactionsModalOpen} onClose={() => setReactionsModalOpen(false)} placement="center">
                 <ModalContent>
                     <ModalHeader>

@@ -50,9 +50,9 @@ module.exports = {
                             path: 'user',
                             model: 'User'
                         }
-                    ]
+                    ],
                 }
-            ]);
+            ]).sort({'messages.created_at': -1});
             if(rooms.length === 0) return res.status(404).json({message: 'No chats found'});
             return res.send(rooms);
         }
