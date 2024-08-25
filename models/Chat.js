@@ -21,6 +21,10 @@ const chatSchema = new Schema({
     profile_picture: {
         type: String
     },
+    muted_for: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     messages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'

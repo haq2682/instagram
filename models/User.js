@@ -148,6 +148,22 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    muted_chats: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Chat'
+    }],
+    muted_posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
+    }],
+    following_posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
+    }],
+    close_friends: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     created_at: {
         type: Date,
         default: new Date(),

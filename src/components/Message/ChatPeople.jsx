@@ -112,6 +112,17 @@ export default function ChatPeople() {
     useEffect(() => {
         socket.on('new message', (data) => {
             setNewMessage(data);
+
+            setChats((previousChats) => {
+                const chatIndex = previousChats.findIndex(chat => chat._id === data.chat);
+                if(chatIndex !== -1) {
+                    const updatedChats = [...previousChats];
+                    const [updatedChat] = updatedChats.splice(chatIndex, 1);
+                    updatedChats.unshift(updatedChat);
+                    return updatedChats;
+                }
+                return previousChats;
+            })
         });
 
         return () => {
