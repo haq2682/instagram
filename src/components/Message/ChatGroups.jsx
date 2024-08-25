@@ -54,8 +54,30 @@ const Group = (props) => {
                         }
                     </div>
                     <div className="w-full overflow-hidden flex flex-col justify-between">
-                        <p className="my-auto mx-2 font-bold max-w-full truncate">{props.group.group_name}</p>
-                        {latestMessage && <p className="mx-2 text-xs max-w-full truncate">{latestMessage.description}</p>}
+                        <p className="font-bold max-w-full truncate mx-2">{props.group.group_name}</p>
+                        {latestMessage && <p className="mx-2 text-xs max-w-full truncate mb-4">
+                            {
+                                latestMessage.media ? (
+                                    <>
+                                        {
+                                            latestMessage.media.media_type === 'image' ? (
+                                                <>
+                                                    <div className="font-bold italic underline">Image</div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="font-bold italic underline">Video</div>
+                                                </>
+                                            )
+                                        }
+                                    </>
+                                ) : (
+                                    <>
+                                        {latestMessage.description}
+                                    </>
+                                )
+                            }
+                        </p>}
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-between">

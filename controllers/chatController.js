@@ -52,7 +52,7 @@ module.exports = {
                         }
                     ],
                 }
-            ]).sort({'messages.created_at': -1});
+            ]).sort({'updated_at': -1});
             if(rooms.length === 0) return res.status(404).json({message: 'No chats found'});
             return res.send(rooms);
         }
@@ -79,7 +79,7 @@ module.exports = {
                         }
                     ]
                 }
-            ]);
+            ]).sort({'updated_at': -1});
             if(rooms.length === 0) return res.status(404).json({message: 'No groups found'});
             return res.send(rooms);
         }

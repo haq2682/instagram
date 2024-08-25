@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, Accordion, AccordionItem } from "@nextui-org/react";
 import { SendFill } from 'styled-icons/bootstrap';
 import axios from 'axios';
+import moment from 'moment';
 
 export default function MessageDetails(props) {
     const [message, setMessage] = useState(null);
@@ -40,7 +41,7 @@ export default function MessageDetails(props) {
                         </div>
                     </div>
                     <div className="text-xs sm:text-sm">
-                        {props.delivery?.created_at}
+                        {props.delivery && moment(props.delivery.created_at).format('lll')}
                     </div>
                 </div>
             </>
