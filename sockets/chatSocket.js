@@ -6,6 +6,9 @@ const Media = require('../models/Media');
 const User = require('../models/User');
 const SeenMessage = require('../models/SeenMessage');
 const DeliveredMessage = require('../models/DeliveredMessage');
+const fs = require('fs');
+const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
 
 const io = new Server(9000, {
     cors: {
@@ -14,6 +17,24 @@ const io = new Server(9000, {
         origin: process.env.FRONT_END_URL
     }
 });
+
+function compressVideo(inputPath, outputPath) {
+    return new Promise((resolve, reject) => {
+        ffmpeg(inputPath)
+            .videoBitrate(1000)
+            .outputOptions([
+                '-maxrate 1M',
+                '-bufsize 2M'
+            ])
+            .on('end', () => {
+                resolve();
+            })
+            .on('error', (err) => {
+                reject(err);
+            })
+            .save(outputPath);
+    });
+}
 
 async function deliverMessage(memberId, message, socket) {
     if (!memberId) return;
@@ -254,8 +275,19 @@ async function createNewMessage(data, socket) {
             else {
                 newMedia.encoding = file.encoding;
                 newMedia.media_type = 'video';
+
+                const inputPath = file.path;
+                const outputPath = path.join(path.dirname(inputPath), `compressed_${file.filename}`);
+                await compressVideo(inputPath, outputPath);
+
+                const stats = fs.statSync(outputPath);
+                newMedia.path = `/${outputPath}`;
+                newMedia.fileName = `compressed_${file.filename}`;
+                newMedia.size = stats.size;
+
+                fs.unlinkSync(inputPath);
             }
-            newMedia.format = file.originalname.substr(-3, 3);
+            newMedia.format = path.extname(newMedia.fileName);
             newMedia.message = newMessage._id;
             await newMedia.save();
             newMessage.media = newMedia._id;
