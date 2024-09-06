@@ -6,18 +6,31 @@ import {
     ModalFooter,
     ModalHeader,
     Textarea,
+    Tooltip,
 } from "@nextui-org/react";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {useDropzone} from 'react-dropzone';
 import {PeopleCommunityAdd} from "@styled-icons/fluentui-system-filled/PeopleCommunityAdd";
 import axios from 'axios';
+import EmojiPicker from "emoji-picker-react";
+import { Emoji } from "styled-icons/fluentui-system-filled";
 
 export default function PostModal(props) {
     const [caption, setCaption] = useState('');
     const [postFiles, setPostFiles] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+    const toggleEmojiPicker = useCallback(() => {
+        setEmojiPickerOpen(!emojiPickerOpen);
+    }, [emojiPickerOpen]);
+
+    const handleEmojiClick = (emoji) => {
+        setCaption(prev => prev + emoji.emoji);
+    }
+
     const handleUpload = (event) => {
         event.target.files.forEach((file) => {
             if(file.type.startsWith('image/') || file.type.startsWith('video/')) setPostFiles(prev => [...prev, file]);
@@ -33,6 +46,7 @@ export default function PostModal(props) {
     const openChange = () => {
         props.togglePostModal();
         setPostFiles([]);
+        setEmojiPickerOpen(false);
         setCaption('');
     }
 
@@ -62,6 +76,16 @@ export default function PostModal(props) {
             props.togglePostModal();
         } 
     }
+
+    const endContent = useMemo(() => {
+        return (
+            <>
+                <Tooltip showArrow={true} content="Emoticons">
+                    <Emoji size="30" className="cursor-pointer" onClick={toggleEmojiPicker} />
+                </Tooltip>
+            </>
+        )
+    }, [toggleEmojiPicker])
     const {getRootProps, getInputProps} = useDropzone({onDrop});
     return (
         <>
@@ -70,14 +94,18 @@ export default function PostModal(props) {
                     {() => (
                         <>
                             <ModalHeader className="flex justify-center text-3xl">Create Post</ModalHeader>
-                            <ModalBody className="w-full">
+                            <ModalBody className="w-full relative">
                                 <Textarea
                                     label="Caption"
                                     placeholder="Enter your caption here..."
                                     className="w-full"
                                     value={caption}
+                                    endContent={endContent}
                                     onChange={(event) => setCaption(event.target.value)}
                                 />
+                                <div className="absolute right-20 -top-8 z-50 overflow-visible">
+                                    <EmojiPicker className="overflow-visible" open={emojiPickerOpen} theme={localStorage.theme === 'dark' ? 'dark' : 'light'} lazyLoadEmojis={true} onEmojiClick={handleEmojiClick} />
+                                </div>
                                 <div {...getRootProps({className: 'border border-neutral-300 dark:border-neutral-700 border-dashed hidden lg:block w-full h-[150px]'})}>
                                     <input {...getInputProps()} />
                                     <div className="h-full flex items-center justify-center">
