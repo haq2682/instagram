@@ -22,6 +22,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PuffLoader } from "react-spinners";
 import ViewLikes from "../ViewLikes";
+import EmojiPicker from "emoji-picker-react";
+import { Emoji } from "styled-icons/fluentui-system-filled";
 
 export default function Comment(props) {
     const [replyState, setReplyState] = useState({});
@@ -38,6 +40,23 @@ export default function Comment(props) {
     const repliesEndRef = useRef(null);
     const loggedInUser = useSelector(state => state.auth);
     const [viewLikesOpen, setViewLikesOpen] = useState(false);
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+    const toggleEmojiPicker = useCallback(() => {
+        setEmojiPickerOpen(!emojiPickerOpen);
+    }, [emojiPickerOpen]);
+
+    const handleEmojiClick = (commentId, emoji) => {
+        setReplyState((prevState) => ({
+            ...prevState,
+            [commentId]: {
+                ...prevState[commentId],
+                file: null,
+                description: prevState.description + emoji.emoji,
+                inputVisible: false,
+            },
+        }));
+    }
 
     const likeComment = async (id) => {
         try {

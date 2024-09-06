@@ -10,7 +10,8 @@ import { Close } from "@styled-icons/ionicons-solid/Close";
 import { ArrowForward } from "@styled-icons/typicons/ArrowForward";
 import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";
 import { PuffLoader } from "react-spinners";
-
+import { Emoji } from "@styled-icons/fluentui-system-filled/Emoji";
+import EmojiPicker from "emoji-picker-react";
 
 export default function MessageInput(props) {
     const [description, setDescription] = useState('');
@@ -19,6 +20,15 @@ export default function MessageInput(props) {
     const [error, setError] = useState('');
     const [file, setFile] = useState(null);
     const typingTimeoutRef = useRef(null);
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+    const toggleEmojiPicker = () => {
+        setEmojiPickerOpen(!emojiPickerOpen);
+    }
+
+    const handleEmojiClick = (emoji) => {
+        setDescription(prev => prev + emoji.emoji);
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -100,32 +110,14 @@ export default function MessageInput(props) {
     const endContent = useMemo(() => {
         return (
             <>
-                <input
-                    id="message-file-upload"
-                    name="message-file-upload"
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileChange}
-                />
-                <label htmlFor="message-file-upload" className="cursor-pointer">
-                    <Tooltip showArrow={true} content="Upload an image">
-                        <Paperclip size="25" />
-                    </Tooltip>
-                </label>
-                <input id="comment-submit" type="submit" className="hidden" />
-                <label htmlFor="comment-submit" className="cursor-pointer">
-                    <Tooltip showArrow={true} content="Submit">
-                        <ArrowForward size="30" />
-                    </Tooltip>
-                </label>
                 {submitLoading && <PuffLoader size="28px" color="gray" />}
             </>
         )
-    }, [handleFileChange, submitLoading]);
+    }, [submitLoading]);
 
     return (
         <>
-            <form method="post" onSubmit={handleSubmit}>
+            <form method="post" onSubmit={handleSubmit} className="relative">
                 {props.replyingToMessage && (
                     <div>
                         <div className="message opacity-40">
@@ -174,14 +166,42 @@ export default function MessageInput(props) {
                         </div>
                     </div>
                 )}
-                <Input
-                    label="Write your message..."
-                    variant="underlined"
-                    isDisabled={!props.currentRoom || submitLoading}
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    endContent={endContent}
-                />
+                <div className="flex items-center gap-2">
+                    <Tooltip showArrow={true} content="Emoticons">
+                        <Emoji size="30" className="cursor-pointer" onClick={toggleEmojiPicker}/>
+                    </Tooltip>
+                    <Input
+                        label="Write your message..."
+                        variant="bordered"
+                        isDisabled={!props.currentRoom || submitLoading}
+                        value={description}
+                        onChange={handleDescriptionChange}
+                        endContent={endContent}
+                        radius="full"
+                    />
+                    <input
+                        id="message-file-upload"
+                        name="message-file-upload"
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileChange}
+                    />
+                    <label htmlFor="message-file-upload" className="cursor-pointer">
+                        <Tooltip showArrow={true} content="Upload an image">
+                            <Paperclip size="25" />
+                        </Tooltip>
+                    </label>
+                    <input id="comment-submit" type="submit" className="hidden" />
+                    <label htmlFor="comment-submit" className="cursor-pointer">
+                        <Tooltip showArrow={true} content="Submit">
+                            <ArrowForward size="30" />
+                        </Tooltip>
+                    </label>
+                    
+                </div>
+                <div className="absolute bottom-12">
+                    <EmojiPicker open={emojiPickerOpen} theme={localStorage.theme === 'dark' ? 'dark' : 'light'} lazyLoadEmojis={true} onEmojiClick={handleEmojiClick}/>
+                </div>
             </form>
         </>
     )

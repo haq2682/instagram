@@ -6,6 +6,8 @@ import { useCallback, useState, useEffect, useRef } from 'react';
 import Comment from './Comment';
 import axios from "axios";
 import { PuffLoader } from "react-spinners";
+import EmojiPicker from "emoji-picker-react";
+import { Emoji } from "styled-icons/fluentui-system-filled";
 
 export default function CommentSection(props) {
     const [file, setFile] = useState('');
@@ -16,10 +18,19 @@ export default function CommentSection(props) {
     const [pageNumber, setPageNumber] = useState(1);
     const [fetchLoading, setFetchLoading] = useState(false);
     const commentsEndRef = useRef(null);
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
     const handleFileUpload = (event) => {
         const uploadedFile = event.target.files[0];
         setFile(uploadedFile);
+    }
+
+    const toggleEmojiPicker = useCallback(() => {
+        setEmojiPickerOpen(!emojiPickerOpen);
+    }, [emojiPickerOpen]);
+
+    const handleEmojiClick = (emoji) => {
+        setDescription(prev => prev + emoji.emoji);
     }
 
     const handleSubmit = async (event) => {
@@ -80,6 +91,7 @@ export default function CommentSection(props) {
     const closeSection = () => {
         setPageNumber(1);
         setComments([]);
+        setEmojiPickerOpen(false);
         props.setClose();
     }
 
@@ -89,7 +101,7 @@ export default function CommentSection(props) {
                 size={'5xl'}
                 isOpen={props.open}
                 onClose={closeSection}
-                className="max-h-[90vh]"
+                className="max-h-[90vh] overflow-visible"
                 placement="center"
             >
                 <ModalContent>
@@ -104,7 +116,10 @@ export default function CommentSection(props) {
                                         onChange={(event) => setDescription(event.target.value)}
                                         isDisabled={loading}
                                         endContent={
-                                            <>
+                                            <div className="flex gap-1">
+                                                <Tooltip showArrow={true} content="Emoticons">
+                                                    <Emoji size="22" className="cursor-pointer mt-1" onClick={toggleEmojiPicker} />
+                                                </Tooltip>
                                                 <input id="comment-file-upload"
                                                     name="comment-file-upload" type="file"
                                                     className="hidden" onChange={handleFileUpload} />
@@ -112,7 +127,7 @@ export default function CommentSection(props) {
                                                     className="cursor-pointer">
                                                     <Tooltip showArrow={true}
                                                         content="Upload an image/video">
-                                                        <Paperclip size="25" />
+                                                        <Paperclip size="20" />
                                                     </Tooltip>
                                                 </label>
                                                 <input id="comment-submit" type="submit"
@@ -120,13 +135,14 @@ export default function CommentSection(props) {
                                                 <label htmlFor="comment-submit"
                                                     className="cursor-pointer">
                                                     <Tooltip showArrow={true} content="Submit">
-                                                        <ArrowForward size="30" />
+                                                        <ArrowForward size="20" />
                                                     </Tooltip>
                                                 </label>
                                                 <div className={`${loading ? 'block' : 'hidden'}`}><PuffLoader size="28px" /></div>
-                                            </>
+                                            </div>
                                         }
                                     />
+                                    
                                     {
                                         file ? (
                                             <div className="max-h-[150px] max-w-[150px] overflow-hidden mt-2 relative">
@@ -166,6 +182,9 @@ export default function CommentSection(props) {
                                 }
                                 <div ref={commentsEndRef} />
                             </ModalBody>
+                            <div className="z-50 right-36 absolute">
+                                <EmojiPicker open={emojiPickerOpen} theme={localStorage.theme === 'dark' ? 'dark' : 'light'} lazyLoadEmojis={true} onEmojiClick={handleEmojiClick} />
+                            </div>
                         </>
                     )}
                 </ModalContent>
