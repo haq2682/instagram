@@ -3,6 +3,27 @@ const Media = require('../models/Media');
 const User = require('../models/User');
 const PostLike = require('../models/PostLike');
 const SavedPost = require('../models/SavedPost');
+const fs = require('fs');
+const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
+
+function compressVideo(inputPath, outputPath) {
+    return new Promise((resolve, reject) => {
+        ffmpeg(inputPath)
+            .videoBitrate(1000)
+            .outputOptions([
+                '-maxrate 1M',
+                '-bufsize 2M'
+            ])
+            .on('end', () => {
+                resolve();
+            })
+            .on('error', (err) => {
+                reject(err);
+            })
+            .save(outputPath);
+    });
+}
 
 module.exports = {
     add: async (req, res) => {
@@ -22,15 +43,25 @@ module.exports = {
                 } else {
                     newMedia.encoding = file.encoding;
                     newMedia.media_type = 'video';
+
+                    const inputPath = file.path;
+                    const outputPath = path.join(path.dirname(inputPath), `compressed_${file.filename}`);
+                    await compressVideo(inputPath, outputPath);
+
+                    const stats = fs.statSync(outputPath);
+                    newMedia.path = `/${outputPath}`;
+                    newMedia.fileName = `compressed_${file.filename}`;
+                    newMedia.size = stats.size;
+
+                    fs.unlinkSync(inputPath);
                 }
-                newMedia.format = file.originalname.substr(-3, 3);
+                newMedia.format = path.extname(newMedia.fileName);
                 newMedia.post = newPost._id;
 
                 await newMedia.save();
 
                 newPost.media.push(newMedia._id);
             }
-
             newPost.description = req.body.caption || null;
             newPost.user = req.user._id;
 
@@ -40,7 +71,7 @@ module.exports = {
 
             res.sendStatus(200);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ message: "An unknown error occurred" });
         }
     },
     find: async (req, res) => {
