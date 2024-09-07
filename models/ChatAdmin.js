@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const chatAdminSchema = new Schema({
     user: {
@@ -10,14 +10,8 @@ const chatAdminSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chat'
     },
-    created_at: {
-        type: Date,
-        default: new Date()
-    },
-    updated_at: {
-        type: Date,
-        default: new Date()
-    }
+}, {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
 });
 
 const ChatAdmin = mongoose.model('ChatAdmin', chatAdminSchema);

@@ -169,7 +169,7 @@ module.exports = {
             if(!replyLike) {
                 const newLike = new ReplyLike({
                     user: user._id,
-                    comment: reply._id
+                    reply: reply._id
                 });
                 await newLike.save();
 
