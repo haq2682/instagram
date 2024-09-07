@@ -44,14 +44,11 @@ const mediaSchema = new Schema({
     message: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'
-    },
-    created_at: {
-        type: Date,
-        default: new Date()
-    },
-    updated_at: {
-        type: Date,
-        default: new Date()
+    }, 
+}, {
+    timestamps: {
+        createdAt: "created_at",
+        updatedAt: "updated_at"
     }
 });
 

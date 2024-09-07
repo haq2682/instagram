@@ -51,9 +51,7 @@ export default function Comment(props) {
             ...prevState,
             [commentId]: {
                 ...prevState[commentId],
-                file: null,
-                description: prevState.description + emoji.emoji,
-                inputVisible: false,
+                description: (prevState[commentId]?.description || '') + emoji.emoji,
             },
         }));
     }
@@ -193,7 +191,7 @@ export default function Comment(props) {
 
     return (
         <>
-            <div className="comment mb-3 p-3 rounded-lg bg-neutral-100 dark:bg-neutral-800">
+            <div className="comment mb-3 p-3 rounded-lg bg-neutral-100 dark:bg-neutral-800 relative overflow-visible">
                 <div className="flex justify-between">
                     <div className="flex">
                         <div className="comment-pfp mb-2.5 mr-2.5">
@@ -290,7 +288,10 @@ export default function Comment(props) {
                             value={replyState[props.comment._id]?.description || ''}
                             onChange={(event) => handleDescriptionChange(props.comment._id, event)}
                             endContent={
-                                <>
+                                <div className="flex gap-1">
+                                    <Tooltip showArrow={true} content="Emoticons">
+                                        <Emoji size="22" className="cursor-pointer mt-0.5" onClick={toggleEmojiPicker} />
+                                    </Tooltip>
                                     <input
                                         id={`reply-file-upload-${props.comment._id}`}
                                         name="reply-file-upload"
@@ -300,17 +301,17 @@ export default function Comment(props) {
                                     />
                                     <label htmlFor={`reply-file-upload-${props.comment._id}`} className="cursor-pointer">
                                         <Tooltip showArrow={true} content="Upload an image/video">
-                                            <Paperclip size="25" />
+                                            <Paperclip size="20" />
                                         </Tooltip>
                                     </label>
                                     <input id={`reply-submit-${props.comment._id}`} type="submit" className="hidden" disabled={!replyState[props.comment._id]?.description && !replyState[props.comment._id]?.file}/>
                                     <label htmlFor={`reply-submit-${props.comment._id}`} className="cursor-pointer">
                                         <Tooltip showArrow={true} content="Submit">
-                                            <ArrowForward size="30" />
+                                            <ArrowForward size="20" />
                                         </Tooltip>
                                     </label>
                                     <div className={`${loading ? 'block' : 'hidden'}`}><PuffLoader size="28px" /></div>
-                                </>
+                                </div>
                             }
                             className={`${replyState[props.comment._id]?.inputVisible ? "block" : "hidden"} mt-3`}
                         />
@@ -394,6 +395,9 @@ export default function Comment(props) {
                 </div>
             </div>
             <ViewLikes open={viewLikesOpen} setClose={() => setViewLikesOpen(false)} content={props.comment} type={'comment'}/>
+            <div className="absolute right-40 top-24 z-50">
+                <EmojiPicker className="overflow-visible" open={emojiPickerOpen} theme={localStorage.theme === 'dark' ? 'dark' : 'light'} lazyLoadEmojis={true} onEmojiClick={(emoji) => handleEmojiClick(props.comment._id, emoji)} />
+            </div>
         </>
     );
 }

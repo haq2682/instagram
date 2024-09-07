@@ -29,10 +29,6 @@ const chatSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'
     }],
-    muted_for: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
     created_at: {
         type: Date,
         default: new Date()
@@ -41,6 +37,8 @@ const chatSchema = new Schema({
         type: Date,
         default: new Date()
     },
+}, {
+    timestamps: {createdAt: "created_at", updatedAt: "updated_at"}
 });
 
 const Chat = mongoose.model('Chat', chatSchema);

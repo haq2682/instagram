@@ -7,13 +7,10 @@ const photoSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    created_at: {
-        type: Date,
-        default: new Date()
-    },
-    updated_at: {
-        type: Date,
-        default: new Date()
+}, {
+    timestamps: {
+        createdAt: "created_at",
+        updatedAt: "updated_at"
     }
 });
 

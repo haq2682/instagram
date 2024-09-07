@@ -163,18 +163,20 @@ export default function CommentSection(props) {
                                     }
                                 </form>
                             </ModalHeader>
-                            <ModalBody className="overflow-scroll max-h-full">
-                                {
-                                    (comments.length !== 0 && !fetchLoading) ? (
-                                        comments.map((comment) => { return (<Comment key={comment._id} comment={comment} />) })
-                                    ) : (
-                                        <div className="text-center text-2xl opacity-50 font-bold my-32">
-                                            {
-                                                fetchLoading ? (<div className="loader"/>) : (error)
-                                            }
-                                        </div>
-                                    )
-                                }
+                            <ModalBody className="overflow-visible max-h-full">
+                                <div className="overflow-auto max-h-full relative">
+                                    {
+                                        (comments.length !== 0 && !fetchLoading) ? (
+                                            comments.map((comment) => { return (<Comment key={comment._id} comment={comment} />) })
+                                        ) : (
+                                            <div className="text-center text-2xl opacity-50 font-bold my-32">
+                                                {
+                                                    fetchLoading ? (<div className="loader" />) : (error)
+                                                }
+                                            </div>
+                                        )
+                                    }
+                                </div>
                                 {
                                     (comments.length !== props.post.comments?.length && !fetchLoading && !error) ? (
                                         <div onClick={fetchMoreComments} className="text-purple-500 cursor-pointer hover:text-purple-700 dark:hover:text-purple-300 transition-color duration-200">View More Comments</div>
