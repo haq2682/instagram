@@ -24,11 +24,8 @@ module.exports = {
             });
             newUser.settings = newSettings;
             newUser.profile_picture = defaultPhoto;
-            await newSettings.save();
-            await defaultPhoto.save();
-            newUser.save();
-            const user = await User.findOne({ _id: newUser._id }).exec();
             await Promise.all([defaultPhoto.save(), newSettings.save(), newUser.save()]);
+            const user = await User.findOne({ _id: newUser._id }).exec();
             createTokenAndSetCookie(user, res);
             return res.status(200).json({ message: "User registered successfully" });
         }
