@@ -1,6 +1,7 @@
-import { Switch, Divider, Link } from '@nextui-org/react';
+import { Switch, Divider, Link, Dropdown, DropdownTrigger, Button, DropdownItem, DropdownMenu } from '@nextui-org/react';
 import { Close } from "@styled-icons/ionicons-solid/Close";
 import { MoreHorizontal } from "@styled-icons/evaicons-solid/MoreHorizontal";
+import { MoreVertical } from "@styled-icons/evaicons-solid/MoreVertical";
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import axios from 'axios';
@@ -10,16 +11,19 @@ export default function ChatDetails(props) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const authId = useSelector(state => state.auth._id);
+    const auth = useSelector(state => state.auth);
 
     const handleMakeAdmin = async (userId) => {
         setError('');
         setLoading(true);
         try {
-            const response = await axios.put(`/api/chat/group/${props.currentRoom._id}/make_admin`, userId);
-            if (response) setLoading(false);
+            await axios.put(`/api/chat/group/${props.currentRoom._id}/make_admin`, userId);
         }
         catch (error) {
             setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
         }
     }
     const Member = (props) => {
@@ -29,7 +33,16 @@ export default function ChatDetails(props) {
                     <div className="flex w-56">
                         <img src={`${props.member.profile_picture.filename}`} alt="pfp" className="w-12 h-12 rounded-full object-cover" />
                         <div className="my-auto mx-2 w-full">
-                            <p className="font-bold truncate">{props.member.firstName + " " + props.member.lastName}</p>
+                            <p className="font-bold truncate">
+                                {
+                                    (props.currentRoom.administrators.includes(props.member._id)) && (
+                                        <div className="inline text-blue-500 mr-1">
+                                            <ShieldStar size="16" />
+                                        </div>
+                                    )
+                                }
+                                {props.member.firstName + " " + props.member.lastName}
+                            </p>
                             <p className="truncate"><Link href={`/profile/${props.member.username}`}>@{props.member.username}</Link></p>
                         </div>
                     </div>
@@ -37,23 +50,33 @@ export default function ChatDetails(props) {
                         (props.currentRoom.chat_type === 'group') && (
                             <>
                                 {
-                                    (props.currentRoom.administrators.includes(props.member._id) ? (
+                                    (props.currentRoom.administrators.includes(authId) && (
                                         <>
-                                            <div className="text-green-500">
-                                                <ShieldStar size="24" />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {
-                                                (props.currentRoom.administrators.includes(authId) && (
-                                                    <>
-                                                        <div className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer transition-color duration-200" onClick={() => handleMakeAdmin(props.member._id)}>
-                                                            Make Admin
-                                                        </div>
-                                                    </>
-                                                ))
-                                            }
+                                            <Dropdown>
+                                                <DropdownTrigger>
+                                                    <Button
+                                                        isIconOnly
+                                                        radius="full"
+                                                        variant="light"
+                                                    >
+                                                        <MoreVertical size="16" />
+                                                    </Button>
+                                                </DropdownTrigger>
+                                                <DropdownMenu aria-label="Static Actions">
+                                                    {(auth.followers.includes(props.member._id)) && <DropdownItem>Remove Follower</DropdownItem>}
+                                                    {(auth.following.includes(props.member._id)) ? <DropdownItem>Unfollow</DropdownItem> : <DropdownItem>Follow</DropdownItem>}
+                                                    {(auth.follow_requests_sent_to.includes(props.member._id)) && <DropdownItem>Cancel Follow Request</DropdownItem>}
+                                                    {(auth.follow_requests_received_from.includes(props.member._id)) && (
+                                                        <>
+                                                            <DropdownItem>Accept Request</DropdownItem>
+                                                            <DropdownItem>Decline Request</DropdownItem>
+                                                        </>
+                                                    )}
+                                                    <DropdownItem>Make Admin</DropdownItem>
+                                                    <DropdownItem color="danger" className="text-danger">Block</DropdownItem>
+                                                    <DropdownItem color="danger" className="text-danger">Kick</DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
                                         </>
                                     ))
                                 }

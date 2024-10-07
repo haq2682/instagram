@@ -1,5 +1,5 @@
-import {Link as UserLink} from "react-router-dom";
-import {User} from "@nextui-org/react";
+import { Link as UserLink } from "react-router-dom";
+import { User } from "@nextui-org/react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import axios from 'axios';
@@ -21,7 +21,7 @@ export default function UserList(props) {
             setRequestsSent(response.data[0]);
             setFollowing(response.data[1]);
         }
-        catch(error) {
+        catch (error) {
             setError(error.response.data.message);
         }
         finally {
@@ -36,7 +36,7 @@ export default function UserList(props) {
             const response = await axios.put(`/user/unfollow/${props.user._id}`);
             setFollowing(response.data);
         }
-        catch(error) {
+        catch (error) {
             setError(error.response.data.message);
         }
         finally {
@@ -52,7 +52,7 @@ export default function UserList(props) {
             setRequestsReceived(response.data[0]);
             setFollowing(response.data[1]);
         }
-        catch(error) {
+        catch (error) {
             setError(error.response.data.message);
         }
         finally {
@@ -67,7 +67,7 @@ export default function UserList(props) {
             const response = await axios.put(`/user/decline_request/${props.user._id}`);
             setRequestsReceived(response.data);
         }
-        catch(error) {
+        catch (error) {
             setError(error.response.data.message);
         }
         finally {
@@ -82,7 +82,7 @@ export default function UserList(props) {
             const response = await axios.put(`/user/cancel_request/${props.user._id}`);
             setRequestsSent(response.data);
         }
-        catch(error) {
+        catch (error) {
             setError(error.response.data.message);
         }
         finally {
@@ -109,15 +109,15 @@ export default function UserList(props) {
         if (!loggedInUser || !props.user) return null;
 
         if (following.includes(props.user._id)) {
-            return <div onClick={unfollow}>Unfollow</div>;
+            return <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={unfollow}>Unfollow</div>;
         }
 
         if (followers.includes(props.user._id)) {
             return (
                 <>
                     <div className="flex gap-2">
-                        <div onClick={removeFollower}>Remove Follower</div>
-                        {!following.includes(props.user._id) && <div onClick={follow}>Follow</div>}
+                        <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={removeFollower}>Remove Follower</div>
+                        {!following.includes(props.user._id) && <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={follow}>Follow</div>}
                     </div>
                 </>
             );
@@ -126,17 +126,17 @@ export default function UserList(props) {
         if (requestsReceived.includes(props.user._id)) {
             return (
                 <div className="flex gap-2">
-                    <div onClick={acceptRequest}>Accept</div>
-                    <div onClick={declineRequest}>Decline</div>
+                    <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={acceptRequest}>Accept</div>
+                    <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={declineRequest}>Decline</div>
                 </div>
             );
         }
 
         if (requestsSent.includes(props.user._id)) {
-            return <div onClick={cancelRequest}>Cancel Request</div>;
+            return <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={cancelRequest}>Cancel Request</div>;
         }
 
-        return <div onClick={follow}>Follow</div>;
+        return <div className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2" onClick={follow}>Follow</div>;
     };
 
     return (
@@ -153,14 +153,13 @@ export default function UserList(props) {
                         src: `${props.user.profile_picture.filename}`
                     }}
                 />
-                <div
-                    className="text-green-500 hover:text-green-600 mt-2.5 rounded-full cursor-pointer transition-all duration-100 text-sm lg:text-md mb-2">
+                <div>
                     {followText()}
                 </div>
                 {
-                    error && <div className="text-red-500 text-center text-sm font-bold">{error}</div> 
+                    error && <div className="text-red-500 text-center text-sm font-bold">{error}</div>
                 }
-                <div className={`h-full w-full bg-neutral-500 bg-opacity-25 text-white absolute top-0 left-0 flex justify-center items-center rounded-xl ${loading ? 'block' : 'hidden'}`}/>
+                <div className={`h-full w-full bg-neutral-500 bg-opacity-25 text-white absolute top-0 left-0 flex justify-center items-center rounded-xl ${loading ? 'block' : 'hidden'}`} />
             </div>
         </>
     )

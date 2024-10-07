@@ -66,7 +66,7 @@ export default function Suggestion() {
                     loading && <SkeletonLoader />
                 }
                 {
-                    users ? (
+                    users.length > 0 ? (
                         users.map((user) => {
                             return (
                                 <UserList key={user._id} user={user} />
