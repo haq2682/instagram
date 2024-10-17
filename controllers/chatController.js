@@ -6,17 +6,17 @@ const User = require('../models/User');
 module.exports = {
     joinRoom: async (req, res) => {
         try {
-            if(!req.user.following.includes(req.params.id) && !req.user.followers.includes(req.params.id)) return res.status(403).json({message: 'You must follow or be a follower of this user to initiate a chat'});
+            if (!req.user.following.includes(req.params.id) && !req.user.followers.includes(req.params.id)) return res.status(403).json({ message: 'You must follow or be a follower of this user to initiate a chat' });
             let room = await Chat.findOne({
                 chat_type: 'individual',
-                members: {$all: [req.user._id, req.params.id], $size: 2}
+                members: { $all: [req.user._id, req.params.id], $size: 2 }
             });
-            if(!room) {
+            if (!room) {
                 room = new Chat();
                 room.members = [req.user._id, req.params.id];
                 await room.save();
-                const authUser = await User.findOne({_id: req.user._id});
-                const otherUser = await User.findOne({_id: req.params.id});
+                const authUser = await User.findOne({ _id: req.user._id });
+                const otherUser = await User.findOne({ _id: req.params.id });
                 authUser.chats.push(room._id);
                 await authUser.save();
                 otherUser.chats.push(room._id);
@@ -24,14 +24,14 @@ module.exports = {
             }
             return res.send(room);
         }
-        catch(error) {
+        catch (error) {
             console.log(error.message);
-            return res.status(500).json({message: 'An unknown error occurred'});
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getAllIndividualRooms: async (req, res) => {
         try {
-            const rooms = await Chat.find({members: {$in: req.user._id}, chat_type: 'individual'}).populate([
+            const rooms = await Chat.find({ members: { $in: req.user._id }, chat_type: 'individual' }).populate([
                 {
                     path: 'members',
                     model: 'User',
@@ -52,17 +52,17 @@ module.exports = {
                         }
                     ],
                 }
-            ]).sort({'updated_at': -1});
-            if(rooms.length === 0) return res.status(404).json({message: 'No chats found'});
+            ]).sort({ 'updated_at': -1 });
+            if (rooms.length === 0) return res.status(404).json({ message: 'No chats found' });
             return res.send(rooms);
         }
-        catch(error) {
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getAllGroupRooms: async (req, res) => {
         try {
-            const rooms = await Chat.find({members: {$in: req.user._id}, chat_type: 'group'}).populate([
+            const rooms = await Chat.find({ members: { $in: req.user._id }, chat_type: 'group' }).populate([
                 {
                     path: 'members',
                     populate: [
@@ -79,33 +79,33 @@ module.exports = {
                         }
                     ]
                 }
-            ]).sort({'updated_at': -1});
-            if(rooms.length === 0) return res.status(404).json({message: 'No groups found'});
+            ]).sort({ 'updated_at': -1 });
+            if (rooms.length === 0) return res.status(404).json({ message: 'No groups found' });
             return res.send(rooms);
         }
-        catch(error) {
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getRoom: async (req, res) => {
         try {
-            const room = await Chat.findOne({_id: req.params.id}).populate([
+            const room = await Chat.findOne({ _id: req.params.id }).populate([
                 {
                     path: 'members',
                     populate: 'profile_picture'
                 }
             ]);
-            if(!room || !room.members.some(member => member._id.equals(req.user._id))) {
+            if (!room || !room.members.some(member => member._id.equals(req.user._id))) {
                 const error = new Error('This chat does not exist');
                 error.status = 404;
                 throw error;
             }
             return res.send(room);
         }
-        catch(error) {
+        catch (error) {
             console.log(error.message);
-            if(error.status === 404) return res.status(404).json({message: error.message});
-            return res.status(500).json({message: 'An unknown error occurred'});
+            if (error.status === 404) return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     newMessage: async (req, res) => {
@@ -183,17 +183,17 @@ module.exports = {
         //     return res.status(500).json({message: 'An unknown error occurred'});
         // }
         try {
-            if(req.file) return res.send(req.file);
+            if (req.file) return res.send(req.file);
         }
-        catch(error) {
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getRoomMessages: async (req, res) => {
         try {
-            const chatRoom = await Chat.findOne({_id: req.params.id});
-            if(!chatRoom || !chatRoom.members.includes(req.user._id)) return res.status(404).json({message: 'This chat does not exist'});
-            let messages = await Message.find({chat: chatRoom._id}).populate([
+            const chatRoom = await Chat.findOne({ _id: req.params.id });
+            if (!chatRoom || !chatRoom.members.includes(req.user._id)) return res.status(404).json({ message: 'This chat does not exist' });
+            let messages = await Message.find({ chat: chatRoom._id }).populate([
                 {
                     path: 'media',
                 },
@@ -240,23 +240,23 @@ module.exports = {
                     path: 'delivered_to'
                 }
             ])
-            .sort({created_at: 'desc'})
-            .limit(15)
-            .skip((req.params.page_number - 1) * 15);
+                .sort({ created_at: 'desc' })
+                .limit(15)
+                .skip((req.params.page_number - 1) * 15);
 
             messages = messages.reverse();
 
-            if(messages.length === 0) return res.status(404).json({messages: 'This chat seems empty'});
+            if (messages.length === 0) return res.status(404).json({ messages: 'This chat seems empty' });
             return res.send(messages);
         }
-        catch(error) {
+        catch (error) {
             console.log(error.message);
-            return res.status(500).json({message: 'An unknown error occurred'});
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getMessage: async (req, res) => {
         try {
-            const message = await Message.findOne({_id: req.params.id}).populate([
+            const message = await Message.findOne({ _id: req.params.id }).populate([
                 {
                     path: 'media',
                 },
@@ -343,16 +343,16 @@ module.exports = {
                     ]
                 }
             ]);
-            if(!message) return res.status(404).json({message: 'This message does not exist'});
+            if (!message) return res.status(404).json({ message: 'This message does not exist' });
             return res.send(message);
         }
-        catch(error) {
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     getFollowers: async (req, res) => {
         try {
-            const user = await User.findOne({_id: req.user._id}).select("followers").populate([
+            const user = await User.findOne({ _id: req.user._id }).select("followers").populate([
                 {
                     path: 'followers',
                     populate: [
@@ -367,18 +367,18 @@ module.exports = {
                 }
             ]);
             const followers = user.followers;
-            if(!followers) return res.status(404).json({message: "No followers found"});
+            if (!followers) return res.status(404).json({ message: "No followers found" });
             return res.send(followers);
         }
-        catch(error) {
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     },
     newGroup: async (req, res) => {
         try {
             const newGroup = new Chat();
             newGroup.members.push(req.user._id);
-            for(const user of req.body.users) {
+            for (const user of req.body.users) {
                 newGroup.members.push(user);
             }
             newGroup.group_name = req.body.group_name;
@@ -387,8 +387,36 @@ module.exports = {
             newGroup.save();
             return res.send(newGroup);
         }
-        catch(error) {
-            return res.status(500).json({message: 'An unknown error occurred'});
+        catch (error) {
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    },
+    makeAdmin: async (req, res) => {
+        try {
+            const chatGroup = await Chat.findOne({ _id: req.params.room_id });
+            if (chatGroup.administrators.includes(req.body.userId)) {
+                return res.status(403).json({ message: 'This user is already an admin' });
+            }
+            chatGroup.administrators.push(req.body.userId);
+            await chatGroup.save();
+            return res.status(200).json({ message: 'Admin role assigned successfully' });
+        }
+        catch {
+            return res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    },
+    removeAdmin: async (req, res) => {
+        try {
+            const chatGroup = await Chat.findOne({ _id: req.params.room_id });
+            if (!chatGroup.administrators.includes(req.body.userId)) {
+                return res.status(404).json({ message: 'This user is not an admin' });
+            }
+            chatGroup.administrators.pull(req.body.userId);
+            await chatGroup.save();
+            return res.status(200).json({ message: "Admin role unassigned successfully" });
+        }
+        catch {
+            return res.status(500).json({ message: 'An unknown error occurred' });
         }
     }
 }

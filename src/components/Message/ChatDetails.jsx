@@ -17,7 +17,107 @@ export default function ChatDetails(props) {
         setError('');
         setLoading(true);
         try {
-            await axios.put(`/api/chat/group/${props.currentRoom._id}/make_admin`, userId);
+            const response = await axios.put(`/api/chat/group/${props.currentRoom._id}/make_admin`, { userId });
+        }
+        catch (error) {
+            console.log(error.response.data.message);
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const handleRemoveAdmin = async (userId) => {
+        setError('');
+        setLoading(true);
+        try {
+            const response = await axios.put(`/api/chat/group/${props.currentRoom._id}/remove_admin`, { userId });
+        }
+        catch (error) {
+            console.log(error.response.data.message);
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const follow = async (memberId) => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.put(`/user/follow/${memberId}`);
+        }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const unfollow = async (memberId) => {
+        setLoading(true);
+        setError('')
+        try {
+            const response = await axios.put(`/user/unfollow/${memberId}`);
+        }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const acceptRequest = async (memberId) => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.put(`/user/accept_request/${memberId}`);
+        }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const declineRequest = async (memberId) => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.put(`/user/decline_request/${memberId}`);
+        }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const cancelRequest = async (memberId) => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.put(`/user/cancel_request/${memberId}`);
+        }
+        catch (error) {
+            setError(error.response.data.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const removeFollower = async (memberId) => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.put(`/user/remove_follower/${memberId}`);
         }
         catch (error) {
             setError(error.response.data.message);
@@ -51,33 +151,34 @@ export default function ChatDetails(props) {
                             <>
                                 {
                                     (props.currentRoom.administrators.includes(authId) && (
-                                        <>
-                                            <Dropdown>
-                                                <DropdownTrigger>
-                                                    <Button
-                                                        isIconOnly
-                                                        radius="full"
-                                                        variant="light"
-                                                    >
-                                                        <MoreVertical size="16" />
-                                                    </Button>
-                                                </DropdownTrigger>
-                                                <DropdownMenu aria-label="Static Actions">
-                                                    {(auth.followers.includes(props.member._id)) && <DropdownItem>Remove Follower</DropdownItem>}
-                                                    {(auth.following.includes(props.member._id)) ? <DropdownItem>Unfollow</DropdownItem> : <DropdownItem>Follow</DropdownItem>}
-                                                    {(auth.follow_requests_sent_to.includes(props.member._id)) && <DropdownItem>Cancel Follow Request</DropdownItem>}
-                                                    {(auth.follow_requests_received_from.includes(props.member._id)) && (
-                                                        <>
-                                                            <DropdownItem>Accept Request</DropdownItem>
-                                                            <DropdownItem>Decline Request</DropdownItem>
-                                                        </>
-                                                    )}
-                                                    <DropdownItem>Make Admin</DropdownItem>
-                                                    <DropdownItem color="danger" className="text-danger">Block</DropdownItem>
-                                                    <DropdownItem color="danger" className="text-danger">Kick</DropdownItem>
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                        </>
+                                        (auth._id !== props.member._id) && (
+                                            <>
+                                                <Dropdown>
+                                                    <DropdownTrigger>
+                                                        <Button
+                                                            isIconOnly
+                                                            radius="full"
+                                                            variant="light"
+                                                        >
+                                                            <MoreVertical size="16" />
+                                                        </Button>
+                                                    </DropdownTrigger>
+                                                    <DropdownMenu aria-label="Static Actions">
+                                                        {(auth.followers.includes(props.member._id)) && <DropdownItem onClick={() => removeFollower(props.member._id)}>Remove Follower</DropdownItem>}
+                                                        {(auth.following.includes(props.member._id)) ? <DropdownItem onClick={() => unfollow(props.member._id)}>Unfollow</DropdownItem> : <DropdownItem onClick={() => follow(props.member._id)}>Follow</DropdownItem>}
+                                                        {(auth.follow_requests_sent_to.includes(props.member._id)) && <DropdownItem onClick={() => cancelRequest(props.member._id)}>Cancel Follow Request</DropdownItem>}
+                                                        {(auth.follow_requests_received_from.includes(props.member._id)) && (
+                                                            <>
+                                                                <DropdownItem onClick={() => acceptRequest(props.member._id)}>Accept Request</DropdownItem>
+                                                                <DropdownItem onClick={() => declineRequest(props.member._id)}>Decline Request</DropdownItem>
+                                                            </>
+                                                        )}
+                                                        {(!props.currentRoom.administrators.includes(props.member._id)) ? <DropdownItem onClick={() => handleMakeAdmin(props.member._id)}>Make Admin</DropdownItem> : <DropdownItem onClick={() => handleRemoveAdmin(props.member._id)}>Remove Admin</DropdownItem>}
+                                                        <DropdownItem color="danger" className="text-danger">Kick</DropdownItem>
+                                                    </DropdownMenu>
+                                                </Dropdown>
+                                            </>
+                                        )
                                     ))
                                 }
                             </>
