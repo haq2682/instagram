@@ -37,8 +37,8 @@ export default function Welcome() {
                             <div className="w-0 h-16 border-l-1 border-black"></div>
                         </div>
                         <div className="flex flex-col">
-                            <a href={process.env.REACT_APP_GOOGLE_AUTH_URI}><Button className="w-28 sm:w-44 py-6 my-2.5 bg-rose-600 text-white md:text-lg shadow-neutral-400 shadow-md"><Google size="25" />Google</Button></a>
-                            <a href={process.env.REACT_APP_FACEBOOK_AUTH_URI}><Button className="w-28 sm:w-44 py-6 my-2.5 bg-blue-700 text-white md:text-lg shadow-neutral-400 shadow-md"><Facebook size="25" />Facebook</Button></a>
+                            <a href={import.meta.env.VITE_GOOGLE_AUTH_URI}><Button className="w-28 sm:w-44 py-6 my-2.5 bg-rose-600 text-white md:text-lg shadow-neutral-400 shadow-md"><Google size="25" />Google</Button></a>
+                            <a href={import.meta.env.VITE_FACEBOOK_AUTH_URI}><Button className="w-28 sm:w-44 py-6 my-2.5 bg-blue-700 text-white md:text-lg shadow-neutral-400 shadow-md"><Facebook size="25" />Facebook</Button></a>
                         </div>
                     </div>
                 </div>
