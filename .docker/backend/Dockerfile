@@ -1,0 +1,57 @@
+# ---- Stage 1: Install dependencies ----
+FROM node:20-alpine AS deps
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# ---- Stage 2: Run ----
+FROM node:20-alpine
+
+RUN apk add --no-cache ffmpeg
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY index.js ./
+COPY package.json ./
+COPY controllers/ ./controllers/
+COPY routes/ ./routes/
+COPY models/ ./models/
+COPY db_config/ ./db_config/
+COPY sockets/ ./sockets/
+COPY public/ ./public/
+
+ARG EXPRESS_PORT=8000
+ENV EXPRESS_PORT=$EXPRESS_PORT
+
+ARG GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+
+ARG FACEBOOK_CLIENT_ID
+ENV FACEBOOK_CLIENT_ID=$FACEBOOK_CLIENT_ID
+ARG FACEBOOK_CLIENT_SECRET
+ENV FACEBOOK_CLIENT_SECRET=$FACEBOOK_CLIENT_SECRET
+
+ARG JWT_SECRET
+ENV JWT_SECRET=$JWT_SECRET
+ARG SESSION_SECRET
+ENV SESSION_SECRET=$SESSION_SECRET
+
+ARG MONGODB_URI
+ENV MONGODB_URI=$MONGODB_URI
+ARG OFFLINE_MONGODB_URI
+ENV OFFLINE_MONGODB_URI=$OFFLINE_MONGODB_URI
+
+ARG BACK_END_URL
+ENV BACK_END_URL=$BACK_END_URL
+
+ARG FRONT_END_URL
+ENV FRONT_END_URL=$FRONT_END_URL
+
+EXPOSE 8000 9000
+
+CMD ["node", "index.js"]

@@ -41,22 +41,7 @@ export const authSlice = createSlice({
             state.follow_requests_received_from = action.payload.data.follow_requests_received_from;
             state.follow_requests_sent_to = action.payload.data.follow_requests_sent_to;
         },
-        logout: (state) => {
-            setTimeout(()=> {
-                //state.is_verified = false;
-                //state.is_authenticated = false;
-                //state.username = '';
-                //state.firstName = '';
-                //state.lastName = '';
-                //state.verify_token = '';
-                //state.website = '';
-                //state.gender = '';
-                //state.bio = '';
-                //state.email = '';
-                //state.profile_picture = null;
-                state = null
-            }, 3000);
-        },
+        logout: () => initialState,
         verifyEmail: (state) => {
             state.is_verified = true;
         },

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const passportLocalMongoose = require("passport-local-mongoose");
+const passportLocalMongoose = require("passport-local-mongoose").default;
 const {Schema} = mongoose;
 const bcrypt = require('bcrypt');
 const Settings = require('./Settings');
@@ -190,25 +190,20 @@ const userSchema = new Schema({
 
 userSchema.plugin(passportLocalMongoose, {usernameQueryFields: ["email", "username"]});
 
-userSchema.pre('save', function(next){
-    if(!this.isModified('password')) return next();
-    bcrypt.hash(this.password, saltRounds, (error, salt) => {
-        if(error) return next(error);
-        this.password = salt;
-        this.verify_token = crypto.randomBytes(16).toString('hex');
-        next();
-    });
+userSchema.pre('save', async function(){
+    if(!this.isModified('password')) return;
+    const hash = await bcrypt.hash(this.password, saltRounds);
+    this.password = hash;
+    this.verify_token = crypto.randomBytes(16).toString('hex');
 });
 
-userSchema.pre('remove', function(next) {
+userSchema.pre('remove', function() {
     Settings.remove({user: this._id}).exec();
     ProfilePhoto.remove({user: this._id}).exec();
-    return next();
 });
 
-userSchema.pre(['find', 'findOne', 'findMany'], function(next) {
+userSchema.pre(['find', 'findOne', 'findMany'], function() {
     this.where({deleted: false});
-    return next();
 })
 
 userSchema.methods.softDelete = async function(note) {

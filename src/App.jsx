@@ -29,6 +29,9 @@ function App() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        if (is_authenticated && !is_verified) {
+            console.log(loggedInUser);
+        }
         if (is_authenticated && is_verified) {
             socket.emit('init connection', loggedInUser);
         }
