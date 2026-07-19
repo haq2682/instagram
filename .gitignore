@@ -2,3 +2,4 @@ node_modules
 .comments
 .idea
 .env
+.env.docker
