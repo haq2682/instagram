@@ -10,14 +10,6 @@ const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 
-const io = new Server(9000, {
-    cors: {
-        methods: ["GET", "POST"],
-        credentials: true,
-        origin: process.env.FRONT_END_URL
-    }
-});
-
 function compressVideo(inputPath, outputPath) {
     return new Promise((resolve, reject) => {
         ffmpeg(inputPath)
@@ -439,7 +431,14 @@ async function getChatUnseenMessagesCount(loggedInUserId, roomId) {
 }
 
 module.exports = {
-    initChatSocket: () => {
+    initChatSocket: (server) => {
+        const io = new Server(server, {
+            cors: {
+                methods: ["GET", "POST"],
+                credentials: true,
+                origin: process.env.FRONT_END_URL
+            }
+        });
         io.on("connection", async (socket) => {
             let typingUsers = new Set();
             let currentRoom;

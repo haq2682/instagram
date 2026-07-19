@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const bodyParser = require('body-parser');
 const {connectToDb} = require('./db_config/db');
 const cors = require('cors');
@@ -20,6 +21,7 @@ const replyRoutes = require('./routes/replyRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
+const server = http.createServer(app);
 dotenv.config();
 let port = process.env.EXPRESS_PORT;
 app.use(express.json());
@@ -30,7 +32,11 @@ app.use(cors());
 app.use(cookieParser());
 connectToDb();
 
-chatSocket.initChatSocket();
+chatSocket.initChatSocket(server);
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -63,4 +69,4 @@ passport.deserializeUser(function(user, done) {
     done(null, user);
 })
 
-app.listen(port, () => console.log('Listening on port: ' + port));
+server.listen(port, () => console.log('Listening on port: ' + port));
