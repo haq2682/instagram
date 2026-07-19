@@ -5,6 +5,10 @@ export default defineConfig({
   plugins: [
     react(),
   ],
+  test: {
+    environment: "jsdom",
+    globals: true,
+  },
   server: {
     port: 3000,
     proxy: {

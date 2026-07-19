@@ -1,0 +1,83 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+    NODE_VERSION: 20
+
+jobs:
+    test:
+        name: Project Test
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+            - name: Use Node.js ${{ env.NODE_VERSION }}
+              uses: actions/setup-node@v7
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+            - name: Install dependencies
+              run: npm ci
+            - name: Run tests
+              run: npm test
+            - name: Run lint
+              run: npm run lint
+    
+    docker-frontend-build:
+        name: Docker Frontend Build
+        runs-on: ubuntu-24.04
+        needs: test
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Log in to DockerHub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  file: .docker/frontend/Dockerfile
+                  push: true
+                  tags: ${{ secrets.DOCKER_USERNAME }}/instagram_clone_frontend:latest
+            - name: Run Trivy Scan on Frontend Image
+              uses: aquasecurity/trivy-action@v1
+              with:
+                image-ref: ${{ secrets.DOCKER_USERNAME }}/instagram_clone_frontend:latest
+    
+    docker-backend-build:
+        name: Docker Backend Build
+        runs-on: ubuntu-24.04
+        needs: test
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: Log in to DockerHub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  file: .docker/backend/Dockerfile
+                  push: true
+                  tags: ${{ secrets.DOCKER_USERNAME }}/instagram_clone_backend:latest
+            - name: Run Trivy Scan on Backend Image
+              uses: aquasecurity/trivy-action@v1
+              with:
+                image-ref: ${{ secrets.DOCKER_USERNAME }}/instagram_clone_backend:latest
+            - name: Docker Logout
+              run: docker logout
