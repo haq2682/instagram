@@ -3,3 +3,8 @@ node_modules
 .idea
 .env
 .env.docker
+
+# terraform/.gitignore
+.terraform/
+*.tfstate
+*.tfstate.backup
