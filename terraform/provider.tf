@@ -6,5 +6,5 @@ provider "helm" {
 
 provider "kubernetes" {
     config_path = "~/.kube/config"
-    config_context = "instagram_clone_context"
+    config_context = "minikube"
 }
