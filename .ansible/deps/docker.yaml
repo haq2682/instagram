@@ -1,0 +1,49 @@
+- name: Create directory for apt keyrings
+  ansible.builtin.file:
+    path: "/etc/apt/keyrings"
+    state: directory
+    mode: '0755'
+
+# - name: Add Docker GPG key
+#   ansible.builtin.get_url:
+#     dest: /etc/apt/keyrings/docker.asc
+#     url: https://download.docker.com/linux/ubuntu/gpg
+#     mode: '0644'
+
+# - name: Add Docker repository
+#   ansible.builtin.deb822_repository:
+#     name: docker
+#     types:
+#       - deb
+#     signed_by: /etc/apt/keyrings/docker.asc
+#     uris: https://download.docker.com/linux/ubuntu
+#     suites: '{{ ansible_facts["distribution_release"] }}'
+#     components:
+#       - stable
+#     state: present
+
+- name: Install Docker packages
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      # - docker-ce
+      # - docker-ce-cli
+      # - containerd.io
+      - docker-compose-plugin
+      - docker-buildx-plugin
+      - docker-registry
+      - docker-doc
+    state: present
+    update_cache: yes
+
+- name: Enable and Start Docker
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Add current user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes

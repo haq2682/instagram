@@ -1,0 +1,78 @@
+- name: Add Kubernetes GPG key
+  ansible.builtin.get_url:
+    url: https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/Release.key
+    dest: /tmp/kubernetes-apt-keyring.gpg
+    mode: '0544'
+
+- name: Convert GPG key to keyring
+  ansible.builtin.command:
+    cmd: >
+      gpg --dearmor
+      -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      /tmp/kubernetes-apt-keyring.gpg
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    
+- name: Add Kubernetes APT repository
+  ansible.builtin.deb822_repository:
+    name: kubernetes
+    types:
+      - deb
+    uris: https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/
+    suites:
+      - /
+    signed_by: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    state: present
+
+- name: Install Kubernetes packages
+  ansible.builtin.apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+      - cri-tools
+    state: present
+    update_cache: yes
+
+- name: Hold Kubernetes packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+    - cri-tools
+
+- name: Enable kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    enabled: true
+
+- name: Install Minikube
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    dest: /usr/local/bin/minikube
+    mode: '0755'
+
+- name: Delete existing Minikube cluster if it exists
+  ansible.builtin.command: minikube delete
+  failed_when: false
+  become: true
+  become_user: khalid_ah_1
+
+- name: Initialize Minikube cluster
+  ansible.builtin.command: minikube start --driver=docker --kubernetes-version=v1.34.9
+  register: minikube_status
+  become: true
+  become_user: khalid_ah_1
+
+- name: Verify Minikube installation
+  ansible.builtin.command: minikube status
+  register: minikube_verify
+  changed_when: false
+  become: true
+  become_user: khalid_ah_1
+
+- name: Verify kubectl installation
+  ansible.builtin.command: kubectl version --client
+  changed_when: false

@@ -1,0 +1,33 @@
+- name: Installing Docker, Kubernetes, Helm, ArgoCD CLI, and Terraform
+  hosts: all
+  become: true
+  become_user: root
+  vars:
+    kubernetes_version: "1.34"
+  tasks:
+  - name: Installing dependencies
+    ansible.builtin.apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    loop:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - curl
+      - software-properties-common
+
+  - name: Installing Docker
+    ansible.builtin.import_tasks: ./deps/docker.yaml
+
+  - name: Installing Kubernetes
+    ansible.builtin.import_tasks: ./deps/kubernetes.yaml
+
+  - name: Installing Helm
+    ansible.builtin.import_tasks: ./deps/helm.yaml
+  
+  - name:  Installing ArgoCD CLI
+    ansible.builtin.import_tasks: ./deps/argocd.yaml
+
+  - name: Installing Terraform
+    ansible.builtin.import_tasks: ./deps/terraform.yaml

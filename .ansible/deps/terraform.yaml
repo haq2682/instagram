@@ -1,0 +1,40 @@
+- name: Download Terraform GPG key
+  ansible.builtin.get_url: 
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: /tmp/hashicorp-archive-keyring.gpg
+    mode: '0644'
+
+- name: Convert GPG key to keyring
+  ansible.builtin.command:
+    cmd: >
+      gpg --dearmor
+      -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+      /tmp/hashicorp-archive-keyring.gpg
+    creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+- name: Add HashiCorp repository
+  ansible.builtin.deb822_repository:
+    types: 
+      - deb
+    signed_by: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    uris: https://apt.releases.hashicorp.com
+    suites: '{{ ansible_facts["distribution_release"] }}'
+    name: hashicorp
+    components: 
+      - main
+    state: present
+
+- name: Install Terraform
+  ansible.builtin.apt:
+    name: terraform
+    state: present
+    update_cache: yes
+
+- name: Verify Terraform installation
+  ansible.builtin.command: terraform version
+  register: terraform_version
+  changed_when: false
+
+- name: Display Terraform version
+  ansible.builtin.debug:
+    msg: "Terraform version installed: {{ terraform_version.stdout }}"

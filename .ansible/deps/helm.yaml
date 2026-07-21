@@ -1,0 +1,12 @@
+- name: Download Helm installation script
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: '0755'
+
+- name: Run Helm installation script
+  ansible.builtin.command: /tmp/get_helm.sh
+
+- name: Verify Helm installation
+  ansible.builtin.command: helm version
+  changed_when: false
