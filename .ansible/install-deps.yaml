@@ -4,7 +4,7 @@
   become_user: root
   vars:
     kubernetes_version: "1.34"
-    normal_user: khalid_ah_1
+    normal_user: "khalid_ah_1"
   tasks:
   - name: Installing dependencies
     ansible.builtin.apt:
