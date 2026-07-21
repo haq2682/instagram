@@ -58,20 +58,20 @@
   ansible.builtin.command: minikube delete
   failed_when: false
   become: true
-  become_user: khalid_ah_1
+  become_user: {{ normal_user }}
 
 - name: Initialize Minikube cluster
   ansible.builtin.command: minikube start --driver=docker --kubernetes-version=v1.34.9
   register: minikube_status
   become: true
-  become_user: khalid_ah_1
+  become_user: {{ normal_user }}
 
 - name: Verify Minikube installation
   ansible.builtin.command: minikube status
   register: minikube_verify
   changed_when: false
   become: true
-  become_user: khalid_ah_1
+  become_user: {{ normal_user }}
 
 - name: Verify kubectl installation
   ansible.builtin.command: kubectl version --client
