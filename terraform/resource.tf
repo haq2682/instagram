@@ -3,7 +3,7 @@ resource "helm_release" "argocd" {
     repository = "https://argoproj.github.io/argo-helm"
     chart      = "argo-cd"
     namespace  = kubernetes_namespace.argocd.metadata[0].name
-    version    = "5.41.0"
+    version    = "10.1.4"
 
     set = [{
         name  = "server.service.type"
@@ -19,6 +19,10 @@ resource "helm_release" "argocd" {
         value: "Prefix"
     }]
 
+    timeout = 3600
+    wait = true
+    atomic = true
+
     depends_on = [kubernetes_namespace.argocd]
 }
 
@@ -27,7 +31,7 @@ resource "helm_release" "kube-prometheus-stack" {
     repository = "https://prometheus-community.github.io/helm-charts"
     chart      = "kube-prometheus-stack"
     namespace  = kubernetes_namespace.monitoring.metadata[0].name
-    version    = "45.6.0"
+    version    = "87.17.0"
 
     set = [{
         name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
@@ -39,6 +43,10 @@ resource "helm_release" "kube-prometheus-stack" {
         name  = "prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues"
         value = "false"
     }]
+
+    timeout = 3600
+    wait = true
+    atomic = true
 
     depends_on = [kubernetes_namespace.monitoring]
 }
