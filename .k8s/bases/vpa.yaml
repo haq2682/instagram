@@ -1,0 +1,53 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: instagram_clone_frontend_vpa
+  namespace: dev
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: instagram_clone_frontend_deployment
+  updatePolicy:
+    updateMode: "Off"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "instagram_clone_frontend"
+      minAllowed:
+        cpu: 100m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 2
+        memory: 2Gi
+      controlledResources:
+      - cpu
+      - memory
+      controlledValues: RequestsAndLimits
+
+---
+
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: instagram_clone_backend_vpa
+  namespace: dev
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: instagram_clone_backend_deployment
+  updatePolicy:
+    updateMode: "Off"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: "instagram_clone_backend"
+      minAllowed:
+        cpu: 100m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 2
+        memory: 2Gi
+      controlledResources:
+      - cpu
+      - memory
+      controlledValues: RequestsAndLimits

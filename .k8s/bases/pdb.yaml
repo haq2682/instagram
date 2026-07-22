@@ -1,0 +1,25 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: instagram_clone_frontend_pdb
+  namespace: dev
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: instagram_clone
+      tier: frontend
+
+---
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: instagram_clone_backend_pdb
+  namespace: dev
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: instagram_clone
+      tier: backend

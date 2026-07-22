@@ -67,6 +67,18 @@
   become: true
   become_user: "{{ normal_user }}"
 
+- name: Enable Minikube Metrics Server Addon
+  ansible.builtin.command: minikube addons enable metrics-server
+  changed_when: false
+  become: true
+  become_user: "{{ normal_user }}"
+
+- name: Enable Minikube Ingress Addon
+  ansible.builtin.command: minikube addons enable ingress
+  changed_when: false
+  become: true
+  become_user: "{{ normal_user }}"
+
 - name: Verify kubectl installation
   ansible.builtin.command: kubectl version --client
   changed_when: false

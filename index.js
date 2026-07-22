@@ -10,6 +10,8 @@ const { MongoStore } = require('connect-mongo');
 const passport = require('passport');
 const chatSocket = require('./sockets/chatSocket');
 
+const client = require("prom-client");
+
 const authRoutes = require('./routes/authRoutes');
 const googleAuthRoutes = require('./routes/googleAuthRoutes');
 const facebookAuthRoutes = require('./routes/facebookAuthRoutes');
@@ -33,6 +35,15 @@ app.use(cookieParser());
 connectToDb();
 
 chatSocket.initChatSocket(server);
+
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
+
+
+app.get("/metrics", async (req, res) => {
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
+});
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });

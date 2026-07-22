@@ -53,7 +53,7 @@ jobs:
                     VITE_GOOGLE_AUTH_URI=${{ vars.VITE_GOOGLE_AUTH_URI }}
                     VITE_FACEBOOK_AUTH_URI=${{ vars.VITE_FACEBOOK_AUTH_URI }}
                     VITE_SOCKET_CLIENT_URL=${{ vars.VITE_SOCKET_CLIENT_URL }}
-                    FRONT_END_URL=${{ vars.FRONTEND_URL }}
+                    FRONT_END_URL=${{ vars.FRONT_END_URL }}
                     BACK_END_URL=${{ vars.BACK_END_URL }}
             - name: Run Trivy Scan on Frontend Image
               uses: aquasecurity/trivy-action@v0.36.0

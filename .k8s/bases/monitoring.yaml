@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: instagram_clone_backend_monitor
+  labels:
+    release: kube-prometheus-stack   # must match Prometheus operator's selector
+spec:
+  selector:
+    matchLabels:
+      app: instagram_clone
+      tier: backend
+  namespaceSelector:
+    matchNames:
+    - dev
+  endpoints:
+  - port: "instagram_clone_backend_service_port"
+    path: /metrics
+    interval: 30s

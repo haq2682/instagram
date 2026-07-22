@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: instagram_clone_cd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/haq2682/instagram.git
+    targetRevision: HEAD
+    path: .k8s/bases
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true
