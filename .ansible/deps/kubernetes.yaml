@@ -54,6 +54,16 @@
     dest: /usr/local/bin/minikube
     mode: '0755'
 
+- name: Add user to the docker group
+  ansible.builtin.user:
+    name: "{{ normal_user }}"
+    groups: docker
+    append: true
+
+- name: Verify User
+  ansible.builtin.command: newgrp docker
+  changed_when: false
+
 - name: Initialize Minikube cluster
   ansible.builtin.command: minikube start --driver=docker --kubernetes-version=v1.34.9
   register: minikube_status
