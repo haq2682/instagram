@@ -1,13 +1,13 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: instagram_clone_frontend_hpa
+  name: instagram-clone-frontend-hpa
   namespace: dev
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: instagram_clone_frontend_deployment
+    name: instagram-clone-frontend-deployment
   minReplicas: 3
   maxReplicas: 10
   metrics:
@@ -30,13 +30,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: instagram_clone_backend_hpa
+  name: instagram-clone-backend-hpa
   namespace: dev
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: instagram_clone_backend_deployment
+    name: instagram-clone-backend-deployment
   minReplicas: 3
   maxReplicas: 10
   metrics:

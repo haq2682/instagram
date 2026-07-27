@@ -49,12 +49,12 @@ jobs:
                 file: .docker/frontend/Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/instagram_clone_frontend:latest
-                build-args: |
-                    VITE_GOOGLE_AUTH_URI=${{ vars.VITE_GOOGLE_AUTH_URI }}
-                    VITE_FACEBOOK_AUTH_URI=${{ vars.VITE_FACEBOOK_AUTH_URI }}
-                    VITE_SOCKET_CLIENT_URL=${{ vars.VITE_SOCKET_CLIENT_URL }}
-                    FRONT_END_URL=${{ vars.FRONT_END_URL }}
-                    BACK_END_URL=${{ vars.BACK_END_URL }}
+                # build-args: |
+                #     VITE_GOOGLE_AUTH_URI=${{ vars.VITE_GOOGLE_AUTH_URI }}
+                #     VITE_FACEBOOK_AUTH_URI=${{ vars.VITE_FACEBOOK_AUTH_URI }}
+                #     VITE_SOCKET_CLIENT_URL=${{ vars.VITE_SOCKET_CLIENT_URL }}
+                #     FRONT_END_URL=${{ vars.FRONT_END_URL }}
+                #     BACK_END_URL=${{ vars.BACK_END_URL }}
             - name: Run Trivy Scan on Frontend Image
               uses: aquasecurity/trivy-action@v0.36.0
               with:
@@ -81,16 +81,16 @@ jobs:
                 file: .docker/backend/Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/instagram_clone_backend:latest
-                build-args: |
-                    EXPRESS_PORT=${{ vars.EXPRESS_PORT }}
-                    GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-                    GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-                    FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID }}
-                    FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET }}
-                    JWT_SECRET=${{ secrets.JWT_SECRET }}
-                    SESSION_SECRET=${{ secrets.SESSION_SECRET }}
-                    MONGODB_URI=${{ secrets.MONGODB_URI }}
-                    OFFLINE_MONGODB_URI=${{ vars.OFFLINE_MONGODB_URI }}
+                # build-args: |
+                #     EXPRESS_PORT=${{ vars.EXPRESS_PORT }}
+                #     GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+                #     GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+                #     FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID }}
+                #     FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET }}
+                #     JWT_SECRET=${{ secrets.JWT_SECRET }}
+                #     SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+                #     MONGODB_URI=${{ secrets.MONGODB_URI }}
+                #     OFFLINE_MONGODB_URI=${{ vars.OFFLINE_MONGODB_URI }}
             - name: Run Trivy Scan on Backend Image
               uses: aquasecurity/trivy-action@v0.36.0
               with:

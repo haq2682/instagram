@@ -1,29 +1,29 @@
-apiVersion: kustomize.config.k8s.io/v1
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: dev
 labels:
   - includeSelectors: true
     pairs:
-      app: instagram_clone
+      app: instagram-clone
 
 resources:
   - deployment.yaml
   - hpa.yaml
-  - vpa.yaml
+  # - vpa.yaml
   - ingress.yaml
   - networkpolicy.yaml
   - pvc.yaml
   - sc.yaml
   - svc.yaml
   - pdb.yaml
-  - argocd.yaml
   - monitoring.yaml
 
 configMapGenerator:
-  - name: instagram_clone_config
+  - name: instagram-clone-config
     envs:
       - configs.env
 
 secretGenerator:
-  - name: instagram_clone_secret
+  - name: instagram-clone-secret
     envs:
       - secrets.env

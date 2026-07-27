@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: instagram_clone_frontend_deployment
+  name: instagram-clone-frontend-deployment
   labels:
-    app: instagram_clone
+    app: instagram-clone
     tier: frontend
   namespace: dev
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: instagram_clone
+      app: instagram-clone
       tier: frontend
   template:
     metadata:
       labels:
-        app: instagram_clone
+        app: instagram-clone
         tier: frontend
     spec:
       containers:
-      - name: instagram_clone_frontend
+      - name: instagram-clone-frontend
         image: haq2682/instagram_clone_frontend:latest
         ports:
         - containerPort: 80
         envFrom:
         - configMapRef:
-          name: instagram_clone_config
+            name: instagram-clone-config
         - secretRef:
-          name: instagram_clone_secret
+            name: instagram-clone-secret
         startupProbe:
           httpGet:
             path: /
@@ -48,7 +48,7 @@ spec:
           failureThreshold: 3
         volumeMounts:
           - mountPath: /usr/share/nginx/html/uploads
-            name: instagram_clone_frontend_volume
+            name: instagram-clone-frontend-volume
         resources:  
           requests:
             cpu: 100m
@@ -56,49 +56,49 @@ spec:
           limits:
             cpu: 2
             memory: 2Gi
-    volumes:
-    - name: instagram_clone_frontend_volume
-      persistentVolumeClaim:
-        claimName: instagram_clone_frontend_pvc
+      volumes:
+      - name: instagram-clone-frontend-volume
+        persistentVolumeClaim:
+          claimName: instagram-clone-frontend-pvc
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: instagram_clone_backend_deployment
+  name: instagram-clone-backend-deployment
   labels:
-    app: instagram_clone
+    app: instagram-clone
     tier: backend
   namespace: dev
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: instagram_clone
+      app: instagram-clone
       tier: backend
   template:
     metadata:
       labels:
-        app: instagram_clone
+        app: instagram-clone
         tier: backend
     spec:
       containers:
-      - name: instagram_clone_backend
+      - name: instagram-clone-backend
         image: haq2682/instagram_clone_backend:latest
         ports:
         - containerPort: 8000
         envFrom:
         - configMapRef:
-          name: instagram_clone_config
+            name: instagram-clone-config
         - secretRef:
-          name: instagram_clone_secret
+            name: instagram-clone-secret
         startupProbe:
           httpGet:
             path: /health
             port: 8000
           periodSeconds: 5
-          failureThreshold: 10
+          failureThreshold: 30
         readinessProbe:
           httpGet:
             path: /health
@@ -113,7 +113,7 @@ spec:
           failureThreshold: 3
         volumeMounts:
         - mountPath: /app/uploads
-          name: instagram_clone_backend_volume
+          name: instagram-clone-backend-volume
         resources:
           requests:
             cpu: 100m
@@ -122,6 +122,6 @@ spec:
             cpu: 2
             memory: 2Gi
       volumes:
-      - name: instagram_clone_backend_volume
+      - name: instagram-clone-backend-volume
         persistentVolumeClaim:
-          claimName: instagram_clone_backend_pvc
+          claimName: instagram-clone-backend-pvc

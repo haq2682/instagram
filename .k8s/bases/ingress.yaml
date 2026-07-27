@@ -1,19 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: instagram_clone_frontend_ingress
+  name: instagram-clone-frontend-ingress
   namespace: dev
 spec:
   ingressClassName: nginx
   rules:
-  - host: instagram_clone.com
+  - host: instagram-clone.com
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: instagram_clone_frontend_service
+            name: instagram-clone-frontend-service
             port:
               number: 80
 
@@ -22,12 +22,12 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: instagram_clone_prometheus
+  name: instagram-clone-prometheus
   namespace: monitoring
 spec:
   ingressClassName: nginx
   rules:
-  - host: instagram_clone.prometheus.com
+  - host: instagram-clone.prometheus.com
     http:
       paths:
       - path: /
@@ -43,12 +43,12 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: instagram_clone_grafana
+  name: instagram-clone-grafana
   namespace: monitoring
 spec:
   ingressClassName: nginx
   rules:
-  - host: instagram_clone.grafana.com
+  - host: instagram-clone.grafana.com
     http:
       paths:
       - path: /

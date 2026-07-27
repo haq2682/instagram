@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: instagram_clone_cd
+  name: instagram-clone-cd
   namespace: argocd
 spec:
   project: default

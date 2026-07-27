@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: instagram_clone_frontend_pvc
+  name: instagram-clone-frontend-pvc
   namespace: dev
 spec:
   accessModes:
@@ -10,14 +10,14 @@ spec:
   resources:
     requests:
       storage: 8Gi
-  storageClassName: instagram_clone_sc
+  storageClassName: instagram-clone-sc
 
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: instagram_clone_backend_pvc
+  name: instagram-clone-backend-pvc
   namespace: dev
 spec:
   accessModes:
@@ -26,4 +26,4 @@ spec:
   resources:
     requests:
       storage: 8Gi
-  storageClassName: instagram_clone_sc
+  storageClassName: instagram-clone-sc
