@@ -26,6 +26,21 @@ resource "helm_release" "argocd" {
     depends_on = [kubernetes_namespace.argocd]
 }
 
+resource "helm_release" "argocd_image_updater" {
+    name       = "argocd-image-updater"
+    repository = "https://argoproj.github.io/argo-helm"
+    chart      = "argocd-image-updater"
+    namespace  = kubernetes_namespace.argocd.metadata[0].name
+    version    = "0.11.2"
+
+    timeout = 3600
+    wait    = true
+    atomic  = true
+
+    depends_on = [helm_release.argocd]
+}
+
+
 resource "helm_release" "kube-prometheus-stack" {
     name       = "kube-prometheus-stack"
     repository = "https://prometheus-community.github.io/helm-charts"

@@ -25,7 +25,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const app = express();
 const server = http.createServer(app);
 dotenv.config();
-let port = process.env.EXPRESS_PORT;
+let port = process.env.EXPRESS_PORT || 8000;
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
@@ -79,5 +79,9 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
     done(null, user);
 })
+
+server.on("error", (err) => {
+    console.error("Server failed to start:", err);
+});
 
 server.listen(port, () => console.log('Listening on port: ' + port));

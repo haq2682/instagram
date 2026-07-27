@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: instagram-clone-prometheus
+  namespace: monitoring
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: instagram-clone.prometheus.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kube-prometheus-stack-prometheus
+            port:
+              number: 9090
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: instagram-clone-grafana
+  namespace: monitoring
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: instagram-clone.grafana.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kube-prometheus-stack-grafana
+            port:
+              number: 80
