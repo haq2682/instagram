@@ -5,6 +5,7 @@ module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/**/dist/**/*.{js,mjs}",
   ],
   safelist: [
     // Background colors
