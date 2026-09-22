@@ -83,6 +83,17 @@ spec:
         app: instagram-clone
         tier: backend
     spec:
+      initContainers:
+      - name: seed-uploads
+        image: haq2682/instagram_clone_backend:latest
+        # The uploads PVC starts empty on a fresh cluster; seed it once from
+        # the image's baked-in copy (see Dockerfile) so existing DB records
+        # (default avatar, old posts) don't 404. Never overwrites real
+        # uploads on restart since it only acts when the volume is empty.
+        command: ["sh", "-c", "if [ -z \"$(ls -A /app/uploads 2>/dev/null)\" ]; then cp -a /app/uploads-seed/. /app/uploads/; fi"]
+        volumeMounts:
+        - mountPath: /app/uploads
+          name: instagram-clone-backend-volume
       containers:
       - name: instagram-clone-backend
         image: haq2682/instagram_clone_backend:latest

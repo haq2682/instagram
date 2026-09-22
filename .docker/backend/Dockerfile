@@ -22,6 +22,10 @@ COPY models/ ./models/
 COPY db_config/ ./db_config/
 COPY sockets/ ./sockets/
 COPY public/ ./public/
+# Seed data for the uploads PVC (see the seed-uploads initContainer in
+# deployment.yaml) — kept out of the live /app/uploads path since a volume
+# mount there would otherwise shadow it.
+COPY uploads/ ./uploads-seed/
 
 # ARG EXPRESS_PORT=8000
 # ENV EXPRESS_PORT=$EXPRESS_PORT
