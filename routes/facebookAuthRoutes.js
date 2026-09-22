@@ -11,11 +11,12 @@ dotenv.config();
 const jwt_secret = process.env.JWT_SECRET;
 const client_id = process.env.FACEBOOK_CLIENT_ID;
 const client_secret = process.env.FACEBOOK_CLIENT_SECRET;
+const public_app_url = process.env.PUBLIC_APP_URL || "http://localhost:3000";
 
 passport.use(new FacebookStrategy({
         clientID: client_id,
         clientSecret: client_secret,
-        callbackURL: "http://localhost:8000/facebookAuth/facebook/callback",
+        callbackURL: `${public_app_url}/facebookAuth/facebook/callback`,
         enableProof: true,
         profileFields: ['email', 'name']
     },
@@ -29,8 +30,8 @@ router.get('/facebook/callback',
     function(req, res) {
         const user = req.user;
         const token = jwt.sign({user}, jwt_secret, {expiresIn: '1w'});
-        res.cookie('token', token, {httpOnly: true, sameSite: 'none', secure: true});
-        res.redirect('http://localhost:3000/');
+        res.cookie('token', token, {httpOnly: true, sameSite: 'lax', secure: false});
+        res.redirect(public_app_url);
     });
 
 router.get('/facebook/error', (req, res) => res.send("Error Logging In"));

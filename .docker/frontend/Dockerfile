@@ -10,14 +10,10 @@ COPY index.html vite.config.js tailwind.config.js postcss.config.js ./
 COPY public/ ./public/
 COPY src/ ./src/
 
-# ARG VITE_GOOGLE_AUTH_URI
-# ENV VITE_GOOGLE_AUTH_URI=$VITE_GOOGLE_AUTH_URI
-
-# ARG VITE_FACEBOOK_AUTH_URI
-# ENV VITE_FACEBOOK_AUTH_URI=$VITE_FACEBOOK_AUTH_URI
-
-# ARG VITE_SOCKET_CLIENT_URL
-# ENV VITE_SOCKET_CLIENT_URL=$VITE_SOCKET_CLIENT_URL
+# Relative paths: nginx (see nginx.conf) proxies these to the backend, so they
+# work under whatever host/domain the frontend itself is served from.
+ENV VITE_GOOGLE_AUTH_URI=/googleAuth/google
+ENV VITE_FACEBOOK_AUTH_URI=/facebookAuth/facebook
 
 RUN npm run build
 

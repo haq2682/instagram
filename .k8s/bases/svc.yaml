@@ -22,6 +22,7 @@ metadata:
   namespace: dev
 spec:
   type: ClusterIP
+  sessionAffinity: ClientIP
   selector:
     app: instagram-clone
     tier: backend

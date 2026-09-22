@@ -8,8 +8,11 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: instagram-clone-frontend-deployment
-  minReplicas: 3
-  maxReplicas: 10
+  # Pinned at 1 to match the backend HPA (see its comment) and keep ingress
+  # -> frontend pod routing single-hop, so it can't reintroduce multi-pod
+  # session routing issues for /socket.io/ proxied through this nginx.
+  minReplicas: 1
+  maxReplicas: 1
   metrics:
   - type: Resource
     resource:
@@ -37,8 +40,11 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: instagram-clone-backend-deployment
-  minReplicas: 3
-  maxReplicas: 10
+  # Pinned at 1: Socket.IO keeps session state in-memory per pod, so more than
+  # one backend replica breaks realtime connections without a shared (e.g.
+  # Redis) adapter. Raise this again once that's added.
+  minReplicas: 1
+  maxReplicas: 1
   metrics:
   - type: Resource
     resource:

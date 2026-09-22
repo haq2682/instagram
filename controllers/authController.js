@@ -10,7 +10,7 @@ let jwt_secret = process.env.JWT_SECRET
 
 const createTokenAndSetCookie = (user, res) => {
     const token = jwt.sign({ user }, jwt_secret, { expiresIn: '1w' });
-    res.cookie('token', token, { httpOnly: true, sameSite: 'none', secure: true });
+    res.cookie('token', token, { httpOnly: true, sameSite: 'lax', secure: false });
 }
 
 module.exports = {
