@@ -1,5 +1,5 @@
 import { Close } from "styled-icons/ionicons-solid"
-import {Tabs, Tab } from "@nextui-org/react";
+import {Tabs, Tab } from "@heroui/react";
 import ChatPeople from "./ChatPeople";
 import ChatGroups from "./ChatGroups";
 

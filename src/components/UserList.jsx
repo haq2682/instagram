@@ -1,5 +1,5 @@
 import { Link as UserLink } from "react-router-dom";
-import { User } from "@nextui-org/react";
+import { User } from "@heroui/react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import axios from 'axios';

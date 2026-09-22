@@ -1,4 +1,4 @@
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import {useState, useEffect} from "react";
 import axios from 'axios';
 import { useSelector, useDispatch } from "react-redux";

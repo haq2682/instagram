@@ -1,4 +1,4 @@
-import { Avatar, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, User, Link, cn, Checkbox, CheckboxGroup, Input } from "@nextui-org/react";
+import { Avatar, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, User, Link, cn, Checkbox, CheckboxGroup, Input } from "@heroui/react";
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect, useRef, useCallback } from "react";

@@ -1,4 +1,4 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Textarea, Button, Avatar } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Textarea, Button, Avatar } from "@heroui/react";
 import {useState} from 'react';
 import {FileCopy2} from '@styled-icons/remix-fill/FileCopy2';
 import axios from 'axios';

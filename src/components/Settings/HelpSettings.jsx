@@ -1,4 +1,4 @@
-import {Input, Divider, Textarea, Button} from "@nextui-org/react";
+import {Input, Divider, Textarea, Button} from "@heroui/react";
 import {useState} from "react";
 import ImageUploading from 'react-images-uploading';
 

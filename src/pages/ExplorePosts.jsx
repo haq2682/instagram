@@ -4,7 +4,7 @@ import Notifications from "../components/Notifications";
 import {
     Divider,
     Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import Post from "../components/Post/Post";
 import {useState, useEffect, useRef, useCallback} from 'react';
 import axios from "axios";

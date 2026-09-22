@@ -1,4 +1,4 @@
-import {Accordion, AccordionItem, Divider, Switch} from '@nextui-org/react';
+import {Accordion, AccordionItem, Divider, Switch} from '@heroui/react';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 

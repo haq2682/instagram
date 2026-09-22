@@ -1,4 +1,4 @@
-import {Badge} from "@nextui-org/react";
+import {Badge} from "@heroui/react";
 import axios from "axios";
 import {useCallback, useEffect, useState } from 'react';
 import { useSelector } from "react-redux";

@@ -1,4 +1,4 @@
-import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader} from "@nextui-org/react";
+import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader} from "@heroui/react";
 import {EyeSlashFilledIcon} from "../../assets/js/EyeSlashFilledIcon";
 import {EyeFilledIcon} from "../../assets/js/EyeFilledIcon";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";

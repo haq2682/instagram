@@ -1,4 +1,4 @@
-import { Switch, Divider, Link, Dropdown, DropdownTrigger, Button, DropdownItem, DropdownMenu } from '@nextui-org/react';
+import { Switch, Divider, Link, Dropdown, DropdownTrigger, Button, DropdownItem, DropdownMenu } from '@heroui/react';
 import { Close } from "@styled-icons/ionicons-solid/Close";
 import { MoreHorizontal } from "@styled-icons/evaicons-solid/MoreHorizontal";
 import { MoreVertical } from "@styled-icons/evaicons-solid/MoreVertical";

@@ -9,7 +9,7 @@ import {
     AutocompleteItem,
     Modal,
     ModalContent, ModalHeader, ModalBody
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Edit } from '@styled-icons/material/Edit';
 import { useSelector, useDispatch } from "react-redux";
 import { authenticate, unVerifyEmail } from '../../redux/authSlice';

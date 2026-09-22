@@ -1,6 +1,6 @@
 import Logo from '../assets/instagram-logo.svg';
 import {useState} from 'react';
-import {Button, useDisclosure} from "@nextui-org/react";
+import {Button, useDisclosure} from "@heroui/react";
 import Signup from "../components/Auth/Signup";
 import Login from "../components/Auth/Login";
 import {Google} from "@styled-icons/bootstrap/Google";

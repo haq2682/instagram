@@ -1,4 +1,4 @@
-const { nextui } = require("@nextui-org/theme/plugin");
+const { heroui } = require("@heroui/theme/plugin");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -66,5 +66,5 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [nextui()],
+  plugins: [heroui()],
 };

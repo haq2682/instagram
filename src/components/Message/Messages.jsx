@@ -7,7 +7,7 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useSelector } from 'react-redux';
 import { Send } from '@styled-icons/bootstrap/Send';
 import { SendFill } from 'styled-icons/bootstrap';

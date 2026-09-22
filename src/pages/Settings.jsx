@@ -5,7 +5,7 @@ import Bottombar from "../components/Navigation/Bottombar";
 import {Close} from '@styled-icons/ionicons-outline/Close';
 import {AccountCircle} from '@styled-icons/material/AccountCircle';
 import {Settings as SubSettings} from '@styled-icons/fluentui-system-filled/Settings';
-import {Divider} from '@nextui-org/react';
+import {Divider} from '@heroui/react';
 import ProfileSettings from "../components/Settings/ProfileSettings";
 import NotificationSettings from '../components/Settings/NotificationSettings';
 import PrivacySettings from '../components/Settings/PrivacySettings';

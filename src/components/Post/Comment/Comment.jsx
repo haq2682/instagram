@@ -7,7 +7,7 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import TextDisplay from "../../TextDisplay";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Paperclip } from "@styled-icons/feather/Paperclip";

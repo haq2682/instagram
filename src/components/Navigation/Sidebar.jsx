@@ -10,7 +10,7 @@ import {Create} from '@styled-icons/ionicons-solid/Create';
 import {Settings} from '@styled-icons/ionicons-sharp/Settings';
 import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
-import {Badge} from "@nextui-org/react";
+import {Badge} from "@heroui/react";
 import {SunFill} from "@styled-icons/bootstrap/SunFill";
 import {Moon} from "@styled-icons/heroicons-solid/Moon";
 import {useDispatch} from 'react-redux';

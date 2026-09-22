@@ -1,4 +1,4 @@
-import {Button, Modal, ModalBody, ModalContent, ModalHeader, Textarea} from "@nextui-org/react";
+import {Button, Modal, ModalBody, ModalContent, ModalHeader, Textarea} from "@heroui/react";
 import {BoxArrowUpRight} from "@styled-icons/bootstrap/BoxArrowUpRight";
 
 export default function Report({open, setClose}) {

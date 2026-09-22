@@ -1,4 +1,4 @@
-import { User } from "@nextui-org/react";
+import { User } from "@heroui/react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { logout } from "../redux/authSlice";

@@ -2,9 +2,9 @@ import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
 import Post from "../components/Post/Post";
 import Notifications from "../components/Notifications";
-import {Divider} from '@nextui-org/react';
+import {Divider} from '@heroui/react';
 import { useEffect, useState, useCallback, useRef } from "react";
-import {Card, Skeleton} from "@nextui-org/react";
+import {Card, Skeleton} from "@heroui/react";
 import axios from 'axios';
 export default function Saved() {
     const [posts, setPosts] = useState([]);

@@ -1,5 +1,5 @@
 import {Close} from '@styled-icons/ionicons-solid/Close';
-import {Avatar} from "@nextui-org/react";
+import {Avatar} from "@heroui/react";
 import {closeNotificationBar} from '../redux/notificationBarSlice';
 import { useSelector, useDispatch } from 'react-redux';
 

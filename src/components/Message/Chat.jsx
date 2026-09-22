@@ -6,7 +6,7 @@ import {
     ModalContent,
     ModalHeader,
     Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Info } from '@styled-icons/evaicons-solid/Info';
 import { Video } from '@styled-icons/fa-solid/Video';

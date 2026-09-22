@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, Accordion, AccordionItem } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, Accordion, AccordionItem } from "@heroui/react";
 import { SendFill } from 'styled-icons/bootstrap';
 import axios from 'axios';
 import moment from 'moment';

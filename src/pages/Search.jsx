@@ -1,6 +1,6 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
-import {Input, Divider} from "@nextui-org/react";
+import {Input, Divider} from "@heroui/react";
 import Notifications from "../components/Notifications";
 import {useState, useRef, useEffect, useCallback} from "react";
 import axios from 'axios';

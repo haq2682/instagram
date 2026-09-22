@@ -1,4 +1,4 @@
-import {Divider, Switch} from "@nextui-org/react";
+import {Divider, Switch} from "@heroui/react";
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 

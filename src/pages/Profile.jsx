@@ -1,6 +1,6 @@
 import Sidebar from "../components/Navigation/Sidebar";
 import Bottombar from "../components/Navigation/Bottombar";
-import { Button, Divider, Tab, Tabs } from "@nextui-org/react";
+import { Button, Divider, Tab, Tabs } from "@heroui/react";
 import Notifications from "../components/Notifications";
 import Post from "../components/Post/Post";
 import { useNavigate, useParams } from "react-router-dom";

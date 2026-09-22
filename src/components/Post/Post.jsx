@@ -1,4 +1,4 @@
-import { Avatar, Divider } from "@nextui-org/react";
+import { Avatar, Divider } from "@heroui/react";
 import Report from './Report';
 import CommentSection from './Comment/CommentSection';
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
@@ -9,7 +9,7 @@ import { Share as ShareArrow } from "@styled-icons/fluentui-system-filled/Share"
 import { Save as SaveOutline } from "@styled-icons/ionicons-outline/Save";
 import { Save as SaveFill } from "@styled-icons/ionicons-sharp/Save";
 import { More } from "@styled-icons/remix-fill/More";
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/react";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@heroui/react";
 import React, { useState, useEffect, useCallback } from "react";
 import EnlargedView from "./EnlargedView";
 import TextDisplay from "../TextDisplay";

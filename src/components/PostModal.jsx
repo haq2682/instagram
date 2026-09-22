@@ -7,7 +7,7 @@ import {
     ModalHeader,
     Textarea,
     Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {PhotoLibrary} from "@styled-icons/material-sharp/PhotoLibrary";
 import {Enter} from "@styled-icons/ionicons-solid/Enter";
 import {useCallback, useMemo, useState} from "react";

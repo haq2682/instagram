@@ -1,4 +1,4 @@
-import { Avatar, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { Avatar, Divider, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import TextDisplay from "../../TextDisplay";
 import { More } from "@styled-icons/remix-fill/More";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";

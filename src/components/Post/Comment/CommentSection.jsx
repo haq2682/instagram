@@ -1,4 +1,4 @@
-import { Input, Modal, ModalBody, ModalContent, ModalHeader, Tooltip } from "@nextui-org/react";
+import { Input, Modal, ModalBody, ModalContent, ModalHeader, Tooltip } from "@heroui/react";
 import { Paperclip } from "@styled-icons/feather/Paperclip";
 import { ArrowForward } from "@styled-icons/typicons/ArrowForward";
 import { CloseCircle } from "@styled-icons/remix-line/CloseCircle";

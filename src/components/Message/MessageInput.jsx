@@ -1,7 +1,7 @@
 import {
     Input,
     Tooltip
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useState, useMemo, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';

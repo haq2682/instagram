@@ -9,7 +9,7 @@ import {SaveCopy} from '@styled-icons/fluentui-system-filled/SaveCopy';
 import {Explore} from '@styled-icons/material-rounded/Explore';
 import {ThreeBars} from '@styled-icons/octicons/ThreeBars';
 import {Person} from '@styled-icons/evaicons-solid/Person';
-import {Popover, PopoverTrigger, PopoverContent, Badge} from "@nextui-org/react";
+import {Popover, PopoverTrigger, PopoverContent, Badge} from "@heroui/react";
 import {Link, Outlet} from 'react-router-dom';
 import {useState, useEffect} from "react";
 import {SunFill} from "@styled-icons/bootstrap/SunFill";
